@@ -8,6 +8,7 @@ import { Button } from "$lib/components/ui/button";
 import * as Sidebar from "$lib/components/ui/sidebar";
 
 let { children } = $props();
+let isSidebarOpen = $state(false);
 </script>
 
 <svelte:head>
@@ -16,17 +17,18 @@ let { children } = $props();
 
 <ModeWatcher />
 
-<Sidebar.Provider open={false}>
-	<AppSidebar />
+<Sidebar.Provider bind:open={isSidebarOpen}>
 	<main class="w-full">
-		<header class="flex justify-between items-center p-4">
-			<Sidebar.Trigger />
-
+		<header
+			class="flex fixed top-0 right-0 left-0 justify-between items-center p-4 w-full"
+		>
 			<Button variant="ghost" size="icon">
 				<Settings />
 			</Button>
+			<Sidebar.Trigger class={isSidebarOpen ? "-translate-x-64" : ""} />
 		</header>
 
 		{@render children()}
 	</main>
+	<AppSidebar />
 </Sidebar.Provider>

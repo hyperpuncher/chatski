@@ -22,7 +22,7 @@ const sidebar = useSidebar();
 	data-slot="sidebar-trigger"
 	variant="ghost"
 	size="icon"
-	class={cn("", className)}
+	class={cn("duration-200 ease-linear", className)}
 	type="button"
 	onclick={(e) => {
 		onclick?.(e);

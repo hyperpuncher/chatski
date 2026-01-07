@@ -43,6 +43,7 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"@ai-sdk/svelte": "^4.0.6",
 		"@openrouter/ai-sdk-provider": "^1.5.4",
 		"ai": "^6.0.6",
 		"mode-watcher": "^1.1.0",

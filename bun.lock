@@ -5,6 +5,7 @@
     "": {
       "name": "chat",
       "dependencies": {
+        "@ai-sdk/svelte": "^4.0.6",
         "@openrouter/ai-sdk-provider": "^1.5.4",
         "ai": "^6.0.6",
         "mode-watcher": "^1.1.0",
@@ -52,6 +53,8 @@
     "@ai-sdk/provider": ["@ai-sdk/provider@3.0.1", "", { "dependencies": { "json-schema": "^0.4.0" } }, "sha512-2lR4w7mr9XrydzxBSjir4N6YMGdXD+Np1Sh0RXABh7tWdNFFwIeRI1Q+SaYZMbfL8Pg8RRLcrxQm51yxTLhokg=="],
 
     "@ai-sdk/provider-utils": ["@ai-sdk/provider-utils@4.0.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.1", "@standard-schema/spec": "^1.1.0", "eventsource-parser": "^3.0.6" }, "peerDependencies": { "zod": "^3.25.76 || ^4.1.8" } }, "sha512-KaykkuRBdF/ffpI5bwpL4aSCmO/99p8/ci+VeHwJO8tmvXtiVAb99QeyvvvXmL61e9Zrvv4GBGoajW19xdjkVQ=="],
+
+    "@ai-sdk/svelte": ["@ai-sdk/svelte@4.0.6", "", { "dependencies": { "@ai-sdk/provider-utils": "4.0.2", "ai": "6.0.6" }, "peerDependencies": { "svelte": "^5.31.0" } }, "sha512-qSzcdsA39uzf2QQJNHpLiz5nsjGWeXzEUa/CzCSCgz8elNLjYQY0UaPN01G200nRhEDaV/lcdDvK7gq+PX6ptw=="],
 
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 

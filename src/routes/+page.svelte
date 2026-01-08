@@ -140,7 +140,7 @@ const marked = new Marked().use(
 					class="rounded-full"
 					size="icon-sm"
 					type="submit"
-					disabled={!input.trim() && !selectedModel}
+					disabled={!input.trim() || !selectedModel}
 				>
 					<ArrowUp />
 				</InputGroup.Button>

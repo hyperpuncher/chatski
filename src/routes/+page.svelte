@@ -10,6 +10,9 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { cn } from "$lib/utils";
+import { Marked } from "marked";
+import { codeToHtml } from "shiki";
+import markedShiki from "marked-shiki";
 
 let input = $state("");
 const chat = new Chat({});
@@ -28,6 +31,14 @@ function handleKeydown(e: KeyboardEvent) {
 		isModelsPopoverOpen = !isModelsPopoverOpen;
 	}
 }
+
+const marked = new Marked().use(
+	markedShiki({
+		highlight(code, lang, props) {
+			return codeToHtml(code, { lang, theme: "dracula", ...props });
+		},
+	}),
+);
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -44,7 +55,11 @@ function handleKeydown(e: KeyboardEvent) {
 									? "ms-auto w-fit rounded-2xl bg-primary px-3 py-2 text-primary-foreground"
 									: "leading-7.5"}
 							>
-								{part.text}
+								{#if message.role === "user"}
+									{part.text}
+								{:else}
+									{@html await marked.parse(part.text)}
+								{/if}
 							</p>
 						{/if}
 					{/each}

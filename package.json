@@ -46,8 +46,11 @@
 		"@ai-sdk/svelte": "^4.0.6",
 		"@openrouter/ai-sdk-provider": "6.0.0-alpha.1",
 		"ai": "^6.0.6",
+		"marked": "^17.0.1",
+		"marked-shiki": "^1.2.1",
 		"mode-watcher": "^1.1.0",
 		"postgres": "^3.4.7",
+		"shiki": "^3.21.0",
 		"valibot": "^1.2.0"
 	},
 	"overrides": {

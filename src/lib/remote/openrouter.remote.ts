@@ -3,10 +3,8 @@ import { query } from "$app/server";
 import { OPENROUTER_KEY } from "$env/static/private";
 
 export const getModels = query(async () => {
-	console.time("getModels");
 	const cached = await redis.get("openrouter:models");
 	if (cached) {
-		console.timeEnd("getModels");
 		return parseModels(JSON.parse(cached));
 	}
 

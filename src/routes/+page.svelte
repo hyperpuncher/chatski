@@ -4,6 +4,8 @@ import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import { slide } from "svelte/transition";
+import Square from "@lucide/svelte/icons/square";
+import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
 import * as Command from "$lib/components/ui/command/index.js";
 import * as InputGroup from "$lib/components/ui/input-group";
@@ -21,7 +23,11 @@ let selectedModel = $state("google/gemini-2.5-flash-lite-preview-09-2025");
 let isModelsPopoverOpen = $state(false);
 
 function handleSubmit() {
-	chat.sendMessage({ text: input, metadata: { model: selectedModel } });
+	if (chat.status === "streaming") {
+		chat.stop();
+	} else {
+		chat.sendMessage({ text: input, metadata: { model: selectedModel } });
+	}
 	input = "";
 }
 
@@ -136,13 +142,17 @@ const marked = new Marked().use(
 				</Popover.Root>
 
 				<InputGroup.Button
-					variant="default"
+					variant={chat.status === "streaming" ? "ghost" : "default"}
 					class="rounded-full"
 					size="icon-sm"
 					type="submit"
 					disabled={!input.trim() || !selectedModel}
 				>
-					<ArrowUp />
+					{#if chat.status === "streaming"}
+						<Square class="text-red-400 fill-red-400" />
+					{:else}
+						<ArrowUp />
+					{/if}
 				</InputGroup.Button>
 			</InputGroup.Addon>
 		</InputGroup.Root>

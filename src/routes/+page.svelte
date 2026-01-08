@@ -18,7 +18,7 @@ let selectedModel = $state("google/gemini-2.5-flash-lite-preview-09-2025");
 let isModelsPopoverOpen = $state(false);
 
 function handleSubmit() {
-	chat.sendMessage({ text: input });
+	chat.sendMessage({ text: input, metadata: { model: selectedModel } });
 	input = "";
 }
 
@@ -125,7 +125,7 @@ function handleKeydown(e: KeyboardEvent) {
 					class="rounded-full"
 					size="icon-sm"
 					type="submit"
-					disabled={!input.trim()}
+					disabled={!input.trim() && !selectedModel}
 				>
 					<ArrowUp />
 				</InputGroup.Button>

@@ -7,8 +7,3 @@ export const openrouter = createOpenRouter({
 		"X-Title": "chat",
 	},
 });
-
-export const model = openrouter.chat("google/gemini-2.5-flash-lite-preview-09-2025", {
-	reasoning: { effort: "low", enabled: false },
-	provider: { order: ["google-ai-studio"] },
-});

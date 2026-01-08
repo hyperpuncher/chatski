@@ -1,0 +1,30 @@
+import { redis } from "bun";
+import { query } from "$app/server";
+import OPENROUTER_API_KEY from "$env/static/private";
+
+export const getModels = query(async () => {
+	console.time("getModels");
+	const cached = await redis.get("openrouter:models");
+	if (cached) {
+		console.timeEnd("getModels");
+		return parseModels(JSON.parse(cached));
+	}
+
+	const res = await fetch("https://openrouter.ai/api/v1/models", {
+		headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}` },
+	});
+
+	const json = await res.json();
+
+	redis.setex(
+		"openrouter:models",
+		60 * 60 * 24, // 1 day
+		JSON.stringify(json),
+	);
+
+	return parseModels(json);
+});
+
+function parseModels(models: any) {
+	return models.data.map((model: any) => model.id).sort();
+}

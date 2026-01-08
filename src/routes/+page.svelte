@@ -75,6 +75,8 @@ const marked = new Marked({ silent: true }).use(
 function handleSubmit() {
 	if (chat.status === "streaming") {
 		chat.stop();
+	} else if (chat.error) {
+		toast.error(chat.error.message || "Something went wrong");
 	} else {
 		chat.sendMessage({ text: input, metadata: { model: selectedModel } });
 	}

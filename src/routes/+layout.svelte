@@ -14,6 +14,7 @@ let isSidebarOpen = $state(false);
 
 <svelte:head>
 	<link rel="icon" href={favicon}>
+	<title>chat</title>
 </svelte:head>
 
 <ModeWatcher />

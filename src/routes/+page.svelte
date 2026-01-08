@@ -7,9 +7,12 @@ import Copy from "@lucide/svelte/icons/copy";
 import DollarSign from "@lucide/svelte/icons/dollar-sign";
 import Gauge from "@lucide/svelte/icons/gauge";
 import Paperclip from "@lucide/svelte/icons/paperclip";
-import { slide } from "svelte/transition";
 import Square from "@lucide/svelte/icons/square";
 import WholeWord from "@lucide/svelte/icons/whole-word";
+import { Marked } from "marked";
+import markedShiki from "marked-shiki";
+import { createHighlighterCore, createJavaScriptRegexEngine } from "shiki";
+import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
@@ -18,15 +21,56 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { cn } from "$lib/utils";
-import { Marked } from "marked";
-import { codeToHtml } from "shiki";
-import markedShiki from "marked-shiki";
 
-let input = $state("");
 const chat = new Chat({});
 
+let input = $state("");
 let selectedModel = $state("google/gemini-2.5-flash-lite-preview-09-2025");
 let isModelsPopoverOpen = $state(false);
+
+const highlighter = await createHighlighterCore({
+	themes: [import("@shikijs/themes/dracula")],
+	langs: [
+		import("@shikijs/langs/astro"),
+		import("@shikijs/langs/bash"),
+		import("@shikijs/langs/c"),
+		import("@shikijs/langs/cpp"),
+		import("@shikijs/langs/css"),
+		import("@shikijs/langs/dockerfile"),
+		import("@shikijs/langs/go"),
+		import("@shikijs/langs/html"),
+		import("@shikijs/langs/http"),
+		import("@shikijs/langs/ini"),
+		import("@shikijs/langs/javascript"),
+		import("@shikijs/langs/json"),
+		import("@shikijs/langs/jsx"),
+		import("@shikijs/langs/lua"),
+		import("@shikijs/langs/make"),
+		import("@shikijs/langs/markdown"),
+		import("@shikijs/langs/python"),
+		import("@shikijs/langs/regex"),
+		import("@shikijs/langs/rust"),
+		import("@shikijs/langs/sql"),
+		import("@shikijs/langs/svelte"),
+		import("@shikijs/langs/swift"),
+		import("@shikijs/langs/templ"),
+		import("@shikijs/langs/toml"),
+		import("@shikijs/langs/tsx"),
+		import("@shikijs/langs/typescript"),
+		import("@shikijs/langs/typst"),
+		import("@shikijs/langs/vue"),
+		import("@shikijs/langs/yaml"),
+	],
+	engine: createJavaScriptRegexEngine(),
+});
+
+const marked = new Marked({ silent: true }).use(
+	markedShiki({
+		highlight(code, lang, props) {
+			return highlighter.codeToHtml(code, { lang, theme: "dracula", ...props });
+		},
+	}),
+);
 
 function handleSubmit() {
 	if (chat.status === "streaming") {
@@ -44,18 +88,10 @@ function handleKeydown(e: KeyboardEvent) {
 	}
 }
 
-const marked = new Marked().use(
 function handleCopy(data: string) {
 	navigator.clipboard.writeText(data);
 	toast.success("Copied to clipboard");
 }
-
-	markedShiki({
-		highlight(code, lang, props) {
-			return codeToHtml(code, { lang, theme: "dracula", ...props });
-		},
-	}),
-);
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -75,7 +111,7 @@ function handleCopy(data: string) {
 								{#if message.role === "user"}
 									{part.text}
 								{:else}
-									{@html await marked.parse(part.text)}
+									{@html marked.parse(part.text)}
 								{/if}
 							</p>
 						{/if}

@@ -12,7 +12,6 @@
         "marked-shiki": "^1.2.1",
         "mode-watcher": "^1.1.0",
         "postgres": "^3.4.7",
-        "shiki": "^3.21.0",
         "valibot": "^1.2.0",
       },
       "devDependencies": {
@@ -33,6 +32,7 @@
         "prettier": "^3.7.4",
         "prettier-plugin-svelte": "^3.4.0",
         "prettier-plugin-tailwindcss": "^0.7.2",
+        "shiki": "^3.21.0",
         "svelte": "^5.45.6",
         "svelte-check-rs": "^0.5.2",
         "svelte-sonner": "^1.0.7",

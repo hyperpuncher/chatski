@@ -1,6 +1,6 @@
 import { redis } from "bun";
 import { query } from "$app/server";
-import OPENROUTER_API_KEY from "$env/static/private";
+import { OPENROUTER_KEY } from "$env/static/private";
 
 export const getModels = query(async () => {
 	console.time("getModels");
@@ -11,7 +11,7 @@ export const getModels = query(async () => {
 	}
 
 	const res = await fetch("https://openrouter.ai/api/v1/models", {
-		headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}` },
+		headers: { Authorization: `Bearer ${OPENROUTER_KEY}` },
 	});
 
 	const json = await res.json();

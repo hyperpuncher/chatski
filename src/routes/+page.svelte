@@ -62,15 +62,15 @@ function handleCopy(data: string) {
 
 <div class="flex flex-col justify-center items-center mx-auto max-w-3xl h-full">
 	{#if chat.messages.length}
-		<ul class="mt-20 mb-12 space-y-8 w-full h-full text-lg" transition:slide>
+		<ul class="mt-20 mb-14 space-y-10 w-full h-full" in:slide>
 			{#each chat.messages as message, messageIndex (messageIndex)}
-				<li class="w-full">
+				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}
 						{#if part.type === "text"}
 							<p
 								class={message.role === "user"
-									? "ms-auto w-fit rounded-2xl bg-primary px-3 py-2 text-primary-foreground"
-									: "leading-7.5"}
+									? "ms-auto w-fit rounded-2xl bg-primary px-4 py-3 text-primary-foreground"
+									: "ai leading-7.5"}
 							>
 								{#if message.role === "user"}
 									{part.text}
@@ -150,7 +150,7 @@ function handleCopy(data: string) {
 		>
 			<InputGroup.Textarea
 				bind:value={input}
-				class="md:text-lg"
+				class="md:text-base"
 				placeholder="Generate slop..."
 				onkeydown={(e) => {
 					if (e.key === "Enter" && !e.shiftKey && input.trim()) {

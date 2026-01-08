@@ -121,60 +121,59 @@
 
 	/* --- GitHub Flavored Markdown Styles --- */
 
-	/* Typography */
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
+	.ai h1,
+	.ai h2,
+	.ai h3,
+	.ai h4,
+	.ai h5,
+	.ai h6 {
 		margin-top: 24px;
 		margin-bottom: 16px;
 		font-weight: 600;
 		line-height: 1.25;
 	}
 
-	h1 {
+	.ai h1 {
 		font-size: 2em;
 		padding-bottom: 0.3em;
 		border-bottom: 1px solid var(--color-border);
 	}
 
-	h2 {
+	.ai h2 {
 		font-size: 1.5em;
 		padding-bottom: 0.3em;
 		border-bottom: 1px solid var(--color-border);
 	}
 
-	h3 {
+	.ai h3 {
 		font-size: 1.25em;
 	}
-	h4 {
+	.ai h4 {
 		font-size: 1em;
 	}
-	h5 {
+	.ai h5 {
 		font-size: 0.875em;
 	}
-	h6 {
+	.ai h6 {
 		font-size: 0.85em;
 		color: var(--color-muted-foreground);
 	}
 
-	p {
+	.ai p {
 		margin-top: 0;
 		margin-bottom: 16px;
 		line-height: 1.6;
 	}
 
-	a {
+	.ai a {
 		color: var(--color-primary);
 		text-decoration: none;
 	}
-	a:hover {
+	.ai a:hover {
 		text-decoration: underline;
 	}
 
-	hr {
+	.ai hr {
 		height: 0.25em;
 		padding: 0;
 		margin: 24px 0;
@@ -182,113 +181,95 @@
 		border: 0;
 	}
 
-	/* Code (Inline) */
-	code {
+	.ai code {
 		padding: 0.2em 0.4em;
 		margin: 0;
 		font-size: 85%;
 		background-color: var(--color-muted);
 		border-radius: 6px;
-		font-family:
-			ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-			monospace;
 	}
 
-	/* Code Blocks */
-	pre {
+	.ai pre {
 		margin-top: 0;
 		margin-bottom: 16px;
 	}
-
-	/* Ensure code inside pre doesn't inherit inline code styles */
-	pre code {
+	.ai pre code {
 		background-color: transparent;
 		padding: 0;
 		font-size: 100%;
 	}
 
-	/* Blockquote */
-	blockquote {
+	.ai blockquote {
 		padding: 0 1em;
 		border-left: 0.25em solid var(--color-border);
 		color: var(--color-muted-foreground);
 		margin: 0 0 16px 0;
 	}
 
-	/* Lists */
-	ul,
-	ol {
+	.ai ul,
+	.ai ol {
 		padding-left: 2em;
 		margin-bottom: 16px;
 	}
+	.ai ul {
+		list-style-type: disc;
+	}
+	.ai ol {
+		list-style-type: decimal;
+	}
 
-	li {
+	.ai li {
 		margin-top: 0.25em;
 		margin-bottom: 0.25em;
 	}
-
-	li + li {
+	.ai li + li {
 		margin-top: 0.25em;
 	}
 
-	/* Task Lists */
-	ul.contains-task-list {
-		list-style-type: none;
-		padding-left: 0;
-	}
-
-	input[type="checkbox"] {
+	.ai input[type="checkbox"] {
 		margin-right: 0.5em;
 		display: inline-block;
 	}
 
-	/* Tables */
-	table {
+	.ai table {
 		width: 100%;
-		overflow: auto;
 		border-spacing: 0;
 		border-collapse: collapse;
 		margin-bottom: 16px;
 	}
-
-	table tr {
+	.ai tr {
 		background-color: var(--color-background);
 		border-top: 1px solid var(--color-border);
 	}
-
-	table tr:hover {
+	.ai tr:hover {
 		background-color: var(--color-muted);
 	}
-
-	table th,
-	table td {
+	.ai th,
+	.ai td {
 		padding: 6px 13px;
 		border: 1px solid var(--color-border);
 	}
-
-	table th {
+	.ai th {
 		font-weight: bold;
 	}
 
-	/* Images */
-	img {
+	.ai img {
 		max-width: 100%;
 		box-sizing: content-box;
 		background-color: var(--color-background);
 	}
 
-	/* Strikethrough */
-	del {
+	.ai del {
 		text-decoration: line-through;
 	}
 
-	/* Syntax Highlighting / Code Blocks */
-	.shiki {
+	.ai .shiki {
 		border-radius: var(--radius-xl);
 		margin: 2rem 0;
 		padding: 1.5rem;
 		border: 1px solid var(--color-border);
-		overflow: hidden;
+		white-space: pre-wrap;
+		word-break: break-word;
 		background-color: oklch(0.205 0 0) !important;
 	}
 }

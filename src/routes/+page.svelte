@@ -2,10 +2,14 @@
 import { Chat } from "@ai-sdk/svelte";
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
+import Clock from "@lucide/svelte/icons/clock";
 import Copy from "@lucide/svelte/icons/copy";
+import DollarSign from "@lucide/svelte/icons/dollar-sign";
+import Gauge from "@lucide/svelte/icons/gauge";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import { slide } from "svelte/transition";
 import Square from "@lucide/svelte/icons/square";
+import WholeWord from "@lucide/svelte/icons/whole-word";
 import { toast } from "svelte-sonner";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
@@ -41,6 +45,11 @@ function handleKeydown(e: KeyboardEvent) {
 }
 
 const marked = new Marked().use(
+function handleCopy(data: string) {
+	navigator.clipboard.writeText(data);
+	toast.success("Copied to clipboard");
+}
+
 	markedShiki({
 		highlight(code, lang, props) {
 			return codeToHtml(code, { lang, theme: "dracula", ...props });
@@ -76,17 +85,53 @@ const marked = new Marked().use(
 						class:ms-auto={message.role === "user"}
 						class:hidden={messageIndex === chat.messages.length - 1 &&
 							chat.status === "streaming"}
+						class="flex gap-2 items-center"
 					>
 						<Button
 							variant="ghost"
 							size="icon-sm"
-							onclick={() => {
-								navigator.clipboard.writeText(message.parts.at(-1)?.text);
-								toast.success("Copied to clipboard");
-							}}
+							onclick={() => handleCopy(message.parts.at(-1)?.text)}
 						>
 							<Copy />
 						</Button>
+
+						{#if message.role === "assistant" && message.metadata}
+							{@const { tokens, cost, tps, time } = message.metadata}
+							<div class="text-muted-foreground">
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => handleCopy(tokens)}
+								>
+									<WholeWord />
+									{tokens} tokens
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => handleCopy(cost)}
+								>
+									<DollarSign />
+									{cost} $
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => handleCopy(time)}
+								>
+									<Clock />
+									{time} s
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => handleCopy(tps)}
+								>
+									<Gauge />
+									{tps} tokens/s
+								</Button>
+							</div>
+						{/if}
 					</div>
 				</li>
 			{/each}

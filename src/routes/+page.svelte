@@ -2,9 +2,11 @@
 import { Chat } from "@ai-sdk/svelte";
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
+import Copy from "@lucide/svelte/icons/copy";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import { slide } from "svelte/transition";
 import Square from "@lucide/svelte/icons/square";
+import { toast } from "svelte-sonner";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
 import * as Command from "$lib/components/ui/command/index.js";
@@ -69,6 +71,23 @@ const marked = new Marked().use(
 							</p>
 						{/if}
 					{/each}
+
+					<div
+						class:ms-auto={message.role === "user"}
+						class:hidden={messageIndex === chat.messages.length - 1 &&
+							chat.status === "streaming"}
+					>
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onclick={() => {
+								navigator.clipboard.writeText(message.parts.at(-1)?.text);
+								toast.success("Copied to clipboard");
+							}}
+						>
+							<Copy />
+						</Button>
+					</div>
 				</li>
 			{/each}
 		</ul>

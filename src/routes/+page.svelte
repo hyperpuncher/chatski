@@ -89,7 +89,7 @@ const marked = new Marked().use(
 				class="md:text-lg"
 				placeholder="Generate slop..."
 				onkeydown={(e) => {
-					if (e.key === "Enter" && !e.shiftKey) {
+					if (e.key === "Enter" && !e.shiftKey && input.trim()) {
 						e.preventDefault();
 						handleSubmit();
 					}

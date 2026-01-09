@@ -12,6 +12,7 @@ import WholeWord from "@lucide/svelte/icons/whole-word";
 import { Marked } from "marked";
 import markedShiki from "marked-shiki";
 import { createHighlighterCore, createJavaScriptRegexEngine } from "shiki";
+import { SvelteSet } from "svelte/reactivity";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
 import { Button } from "$lib/components/ui/button";
@@ -20,12 +21,15 @@ import * as Command from "$lib/components/ui/command/index.js";
 import * as InputGroup from "$lib/components/ui/input-group";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { getModels } from "$lib/remote/openrouter.remote";
+import { localStorage } from "$lib/storage";
 import { cn } from "$lib/utils";
 
 const chat = new Chat({});
 
 let input = $state("");
 let selectedModel = $state("google/gemini-2.5-flash-lite-preview-09-2025");
+let defaultModel = $state((await localStorage.get<string>("defaultModel")) ?? "");
+let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);
 
 const highlighter = await createHighlighterCore({

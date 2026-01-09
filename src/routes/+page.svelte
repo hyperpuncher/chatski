@@ -273,10 +273,10 @@ function handleDefaultModel(model: string) {
 
 				<InputGroup.Button
 					variant={chat.status === "streaming" ? "destructive" : "default"}
-					class="ml-2 rounded-full"
+					class="ml-1 rounded-full"
 					size="icon-sm"
 					type="submit"
-					disabled={!input.trim() || !selectedModel}
+					disabled={chat.status !== "streaming" && (!input.trim() || !selectedModel)}
 				>
 					{#if chat.status === "streaming"}
 						<Square />

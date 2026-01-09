@@ -31,7 +31,7 @@ let input = $state("");
 let defaultModel = $state((await localStorage.get<string>("defaultModel")) ?? "");
 let selectedModel = $state(defaultModel);
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
-let isModelsPopoverOpen = $state(true);
+let isModelsPopoverOpen = $state(false);
 let hoveredModel = $state("");
 
 const models = $derived(await getModels());

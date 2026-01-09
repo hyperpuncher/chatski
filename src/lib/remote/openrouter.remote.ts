@@ -23,6 +23,6 @@ export const getModels = query(async () => {
 	return parseModels(json);
 });
 
-function parseModels(models: any) {
+function parseModels(models: any): string[] {
 	return models.data.map((model: any) => model.id).sort();
 }

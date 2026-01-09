@@ -9,9 +9,6 @@ import Gauge from "@lucide/svelte/icons/gauge";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import Square from "@lucide/svelte/icons/square";
 import WholeWord from "@lucide/svelte/icons/whole-word";
-import { Marked } from "marked";
-import markedShiki from "marked-shiki";
-import { createHighlighterCore, createJavaScriptRegexEngine } from "shiki";
 import { SvelteSet } from "svelte/reactivity";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
@@ -21,6 +18,7 @@ import * as Command from "$lib/components/ui/command/index.js";
 import * as InputGroup from "$lib/components/ui/input-group";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { getModels } from "$lib/remote/openrouter.remote";
+import { marked } from "$lib/renderer";
 import { localStorage } from "$lib/storage";
 import { cn } from "$lib/utils";
 
@@ -32,49 +30,7 @@ let defaultModel = $state((await localStorage.get<string>("defaultModel")) ?? ""
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);
 
-const highlighter = await createHighlighterCore({
-	themes: [import("@shikijs/themes/dracula")],
-	langs: [
-		import("@shikijs/langs/astro"),
-		import("@shikijs/langs/bash"),
-		import("@shikijs/langs/c"),
-		import("@shikijs/langs/cpp"),
-		import("@shikijs/langs/css"),
-		import("@shikijs/langs/dockerfile"),
-		import("@shikijs/langs/go"),
-		import("@shikijs/langs/html"),
-		import("@shikijs/langs/http"),
-		import("@shikijs/langs/ini"),
-		import("@shikijs/langs/javascript"),
-		import("@shikijs/langs/json"),
-		import("@shikijs/langs/jsx"),
-		import("@shikijs/langs/lua"),
-		import("@shikijs/langs/make"),
-		import("@shikijs/langs/markdown"),
-		import("@shikijs/langs/python"),
-		import("@shikijs/langs/regex"),
-		import("@shikijs/langs/rust"),
-		import("@shikijs/langs/sql"),
-		import("@shikijs/langs/svelte"),
-		import("@shikijs/langs/swift"),
-		import("@shikijs/langs/templ"),
-		import("@shikijs/langs/toml"),
-		import("@shikijs/langs/tsx"),
-		import("@shikijs/langs/typescript"),
-		import("@shikijs/langs/typst"),
-		import("@shikijs/langs/vue"),
-		import("@shikijs/langs/yaml"),
-	],
-	engine: createJavaScriptRegexEngine(),
-});
 
-const marked = new Marked({ silent: true }).use(
-	markedShiki({
-		highlight(code, lang, props) {
-			return highlighter.codeToHtml(code, { lang, theme: "dracula", ...props });
-		},
-	}),
-);
 
 function handleSubmit() {
 	if (chat.status === "streaming") {

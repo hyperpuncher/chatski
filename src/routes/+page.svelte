@@ -204,14 +204,14 @@ function handleCopy(data: string) {
 				</Popover.Root>
 
 				<InputGroup.Button
-					variant={chat.status === "streaming" ? "ghost" : "default"}
-					class="rounded-full"
+					variant={chat.status === "streaming" ? "destructive" : "default"}
+					class="ml-2 rounded-full"
 					size="icon-sm"
 					type="submit"
 					disabled={!input.trim() || !selectedModel}
 				>
 					{#if chat.status === "streaming"}
-						<Square class="text-red-400 fill-red-400" />
+						<Square />
 					{:else}
 						<ArrowUp />
 					{/if}

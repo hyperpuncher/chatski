@@ -2,6 +2,18 @@ import { redis } from "bun";
 import { query } from "$app/server";
 import { OPENROUTER_KEY } from "$env/static/private";
 
+const labs = new Set([
+	"anthropic",
+	"deepseek",
+	"google",
+	"minimax",
+	"moonshotai",
+	"openai",
+	"x-ai",
+	"xiaomi",
+	"z-ai",
+]);
+
 export const getModels = query(async () => {
 	const cached = await redis.get("openrouter:models");
 	if (cached) {
@@ -17,12 +29,15 @@ export const getModels = query(async () => {
 	redis.setex(
 		"openrouter:models",
 		60 * 60 * 24, // 1 day
-		JSON.stringify(json),
+		JSON.stringify(json.data),
 	);
 
-	return parseModels(json);
+	return parseModels(json.data);
 });
 
-function parseModels(models: any): string[] {
-	return models.data.map((model: any) => model.id).sort();
+function parseModels(models: string[]) {
+	return models
+		.filter((model: any) => labs.has(model.id.split("/")[0]))
+		.map((model: any) => model.id)
+		.sort();
 }

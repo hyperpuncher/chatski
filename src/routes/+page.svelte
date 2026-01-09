@@ -6,8 +6,11 @@ import Clock from "@lucide/svelte/icons/clock";
 import Copy from "@lucide/svelte/icons/copy";
 import DollarSign from "@lucide/svelte/icons/dollar-sign";
 import Gauge from "@lucide/svelte/icons/gauge";
+import Lock from "@lucide/svelte/icons/lock";
+import LockOpen from "@lucide/svelte/icons/lock-open";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import Square from "@lucide/svelte/icons/square";
+import Star from "@lucide/svelte/icons/star";
 import WholeWord from "@lucide/svelte/icons/whole-word";
 import { SvelteSet } from "svelte/reactivity";
 import { slide } from "svelte/transition";
@@ -25,12 +28,14 @@ import { cn } from "$lib/utils";
 const chat = new Chat({});
 
 let input = $state("");
-let selectedModel = $state("google/gemini-2.5-flash-lite-preview-09-2025");
 let defaultModel = $state((await localStorage.get<string>("defaultModel")) ?? "");
+let selectedModel = $state(defaultModel);
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
-let isModelsPopoverOpen = $state(false);
+let isModelsPopoverOpen = $state(true);
+let hoveredModel = $state("");
 
-
+const models = $derived(await getModels());
+const modelsList = $derived([...favorites, ...models.filter((m) => !favorites.has(m))]);
 
 function handleSubmit() {
 	if (chat.status === "streaming") {
@@ -53,6 +58,26 @@ function handleKeydown(e: KeyboardEvent) {
 function handleCopy(data: string) {
 	navigator.clipboard.writeText(data);
 	toast.success("Copied to clipboard");
+}
+
+function handleFavorite(model: string) {
+	if (favorites.has(model)) {
+		favorites.delete(model);
+	} else {
+		favorites.add(model);
+	}
+	localStorage.set("favorites", [...favorites].sort());
+}
+
+function handleDefaultModel(model: string) {
+	if (defaultModel === model) {
+		defaultModel = "";
+		localStorage.remove("defaultModel");
+	} else {
+		selectedModel = model;
+		defaultModel = model;
+		localStorage.set("defaultModel", defaultModel);
+	}
 }
 </script>
 
@@ -175,26 +200,69 @@ function handleCopy(data: string) {
 					>
 						<Bot />
 						{#if selectedModel}
-							{selectedModel}
+							{selectedModel.split("/")[1]}
 						{:else}
 							Select model
 						{/if}
 					</Popover.Trigger>
-					<Popover.Content class="p-0 w-90" side="top" align="end">
+					<Popover.Content class="p-0 w-80" side="top" align="end">
 						<Command.Root>
 							<Command.Input placeholder="Search models..." />
 							<Command.List>
 								<Command.Empty>No results found.</Command.Empty>
 								<Command.Group>
-									{#each await getModels() as model}
+									{#each modelsList as model (model)}
+										{@const isFavorite = favorites.has(model)}
+										{@const isDefault = defaultModel === model}
+										{@const isHovered = hoveredModel === model}
 										<Command.Item
+											class="flex gap-2 justify-between group"
 											value={model}
 											onSelect={() => {
 												selectedModel = model;
 												isModelsPopoverOpen = false;
 											}}
+											onmouseenter={() => (hoveredModel = model)}
+											onmouseleave={() => (hoveredModel = "")}
 										>
-											<span> {model} </span>
+											<span class="truncate">
+												{model.split("/")[1]}
+											</span>
+
+											{#if isHovered || isFavorite || isDefault}
+												<div class="flex gap-2">
+													<Button
+														class="invisible transition-none group-hover:visible
+														{isDefault ? 'visible' : ''}"
+														variant="ghost"
+														size="icon-xs"
+														onclick={(e) => {
+															e.stopPropagation();
+															handleDefaultModel(model);
+														}}
+													>
+														{#if isDefault}
+															<Lock />
+														{:else}
+															<LockOpen />
+														{/if}
+													</Button>
+													<Button
+														class="invisible transition-none group-hover:visible
+														{isFavorite ? 'visible' : ''}"
+														variant="ghost"
+														size="icon-xs"
+														onclick={(e) => {
+															e.stopPropagation();
+															handleFavorite(model);
+														}}
+													>
+														<Star
+															class={isFavorite ? "fill-yellow-400 text-yellow-400" : ""}
+														/>
+													</Button>
+												</div>
+											{/if}
 										</Command.Item>
 									{/each}
 								</Command.Group>

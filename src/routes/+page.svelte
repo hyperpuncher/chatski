@@ -167,10 +167,10 @@ function handleCopy(data: string) {
 					<Popover.Trigger
 						class={cn(
 							buttonVariants({
-								variant: "outline",
+								variant: "secondary",
 								size: "sm",
 							}),
-							"ms-auto text-xs text-foreground",
+							"ms-auto bg-primary/10 text-xs text-foreground hover:bg-primary/15",
 						)}
 					>
 						<Bot />

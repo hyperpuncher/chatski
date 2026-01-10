@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Chat } from "@ai-sdk/svelte";
+import { Spinner } from "$lib/components/ui/spinner";
 import FileText from "@lucide/svelte/icons/file-text";
 import Image from "@lucide/svelte/icons/image";
 import Music from "@lucide/svelte/icons/music";
@@ -206,6 +207,10 @@ function handleDefaultModel(model: string) {
 					</div>
 				</li>
 			{/each}
+
+			{#if chat.status !== "ready" && chat.lastMessage?.role === "user"}
+				<Spinner />
+			{/if}
 		</ul>
 	{/if}
 

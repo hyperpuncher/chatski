@@ -4,6 +4,7 @@ import FileText from "@lucide/svelte/icons/file-text";
 import Image from "@lucide/svelte/icons/image";
 import Music from "@lucide/svelte/icons/music";
 import Video from "@lucide/svelte/icons/video";
+import * as Kbd from "$lib/components/ui/kbd";
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
 import Clock from "@lucide/svelte/icons/clock";
@@ -312,6 +313,8 @@ function handleDefaultModel(model: string) {
 						{:else}
 							Select model
 						{/if}
+
+						<Kbd.Root>Ctrl + M</Kbd.Root>
 					</Popover.Trigger>
 					<Popover.Content class="p-0 w-80" side="top" align="end">
 						<Command.Root>

@@ -38,6 +38,13 @@ export const getModels = query(async () => {
 function parseModels(models: string[]) {
 	return models
 		.filter((model: any) => labs.has(model.id.split("/")[0]))
-		.map((model: any) => model.id)
-		.sort();
+		.map((model: any) => ({
+			id: model.id,
+			name: model.name,
+			modalities: {
+				input: model.architecture.input_modalities,
+				output: model.architecture.output_modalities,
+			},
+		}))
+		.sort((a, b) => a.id.localeCompare(b.id));
 }

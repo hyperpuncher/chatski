@@ -1,5 +1,9 @@
 <script lang="ts">
 import { Chat } from "@ai-sdk/svelte";
+import FileText from "@lucide/svelte/icons/file-text";
+import Image from "@lucide/svelte/icons/image";
+import Music from "@lucide/svelte/icons/music";
+import Video from "@lucide/svelte/icons/video";
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
 import Clock from "@lucide/svelte/icons/clock";
@@ -28,6 +32,7 @@ import { cn } from "$lib/utils";
 const chat = new Chat({});
 
 let input = $state("");
+let fileList = $state<FileList>();
 let defaultModel = $state((await localStorage.get<string>("defaultModel")) ?? "");
 let selectedModel = $state(defaultModel);
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
@@ -35,7 +40,29 @@ let isModelsPopoverOpen = $state(false);
 let hoveredModel = $state("");
 
 const models = $derived(await getModels());
-const modelsList = $derived([...favorites, ...models.filter((m) => !favorites.has(m))]);
+const modelsList = $derived([
+	...favorites,
+	...models.filter((m) => !favorites.has(m.id)).map((m) => m.id),
+]);
+
+const modalities = $derived(models.filter((m) => m.id === selectedModel)[0]?.modalities);
+const inputModalities = $derived.by(() => {
+	let types = [];
+	if (modalities.input.includes("image")) {
+		types.push("image/*");
+	}
+	if (modalities.input.includes("audio")) {
+		types.push("audio/*");
+	}
+	if (modalities.input.includes("video")) {
+		types.push("video/*");
+	}
+	if (modalities.input.includes("file")) {
+		types.push("application/pdf");
+		types.push("text/plain");
+	}
+	return types.join(",");
+});
 
 function handleSubmit() {
 	if (chat.status === "streaming") {
@@ -43,9 +70,14 @@ function handleSubmit() {
 	} else if (chat.error) {
 		toast.error(chat.error.message || "Something went wrong");
 	} else {
-		chat.sendMessage({ text: input, metadata: { model: selectedModel } });
+		chat.sendMessage({
+			text: input,
+			files: fileList,
+			metadata: { model: selectedModel },
+		});
 	}
 	input = "";
+	fileList = undefined;
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -89,6 +121,21 @@ function handleDefaultModel(model: string) {
 			{#each chat.messages as message, messageIndex (messageIndex)}
 				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}
+						{#if part.type === "file"}
+							<Button variant="outline" size="sm" class="ms-auto">
+								{#if part.type.startsWith("image")}
+									<Image />
+								{:else if part.type.startsWith("audio")}
+									<Music />
+								{:else if part.type.startsWith("video")}
+									<Video />
+								{:else}
+									<FileText />
+								{/if}
+								<span>{part.filename}</span>
+							</Button>
+						{/if}
+
 						{#if part.type === "text"}
 							<p
 								class={message.role === "user"
@@ -171,6 +218,29 @@ function handleDefaultModel(model: string) {
 		<InputGroup.Root
 			class="py-1 px-2 rounded-3xl bg-muted/85 backdrop-blur-md dark:bg-muted/85"
 		>
+			{#if fileList}
+				<InputGroup.Addon align="block-start">
+					<ul class="flex gap-2">
+						{#each fileList as file}
+							<li>
+								<Button variant="outline" size="sm">
+									{#if file.type.startsWith("image")}
+										<Image />
+									{:else if file.type.startsWith("audio")}
+										<Music />
+									{:else if file.type.startsWith("video")}
+										<Video />
+									{:else}
+										<FileText />
+									{/if}
+									<span>{file.name}</span>
+								</Button>
+							</li>
+						{/each}
+					</ul>
+				</InputGroup.Addon>
+			{/if}
+
 			<InputGroup.Textarea
 				bind:value={input}
 				class="md:text-base"
@@ -184,9 +254,46 @@ function handleDefaultModel(model: string) {
 			/>
 
 			<InputGroup.Addon align="block-end">
-				<InputGroup.Button variant="ghost" class="rounded-full" size="icon-sm">
-					<Paperclip />
+				<InputGroup.Button
+					variant="outline"
+					class="relative rounded-full"
+					size="icon-sm"
+					disabled={!inputModalities}
+				>
+					<label class="flex absolute inset-0 justify-center items-center">
+						<Paperclip />
+						<input
+							type="file"
+							multiple
+							class="hidden"
+							accept={inputModalities}
+							bind:files={fileList}
+						>
+					</label>
 				</InputGroup.Button>
+
+				<div class="flex gap-2">
+					<FileText
+						class="size-4 {modalities.input.includes('file')
+							? 'text-green-500 dark:text-green-600'
+							: ''}"
+					/>
+					<Image
+						class="size-4 {modalities.input.includes('image')
+							? 'text-green-500 dark:text-green-600'
+							: ''}"
+					/>
+					<Music
+						class="size-4 {modalities.input.includes('audio')
+							? 'text-green-500 dark:text-green-600'
+							: ''}"
+					/>
+					<Video
+						class="size-4 {modalities.input.includes('video')
+							? 'text-green-500 dark:text-green-600'
+							: ''}"
+					/>
+				</div>
 
 				<Popover.Root bind:open={isModelsPopoverOpen}>
 					<Popover.Trigger
@@ -199,6 +306,7 @@ function handleDefaultModel(model: string) {
 						)}
 					>
 						<Bot />
+
 						{#if selectedModel}
 							{selectedModel.split("/")[1]}
 						{:else}

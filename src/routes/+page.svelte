@@ -280,24 +280,16 @@ function handleDefaultModel(model: string) {
 
 				<div class="flex gap-2">
 					<FileText
-						class="size-4 {modalities.input.includes('file')
-							? 'text-green-500 dark:text-green-600'
-							: ''}"
+						class="size-4 {modalities.input.includes('file') ? 'text-violet-400' : ''}"
 					/>
 					<Image
-						class="size-4 {modalities.input.includes('image')
-							? 'text-green-500 dark:text-green-600'
-							: ''}"
+						class="size-4 {modalities.input.includes('image') ? 'text-violet-400' : ''}"
 					/>
 					<Music
-						class="size-4 {modalities.input.includes('audio')
-							? 'text-green-500 dark:text-green-600'
-							: ''}"
+						class="size-4 {modalities.input.includes('audio') ? 'text-violet-400' : ''}"
 					/>
 					<Video
-						class="size-4 {modalities.input.includes('video')
-							? 'text-green-500 dark:text-green-600'
-							: ''}"
+						class="size-4 {modalities.input.includes('video') ? 'text-violet-400' : ''}"
 					/>
 				</div>
 

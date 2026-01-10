@@ -136,9 +136,7 @@ function handleDefaultModel(model: string) {
 								{/if}
 								<span>{part.filename}</span>
 							</Button>
-						{/if}
-
-						{#if part.type === "text"}
+						{:else if part.type === "text"}
 							<p
 								class={message.role === "user"
 									? "ms-auto w-fit rounded-2xl rounded-tr-[3px] bg-primary px-3.5 py-2 text-primary-foreground"

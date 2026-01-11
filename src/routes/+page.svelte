@@ -183,7 +183,7 @@ function handleDefaultModel(model: string) {
 							<div class="text-muted-foreground">
 								<Button
 									variant="ghost"
-									size="sm"
+									size="xs"
 									onclick={() => handleCopy(tokens)}
 								>
 									<WholeWord />
@@ -191,23 +191,23 @@ function handleDefaultModel(model: string) {
 								</Button>
 								<Button
 									variant="ghost"
-									size="sm"
+									size="xs"
 									onclick={() => handleCopy(cost)}
 								>
 									<DollarSign />
-									{cost} $
+									{cost}
 								</Button>
 								<Button
 									variant="ghost"
-									size="sm"
+									size="xs"
 									onclick={() => handleCopy(time)}
 								>
 									<Clock />
-									{time} s
+									{time}s
 								</Button>
 								<Button
 									variant="ghost"
-									size="sm"
+									size="xs"
 									onclick={() => handleCopy(tps)}
 								>
 									<Gauge />

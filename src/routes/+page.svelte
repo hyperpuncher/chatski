@@ -18,16 +18,18 @@ import Paperclip from "@lucide/svelte/icons/paperclip";
 import Square from "@lucide/svelte/icons/square";
 import Star from "@lucide/svelte/icons/star";
 import WholeWord from "@lucide/svelte/icons/whole-word";
+import dracula from "@shikijs/themes/dracula";
 import { SvelteSet } from "svelte/reactivity";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
+import { Streamdown } from "svelte-streamdown";
+import Code from "svelte-streamdown/code";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
 import * as Command from "$lib/components/ui/command/index.js";
 import * as InputGroup from "$lib/components/ui/input-group";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { getModels } from "$lib/remote/openrouter.remote";
-import { marked } from "$lib/renderer";
 import { localStorage } from "$lib/storage";
 import { cn } from "$lib/utils";
 
@@ -137,17 +139,28 @@ function handleDefaultModel(model: string) {
 								<span>{part.filename}</span>
 							</Button>
 						{:else if part.type === "text"}
-							<p
-								class={message.role === "user"
-									? "ms-auto w-fit rounded-2xl rounded-tr-[3px] bg-primary px-3.5 py-2 text-primary-foreground"
-									: "ai leading-7.5"}
-							>
-								{#if message.role === "user"}
+							{#if message.role === "user"}
+								<p
+									class="py-2 px-3.5 rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground"
+								>
 									{part.text}
-								{:else}
-									{@html marked.parse(part.text)}
-								{/if}
-							</p>
+								</p>
+							{:else}
+								<Streamdown
+									content={part.text}
+									components={{ code: Code }}
+									baseTheme="shadcn"
+									animation={{ enabled: true, type: "fade", duration: 200 }}
+									shikiTheme="dracula"
+									shikiThemes={{ dracula }}
+									theme={{
+										code: {
+											container: "bg-primary",
+											pre: "bg-primary",
+										},
+									}}
+								/>
+							{/if}
 						{/if}
 					{/each}
 

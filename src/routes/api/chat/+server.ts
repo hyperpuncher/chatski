@@ -53,7 +53,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 function roundToSignificant(value: number, significantDigits = 3) {
 	if (value === 0) return 0;
-	const exponent = Math.floor(Math.log10(Math.abs(value)));
+	const exponent = Math.floor(Math.log10(value));
 	const scale = 10 ** (significantDigits - exponent - 1);
 	return Math.round(value * scale) / scale;
 }

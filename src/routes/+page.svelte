@@ -119,9 +119,9 @@ function handleDefaultModel(model: string) {
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="flex flex-col justify-center items-center mx-auto max-w-3xl h-full">
+<div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if chat.messages.length}
-		<ul class="mt-20 mb-14 space-y-10 w-full h-full" in:slide>
+		<ul class="px-4 mt-20 mb-14 space-y-10 w-full h-full sm:px-5" in:slide>
 			{#each chat.messages as message, messageIndex (messageIndex)}
 				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}
@@ -226,7 +226,7 @@ function handleDefaultModel(model: string) {
 	{/if}
 
 	<form
-		class="sticky bottom-4 w-full"
+		class="sticky bottom-2 w-full sm:bottom-4"
 		onsubmit={(e) => {
 			e.preventDefault();
 			handleSubmit();

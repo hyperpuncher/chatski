@@ -42,6 +42,12 @@ let selectedModel = $state(defaultModel);
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);
 let hoveredModel = $state("");
+let isStreaming = $derived(chat.status !== "ready" && chat.lastMessage?.role === "user");
+let isThinking = $derived(
+	chat.status === "streaming" && chat.lastMessage?.parts.at(-1)?.type === "reasoning",
+);
+
+$inspect(isThinking);
 
 const models = $derived(await getModels());
 const modelsList = $derived([
@@ -219,9 +225,14 @@ function handleDefaultModel(model: string) {
 				</li>
 			{/each}
 
-			{#if chat.status !== "ready" && chat.lastMessage?.role === "user"}
-				<Spinner />
-			{/if}
+			<div class="flex gap-2 items-center">
+				{#if isStreaming}
+					<Spinner />
+				{/if}
+				{#if isThinking}
+					<span class="text-muted-foreground">Thinking...</span>
+				{/if}
+			</div>
 		</ul>
 	{/if}
 

@@ -1,17 +1,28 @@
-import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { devToolsMiddleware } from "@ai-sdk/devtools";
+import {
+	convertToModelMessages,
+	streamText,
+	type UIMessage,
+	wrapLanguageModel,
+} from "ai";
+import { dev } from "$app/environment";
 import { openrouter } from "$lib/server/ai";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request }) => {
 	const { messages }: { messages: UIMessage[] } = await request.json();
 
-	const model = openrouter.chat(messages.at(-1)?.metadata?.model, {
-		reasoning: { effort: "low", enabled: false },
+	const { model: selectedModel, reasoning } = messages.at(-1)?.metadata;
+
+	const model = openrouter.chat(selectedModel, {
+		reasoning: { effort: reasoning, enabled: reasoning !== "none" },
 		provider: { order: ["google-ai-studio"] },
 	});
 
+	const wrapper = wrapLanguageModel({ model, middleware: devToolsMiddleware() });
+
 	const result = streamText({
-		model: model,
+		model: dev ? wrapper : model,
 		messages: await convertToModelMessages(messages),
 	});
 

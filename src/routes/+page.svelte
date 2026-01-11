@@ -298,20 +298,20 @@ function handleDefaultModel(model: string) {
 								variant: "secondary",
 								size: "sm",
 							}),
-							"ms-auto bg-primary/10 text-xs text-foreground hover:bg-primary/15",
+							"ms-auto max-w-38 bg-primary/10 text-xs text-foreground hover:bg-primary/15 sm:max-w-full",
 						)}
 					>
 						<Bot />
 
 						{#if selectedModel}
-							{selectedModel.split("/")[1]}
+							<span class="truncate">{selectedModel.split("/")[1]}</span>
 						{:else}
-							Select model
+							<span class="truncate">Select model</span>
 						{/if}
 
-						<Kbd.Root>Ctrl + M</Kbd.Root>
+						<Kbd.Root class="hidden sm:inline-flex">Ctrl + M</Kbd.Root>
 					</Popover.Trigger>
-					<Popover.Content class="p-0 w-80" side="top" align="end">
+					<Popover.Content class="p-0 w-66" side="top" align="end">
 						<Command.Root>
 							<Command.Input placeholder="Search models..." />
 							<Command.List>

@@ -161,8 +161,8 @@ function handleDefaultModel(model: string) {
 									shikiThemes={{ dracula }}
 									theme={{
 										code: {
-											container: "bg-primary",
-											pre: "bg-primary",
+											container: "bg-[#171717]",
+											pre: "bg-[#171717]",
 										},
 									}}
 								/>

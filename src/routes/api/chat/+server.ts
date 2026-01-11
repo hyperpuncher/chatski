@@ -23,16 +23,26 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 			if (part.type === "finish-step") {
 				const time = Math.round(((performance.now() - start) / 1000) * 100) / 100;
+				const cost = roundToSignificant(
+					part.providerMetadata?.openrouter?.usage?.cost,
+				);
 
 				return {
 					tokens: part.providerMetadata?.openrouter?.usage?.completionTokens,
-					cost: part.providerMetadata?.openrouter?.usage?.cost,
 					tps: Math.round(
 						part.providerMetadata?.openrouter?.usage?.completionTokens / time,
 					),
 					time,
+					cost,
 				};
 			}
 		},
 	});
 };
+
+function roundToSignificant(value: number, significantDigits = 3) {
+	if (value === 0) return 0;
+	const exponent = Math.floor(Math.log10(Math.abs(value)));
+	const scale = 10 ** (significantDigits - exponent - 1);
+	return Math.round(value * scale) / scale;
+}

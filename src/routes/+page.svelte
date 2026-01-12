@@ -1,8 +1,8 @@
 <script lang="ts">
-import { Chat } from "@ai-sdk/svelte";
 import ChatUi from "$lib/components/chat-ui.svelte";
+import { getChatContext } from "$lib/context";
 
-const chat = new Chat({});
+const ctx = getChatContext();
 </script>
 
-<ChatUi {chat} />
+<ChatUi chat={ctx.chat} />

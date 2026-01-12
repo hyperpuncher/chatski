@@ -1,14 +1,17 @@
 <script lang="ts">
-import { Chat } from "@ai-sdk/svelte";
+import { untrack } from "svelte";
 import ChatUi from "$lib/components/chat-ui.svelte";
-import { getChat } from "$lib/remote/chats.remote";
+import { getChatContext } from "$lib/context.js";
 
 let { params } = $props();
 
-const messages = $derived(await getChat(params.id));
-$inspect(messages);
+const ctx = getChatContext();
 
-const chat = $derived(new Chat({ id: params.id, messages }));
+$effect(() => {
+	if (untrack(() => ctx.chat.id) !== params.id) {
+		ctx.loadChat(params.id);
+	}
+});
 </script>
 
-<ChatUi {chat} />
+<ChatUi chat={ctx.chat} />

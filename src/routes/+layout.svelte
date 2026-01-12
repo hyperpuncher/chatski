@@ -2,19 +2,36 @@
 import favicon from "$lib/assets/favicon.svg";
 import "./layout.css";
 import Settings from "@lucide/svelte/icons/settings";
+import { Chat } from "@ai-sdk/svelte";
 import { ModeWatcher } from "mode-watcher";
 import { goto } from "$app/navigation";
 import AppSidebar from "$lib/components/app-sidebar.svelte";
 import { Button } from "$lib/components/ui/button";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
+import { type ChatContext, setChatContext } from "$lib/context";
+import { getMessages } from "$lib/remote/chats.remote";
 
 let { children } = $props();
 let isSidebarOpen = $state(false);
 
+const ctx = $state<ChatContext>({
+	chat: new Chat({ id: crypto.randomUUID() }),
+	newChat: () => {
+		ctx.chat = new Chat({ id: crypto.randomUUID() });
+	},
+	loadChat: async (id: string) => {
+		const messages = (await getMessages(id)) ?? [];
+		ctx.chat = new Chat({ id, messages });
+	},
+});
+
+setChatContext(ctx);
+
 function handleKeydown(e: KeyboardEvent) {
 	if (e.key === "o" && (e.ctrlKey || e.metaKey)) {
 		e.preventDefault();
+		ctx.newChat();
 		goto("/");
 	}
 }

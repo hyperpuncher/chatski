@@ -22,7 +22,7 @@ import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
 import { Streamdown } from "svelte-streamdown";
 import Code from "svelte-streamdown/code";
-import { goto, refreshAll } from "$app/navigation";
+import { goto } from "$app/navigation";
 import { page } from "$app/state";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
@@ -92,14 +92,14 @@ async function handleSubmit() {
 	} else if (chat.error) {
 		toast.error(chat.error.message || "Something went wrong");
 	} else {
+		if (page.url.pathname === "/") {
+			await goto(`/chat/${chat.id}`, { replaceState: true, keepFocus: true });
+		}
 		chat.sendMessage({
 			text: input,
 			files: fileList,
 			metadata: { model: selectedModel, reasoning },
 		});
-		if (page.url.pathname === "/") {
-			await refreshAll();
-		}
 	}
 	input = "";
 	fileList = undefined;
@@ -290,6 +290,7 @@ $inspect(chat.status, isThinking, reasoning);
 				bind:value={input}
 				class="md:text-base"
 				placeholder="Generate slop..."
+				autofocus
 				onkeydown={async (e) => {
 					if (e.key === "Enter" && !e.shiftKey && input.trim()) {
 						e.preventDefault();

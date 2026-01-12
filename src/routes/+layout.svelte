@@ -3,6 +3,7 @@ import favicon from "$lib/assets/favicon.svg";
 import "./layout.css";
 import Settings from "@lucide/svelte/icons/settings";
 import { ModeWatcher } from "mode-watcher";
+import { goto } from "$app/navigation";
 import AppSidebar from "$lib/components/app-sidebar.svelte";
 import { Button } from "$lib/components/ui/button";
 import * as Sidebar from "$lib/components/ui/sidebar";
@@ -10,12 +11,21 @@ import { Toaster } from "$lib/components/ui/sonner/index.js";
 
 let { children } = $props();
 let isSidebarOpen = $state(false);
+
+function handleKeydown(e: KeyboardEvent) {
+	if (e.key === "o" && (e.ctrlKey || e.metaKey)) {
+		e.preventDefault();
+		goto("/");
+	}
+}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon}>
 	<title>chat</title>
 </svelte:head>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <ModeWatcher />
 

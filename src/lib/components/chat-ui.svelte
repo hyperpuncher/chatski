@@ -136,8 +136,6 @@ function handleDefaultModel(model: string) {
 		localStorage.set("defaultModel", defaultModel);
 	}
 }
-
-$inspect(chat.status, isThinking, reasoning);
 </script>
 
 <svelte:window onkeydown={handleKeydown} />

@@ -34,7 +34,7 @@
         "prettier-plugin-svelte": "^3.4.0",
         "prettier-plugin-tailwindcss": "^0.7.2",
         "svelte": "^5.45.6",
-        "svelte-check-rs": "^0.6.3",
+        "svelte-check-rs": "^0.6.5",
         "svelte-sonner": "^1.0.7",
         "tailwind-merge": "^3.4.0",
         "tailwind-variants": "^3.2.2",
@@ -887,7 +887,7 @@
 
     "svelte": ["svelte@5.46.1", "", { "dependencies": { "@jridgewell/remapping": "^2.3.4", "@jridgewell/sourcemap-codec": "^1.5.0", "@sveltejs/acorn-typescript": "^1.0.5", "@types/estree": "^1.0.5", "acorn": "^8.12.1", "aria-query": "^5.3.1", "axobject-query": "^4.1.0", "clsx": "^2.1.1", "devalue": "^5.5.0", "esm-env": "^1.2.1", "esrap": "^2.2.1", "is-reference": "^3.0.3", "locate-character": "^3.0.0", "magic-string": "^0.30.11", "zimmerframe": "^1.1.2" } }, "sha512-ynjfCHD3nP2el70kN5Pmg37sSi0EjOm9FgHYQdC4giWG/hzO3AatzXXJJgP305uIhGQxSufJLuYWtkY8uK/8RA=="],
 
-    "svelte-check-rs": ["svelte-check-rs@0.6.3", "", { "dependencies": { "axios": "^1.13.2", "axios-proxy-builder": "^0.1.2", "console.table": "^0.10.0", "detect-libc": "^2.1.2", "rimraf": "^6.1.2" }, "bin": { "svelte-check-rs": "run-svelte-check-rs.js" } }, "sha512-hv18GI458KBWtVlk3+M4FYTytw5F1mOfSMqgEbDhGY03FMDSYyewRDYTsDu6QCgthP/ND2UhN5Om7IaSRdypeQ=="],
+    "svelte-check-rs": ["svelte-check-rs@0.6.5", "", { "dependencies": { "axios": "^1.13.2", "axios-proxy-builder": "^0.1.2", "console.table": "^0.10.0", "detect-libc": "^2.1.2", "rimraf": "^6.1.2" }, "bin": { "svelte-check-rs": "run-svelte-check-rs.js" } }, "sha512-ijpZnG5pL4ap1OmyeLz5tadkJLQEDj9EgTRHzwSkMpBlXgMFw7r3YVqbftfqv+bDbEThU/SvItDyeENrkEXnHg=="],
 
     "svelte-sonner": ["svelte-sonner@1.0.7", "", { "dependencies": { "runed": "^0.28.0" }, "peerDependencies": { "svelte": "^5.0.0" } }, "sha512-1EUFYmd7q/xfs2qCHwJzGPh9n5VJ3X6QjBN10fof2vxgy8fYE7kVfZ7uGnd7i6fQaWIr5KvXcwYXE/cmTEjk5A=="],
 

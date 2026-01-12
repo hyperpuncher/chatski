@@ -45,6 +45,7 @@ function parseModels(models: string[]) {
 				input: model.architecture.input_modalities,
 				output: model.architecture.output_modalities,
 			},
+			supportedParameters: model.supported_parameters,
 		}))
 		.sort((a, b) => a.id.localeCompare(b.id));
 }

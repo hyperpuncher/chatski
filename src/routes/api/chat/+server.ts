@@ -1,4 +1,5 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
+import type { RequestHandler } from "@sveltejs/kit";
 import {
 	convertToModelMessages,
 	streamText,
@@ -6,11 +7,11 @@ import {
 	wrapLanguageModel,
 } from "ai";
 import { dev } from "$app/environment";
+import { saveChat } from "$lib/remote/chats.remote";
 import { openrouter } from "$lib/server/ai";
-import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { messages }: { messages: UIMessage[] } = await request.json();
+	const { messages, id }: { messages: UIMessage[]; id: string } = await request.json();
 
 	const { model: selectedModel, reasoning } = messages.at(-1)?.metadata;
 
@@ -47,6 +48,10 @@ export const POST: RequestHandler = async ({ request }) => {
 					cost,
 				};
 			}
+		},
+		originalMessages: messages,
+		onFinish: ({ messages }) => {
+			saveChat({ chatId: id, messages });
 		},
 	});
 };

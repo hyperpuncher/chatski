@@ -104,7 +104,6 @@ async function handleSubmit() {
 		chat.sendMessage({
 			text: input,
 			files: fileList,
-			metadata: { model: selectedModel, reasoning },
 		});
 		await tick();
 		scroll.scrollToBottom();

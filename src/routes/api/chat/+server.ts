@@ -1,4 +1,5 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { RequestHandler } from "@sveltejs/kit";
 import {
 	convertToModelMessages,
@@ -8,15 +9,27 @@ import {
 } from "ai";
 import { dev } from "$app/environment";
 import { saveChat } from "$lib/remote/chats.remote";
-import { openrouter } from "$lib/server/ai";
+
+type Request = {
+	messages: UIMessage[];
+	id: string;
+	selectedModel: string;
+	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
+};
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { messages, id }: { messages: UIMessage[]; id: string } = await request.json();
+	const { messages, id, selectedModel, reasoning }: Request = await request.json();
 
-	const { model: selectedModel, reasoning } = messages.at(-1)?.metadata;
+	const openrouter = createOpenRouter({
+		apiKey: request.headers.get("x-api-key") ?? undefined,
+		headers: {
+			"HTTP-Referer": "http://localhost",
+			"X-Title": "chat",
+		},
+	});
 
 	const model = openrouter.chat(selectedModel, {
-		reasoning: { effort: reasoning, enabled: reasoning !== "none" },
+		reasoning: { effort: reasoning },
 		provider: { order: ["google-ai-studio"] },
 	});
 

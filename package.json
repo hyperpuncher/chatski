@@ -47,7 +47,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/svelte": "^4.0.31",
-		"@openrouter/ai-sdk-provider": "6.0.0-alpha.1",
+		"@openrouter/ai-sdk-provider": "1.5.4",
 		"ai": "^6.0.31",
 		"mode-watcher": "^1.1.0",
 		"postgres": "^3.4.7",

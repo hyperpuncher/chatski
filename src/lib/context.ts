@@ -1,4 +1,5 @@
 import type { Chat } from "@ai-sdk/svelte";
+import type { ScrollState } from "runed";
 import { createContext } from "svelte";
 
 export type ChatContext = {
@@ -8,3 +9,5 @@ export type ChatContext = {
 };
 
 export const [getChatContext, setChatContext] = createContext<ChatContext>();
+
+export const [getScrollContext, setScrollContext] = createContext<ScrollState>();

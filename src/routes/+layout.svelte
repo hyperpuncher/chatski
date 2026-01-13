@@ -4,12 +4,14 @@ import "./layout.css";
 import Settings from "@lucide/svelte/icons/settings";
 import { Chat } from "@ai-sdk/svelte";
 import { ModeWatcher } from "mode-watcher";
+import { ScrollState } from "runed";
+import { tick } from "svelte";
 import { goto } from "$app/navigation";
 import AppSidebar from "$lib/components/app-sidebar.svelte";
 import { Button } from "$lib/components/ui/button";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
-import { type ChatContext, setChatContext } from "$lib/context";
+import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
 import { getMessages } from "$lib/remote/chats.remote";
 
 let { children } = $props();
@@ -23,10 +25,18 @@ const ctx = $state<ChatContext>({
 	loadChat: async (id: string) => {
 		const messages = (await getMessages(id)) ?? [];
 		ctx.chat = new Chat({ id, messages });
+		await tick();
+		scrollCtx.scrollToBottom();
 	},
 });
 
+const scrollCtx = new ScrollState({
+	element: () => document.documentElement,
+	behavior: "smooth",
+});
+
 setChatContext(ctx);
+setScrollContext(scrollCtx);
 
 function handleKeydown(e: KeyboardEvent) {
 	if (e.key === "o" && (e.ctrlKey || e.metaKey)) {

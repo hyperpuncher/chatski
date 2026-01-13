@@ -17,6 +17,7 @@ import Star from "@lucide/svelte/icons/star";
 import Video from "@lucide/svelte/icons/video";
 import WholeWord from "@lucide/svelte/icons/whole-word";
 import dracula from "@shikijs/themes/dracula";
+import { tick } from "svelte";
 import { SvelteSet } from "svelte/reactivity";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
@@ -32,11 +33,14 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { Spinner } from "$lib/components/ui/spinner";
+import { getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { localStorage } from "$lib/storage";
 import { cn } from "$lib/utils";
 
 let { chat } = $props();
+
+const scroll = getScrollContext();
 
 let input = $state("");
 let fileList = $state<FileList>();
@@ -100,6 +104,8 @@ async function handleSubmit() {
 			files: fileList,
 			metadata: { model: selectedModel, reasoning },
 		});
+		await tick();
+		scroll.scrollToBottom();
 	}
 	input = "";
 	fileList = undefined;
@@ -142,7 +148,7 @@ function handleDefaultModel(model: string) {
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if chat.messages.length}
-		<ul class="px-4 mt-20 mb-14 space-y-10 w-full h-full sm:px-5" in:slide>
+		<ul class="px-4 mt-20 mb-32 space-y-10 w-full h-full sm:px-5" in:slide>
 			{#each chat.messages as message, messageIndex (messageIndex)}
 				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}

@@ -52,7 +52,11 @@ let selectedModel = $state(
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);
 let hoveredModel = $state("");
-let isStreaming = $derived(chat.status !== "ready" && chat.lastMessage?.role === "user");
+let isStreaming = $derived(
+	chat.status !== "error" &&
+		chat.status !== "ready" &&
+		chat.lastMessage?.role === "user",
+);
 let isThinking = $derived(
 	chat.status === "streaming" && chat.lastMessage?.parts.at(-1)?.type === "reasoning",
 );
@@ -93,8 +97,6 @@ const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 async function handleSubmit() {
 	if (chat.status === "streaming") {
 		chat.stop();
-	} else if (chat.error) {
-		toast.error(chat.error.message || "Something went wrong");
 	} else {
 		if (page.url.pathname === "/") {
 			await goto(`/chat/${chat.id}`, { replaceState: true });
@@ -145,6 +147,12 @@ function handleDefaultModel(model: string) {
 
 afterNavigate(() => {
 	inputElement?.focus();
+});
+
+$effect(() => {
+	if (chat.error) {
+		toast.error(chat.error.message || "Something went wrong");
+	}
 });
 </script>
 

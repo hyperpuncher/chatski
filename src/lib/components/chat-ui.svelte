@@ -162,7 +162,7 @@ function handleDefaultModel(model: string) {
 						{:else if part.type === "text"}
 							{#if message.role === "user"}
 								<p
-									class="py-2 px-3.5 rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground"
+									class="py-2 px-3.5 max-w-full rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground sm:max-w-5/6"
 								>
 									{part.text}
 								</p>

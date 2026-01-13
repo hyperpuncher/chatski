@@ -1,13 +1,16 @@
 import { redis } from "bun";
 import * as v from "valibot";
 import { command, query } from "$app/server";
+import { requireAuth } from "./auth.remote";
 
 export const getChats = query(async () => {
-	const keys = await redis.keys("chats:*");
-	return keys.map((key) => key.split(":")[1]);
+	const user = await requireAuth();
+	const keys = await redis.keys(`chats:${user.id}:*`);
+	return keys.map((key) => key.split(":").at(-1));
 });
 
 export const getTitle = query.batch(v.string(), async (ids) => {
+	await requireAuth();
 	const keys = ids.map((id) => `chat:title:${id}`);
 	const titles = await redis.mget(...keys);
 	const lookup = new Map(ids.map((id, i) => [id, titles[i]]));
@@ -15,7 +18,8 @@ export const getTitle = query.batch(v.string(), async (ids) => {
 });
 
 export const getMessages = query(v.string(), async (chatId) => {
-	const chat = await redis.get(`chats:${chatId}`);
+	const user = await requireAuth();
+	const chat = await redis.get(`chats:${user.id}:${chatId}`);
 	if (chat) {
 		return JSON.parse(chat);
 	}
@@ -23,18 +27,21 @@ export const getMessages = query(v.string(), async (chatId) => {
 });
 
 export const saveChat = command("unchecked", async ({ chatId, messages }) => {
-	await redis.set(`chats:${chatId}`, JSON.stringify(messages));
+	const user = await requireAuth();
+	await redis.set(`chats:${user.id}:${chatId}`, JSON.stringify(messages));
 	await redis.set(`chat:title:${chatId}`, messages.at(0)?.parts.at(-1)?.text);
 	getChats().refresh();
 });
 
 export const deleteChat = command(v.string(), async (chatId) => {
-	await redis.del(`chats:${chatId}`);
+	const user = await requireAuth();
+	await redis.del(`chats:${user.id}:${chatId}`);
 	getChats().refresh();
 });
 
 export const deleteAllChats = command(async () => {
-	const keys = await redis.keys("chats:*");
+	const user = await requireAuth();
+	const keys = await redis.keys(`chats:${user.id}:*`);
 	await redis.del(...keys);
 	getChats().refresh();
 });

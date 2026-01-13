@@ -1,6 +1,6 @@
 <script lang="ts">
 import favicon from "$lib/assets/favicon.svg";
-import "./layout.css";
+import "../layout.css";
 import { Chat } from "@ai-sdk/svelte";
 import { DefaultChatTransport } from "ai";
 import { ModeWatcher } from "mode-watcher";
@@ -12,8 +12,12 @@ import Settings from "$lib/components/settings.svelte";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
-import { getMessages } from "$lib/remote/chats.remote";
+import { getChats, getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
+
+// import eruda from "eruda";
+
+// eruda.init();
 
 let { children } = $props();
 let isSidebarOpen = $state(false);

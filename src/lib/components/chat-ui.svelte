@@ -162,12 +162,13 @@ function handleDefaultModel(model: string) {
 						{:else if part.type === "text"}
 							{#if message.role === "user"}
 								<p
-									class="py-2 px-3.5 max-w-full rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground sm:max-w-5/6"
+									class="py-2 px-3.5 max-w-full leading-7 rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground sm:max-w-5/6"
 								>
 									{part.text}
 								</p>
 							{:else}
 								<Streamdown
+									class="leading-7.5"
 									content={part.text}
 									components={{ code: Code }}
 									baseTheme="shadcn"

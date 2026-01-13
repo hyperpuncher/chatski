@@ -306,6 +306,7 @@ $effect(() => {
 				bind:ref={inputElement}
 				bind:value={input}
 				class="md:text-base"
+				autofocus
 				placeholder="Generate slop..."
 				onkeydown={async (e) => {
 					if (e.key === "Enter" && !e.shiftKey && input.trim()) {

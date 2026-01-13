@@ -12,8 +12,6 @@
 		"format": "prettier --write . ; biome check --linter-enabled=false --write . ; rustywind --write .",
 		"lint": "oxlint",
 		"lint:fix": "oxlint --fix",
-		"db:push": "drizzle-kit push",
-		"db:generate": "drizzle-kit generate",
 		"clean": "rm -rf node_modules/ .svelte-kit/ build/ bun.lock"
 	},
 	"devDependencies": {
@@ -29,8 +27,6 @@
 		"@typescript/native-preview": "^7.0.0-dev.20260112.1",
 		"bits-ui": "^2.14.4",
 		"clsx": "^2.1.1",
-		"drizzle-kit": "^0.31.8",
-		"drizzle-orm": "^0.45.0",
 		"oxlint": "^1.39.0",
 		"prettier": "^3.7.4",
 		"prettier-plugin-svelte": "^3.4.0",
@@ -50,7 +46,6 @@
 		"@openrouter/ai-sdk-provider": "1.5.4",
 		"ai": "^6.0.31",
 		"mode-watcher": "^1.1.0",
-		"postgres": "^3.4.7",
 		"runed": "^0.37.1",
 		"svelte-streamdown": "^3.0.1",
 		"unstorage": "^1.17.3",

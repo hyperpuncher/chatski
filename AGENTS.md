@@ -135,7 +135,6 @@ let { class: className, ...rest } = $props();
 
 ### Database
 
-- PostgreSQL with Drizzle ORM
 - Redis for chat storage and caching
 - Connection via environment variables
 

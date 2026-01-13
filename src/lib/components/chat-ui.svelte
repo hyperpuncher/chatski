@@ -178,7 +178,7 @@ function handleDefaultModel(model: string) {
 									theme={{
 										code: {
 											container: "bg-[#171717]",
-											pre: "bg-[#171717]",
+											pre: "bg-[#171717] text-base",
 										},
 									}}
 								/>

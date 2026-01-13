@@ -23,7 +23,7 @@ import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
 import { Streamdown } from "svelte-streamdown";
 import Code from "svelte-streamdown/code";
-import { goto } from "$app/navigation";
+import { afterNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
@@ -43,6 +43,7 @@ let { chat } = $props();
 const scroll = getScrollContext();
 
 let input = $state("");
+let inputElement = $state<HTMLTextAreaElement | null>(null);
 let fileList = $state<FileList>();
 let defaultModel = $state(await localStorage.get<string>("defaultModel"));
 let selectedModel = $state(
@@ -96,7 +97,7 @@ async function handleSubmit() {
 		toast.error(chat.error.message || "Something went wrong");
 	} else {
 		if (page.url.pathname === "/") {
-			await goto(`/chat/${chat.id}`, { replaceState: true, keepFocus: true });
+			await goto(`/chat/${chat.id}`, { replaceState: true });
 		}
 		chat.sendMessage({
 			text: input,
@@ -141,6 +142,10 @@ function handleDefaultModel(model: string) {
 		localStorage.set("defaultModel", defaultModel);
 	}
 }
+
+afterNavigate(() => {
+	inputElement?.focus();
+});
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -291,10 +296,10 @@ function handleDefaultModel(model: string) {
 			{/if}
 
 			<InputGroup.Textarea
+				bind:ref={inputElement}
 				bind:value={input}
 				class="md:text-base"
 				placeholder="Generate slop..."
-				autofocus
 				onkeydown={async (e) => {
 					if (e.key === "Enter" && !e.shiftKey && input.trim()) {
 						e.preventDefault();
@@ -368,7 +373,10 @@ function handleDefaultModel(model: string) {
 					</DropdownMenu.Root>
 				{/if}
 
-				<Popover.Root bind:open={isModelsPopoverOpen}>
+				<Popover.Root
+					bind:open={isModelsPopoverOpen}
+					onOpenChangeComplete={(open) => !open && inputElement?.focus()}
+				>
 					<Popover.Trigger
 						class={cn(
 							buttonVariants({

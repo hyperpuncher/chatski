@@ -172,7 +172,7 @@ afterNavigate(() => {
 						{:else if part.type === "text"}
 							{#if message.role === "user"}
 								<p
-									class="py-2 px-3.5 max-w-full leading-7 rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground sm:max-w-5/6"
+									class="py-1.5 px-3.5 max-w-full leading-7 rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground sm:max-w-5/6"
 								>
 									{part.text}
 								</p>
@@ -188,7 +188,7 @@ afterNavigate(() => {
 									theme={{
 										code: {
 											container: "bg-[#171717]",
-											pre: "bg-[#171717] text-base",
+											pre: "bg-[#171717] text-base text-primary-foreground dark:text-foreground",
 										},
 									}}
 								/>

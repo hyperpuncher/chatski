@@ -44,11 +44,10 @@ const scroll = getScrollContext();
 
 let input = $state("");
 let fileList = $state<FileList>();
-let defaultModel = $state(
-	(await localStorage.get<string>("defaultModel")) ??
-		"google/gemini-2.5-flash-lite-preview-09-2025",
+let defaultModel = $state(await localStorage.get<string>("defaultModel"));
+let selectedModel = $state(
+	(await localStorage.get<string>("selectedModel")) ?? defaultModel,
 );
-let selectedModel = $state(defaultModel);
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);
 let hoveredModel = $state("");
@@ -404,6 +403,7 @@ function handleDefaultModel(model: string) {
 											value={model}
 											onSelect={() => {
 												selectedModel = model;
+												localStorage.set("selectedModel", model);
 												isModelsPopoverOpen = false;
 											}}
 											onmouseenter={() => (hoveredModel = model)}

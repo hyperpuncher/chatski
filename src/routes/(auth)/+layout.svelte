@@ -16,4 +16,4 @@ let { children } = $props();
 
 <ModeWatcher />
 
-<main class="flex justify-center items-center h-screen">{@render children()}</main>
+<main class="flex justify-center items-center h-dvh">{@render children()}</main>

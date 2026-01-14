@@ -67,6 +67,9 @@ function handleKeydown(e: KeyboardEvent) {
 <svelte:head>
 	<link rel="icon" href={favicon}>
 	<title>chatski</title>
+	<meta property="og:title" content="chatski">
+	<meta property="og:description" content="Chatski with your slop generators">
+	<meta property="og:type" content="website">
 </svelte:head>
 
 <svelte:window onkeydown={handleKeydown} />

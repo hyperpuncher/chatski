@@ -47,7 +47,8 @@ let inputElement = $state<HTMLTextAreaElement | null>(null);
 let fileList = $state<FileList>();
 let defaultModel = $state(await localStorage.get<string>("defaultModel"));
 let selectedModel = $state(
-	(await localStorage.get<string>("selectedModel")) ?? defaultModel,
+	(await localStorage.get<string>("selectedModel")) ??
+		(defaultModel || "moonshotai/kimi-k2-0905"),
 );
 let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);

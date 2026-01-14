@@ -1,19 +1,24 @@
 <script lang="ts">
 import Settings from "@lucide/svelte/icons/settings";
 import SquareArrowOutUpRight from "@lucide/svelte/icons/square-arrow-out-up-right";
+import Trash from "@lucide/svelte/icons/trash";
 import { Button, buttonVariants } from "$lib/components/ui/button";
 import * as Dialog from "$lib/components/ui/dialog";
 import { Input } from "$lib/components/ui/input";
 import { Label } from "$lib/components/ui/label";
-import { localStorage } from "$lib/storage";
+import { config } from "$lib/config.svelte";
 
 let input = $state("");
-let open = $state(!(await localStorage.get<string>("apiKey")));
+let open = $state(false);
 
 async function handleSubmit() {
-	await localStorage.setItem("apiKey", input);
+	config.save(input);
 	open = false;
 }
+
+$effect(() => {
+	open = !config.isConfigured;
+});
 </script>
 
 <Dialog.Root bind:open>
@@ -40,12 +45,28 @@ async function handleSubmit() {
 							<SquareArrowOutUpRight />
 						</Button>
 					</Label>
-					<Input
-						type="password"
-						bind:value={input}
-						name="apiKey"
-						placeholder="sk-or-*******************************************************************"
-					/>
+					<div class="flex gap-2 items-center">
+						<Input
+							type="password"
+							bind:value={input}
+							name="apiKey"
+							placeholder="sk-or-*******************************************************************"
+							onkeydown={async (e) => {
+								if (e.key === "Enter") {
+									e.preventDefault();
+									await handleSubmit();
+								}
+							}}
+						/>
+						<Button
+							variant="destructive"
+							size="icon-sm"
+							onclick={() => config.clear()}
+							hidden={!config.apiKey}
+						>
+							<Trash />
+						</Button>
+					</div>
 				</div>
 			</div>
 

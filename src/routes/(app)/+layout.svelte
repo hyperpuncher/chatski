@@ -11,8 +11,9 @@ import AppSidebar from "$lib/components/app-sidebar.svelte";
 import Settings from "$lib/components/settings.svelte";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
+import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
-import { getChats, getMessages } from "$lib/remote/chats.remote";
+import { getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
 
 // import eruda from "eruda";
@@ -24,7 +25,7 @@ let isSidebarOpen = $state(false);
 
 const transport = new DefaultChatTransport({
 	headers: async () => ({
-		"x-api-key": `${await localStorage.get<string>("apiKey")}`,
+		"x-api-key": `${config.apiKey}`,
 	}),
 	body: async () => ({
 		selectedModel: await localStorage.get<string>("selectedModel"),
@@ -52,6 +53,7 @@ const scrollCtx = new ScrollState({
 
 setChatContext(ctx);
 setScrollContext(scrollCtx);
+await config.init();
 
 function handleKeydown(e: KeyboardEvent) {
 	if (e.key === "o" && (e.ctrlKey || e.metaKey)) {
@@ -82,7 +84,9 @@ function handleKeydown(e: KeyboardEvent) {
 			<Sidebar.Trigger class={isSidebarOpen ? "-translate-x-64" : ""} />
 		</header>
 
-		{@render children()}
+		{#if config.isConfigured}
+			{@render children()}
+		{/if}
 	</main>
 	<AppSidebar />
 </Sidebar.Provider>

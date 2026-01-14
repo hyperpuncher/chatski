@@ -6,6 +6,7 @@ import Clock from "@lucide/svelte/icons/clock";
 import Copy from "@lucide/svelte/icons/copy";
 import DollarSign from "@lucide/svelte/icons/dollar-sign";
 import FileText from "@lucide/svelte/icons/file-text";
+import FileUp from "@lucide/svelte/icons/file-up";
 import Gauge from "@lucide/svelte/icons/gauge";
 import Image from "@lucide/svelte/icons/image";
 import Lock from "@lucide/svelte/icons/lock";
@@ -61,6 +62,7 @@ let isStreaming = $derived(
 let isThinking = $derived(
 	chat.status === "streaming" && chat.lastMessage?.parts.at(-1)?.type === "reasoning",
 );
+let isDragging = $state(false);
 
 const models = $derived(await getModels());
 const modelsList = $derived([
@@ -145,6 +147,26 @@ function handleDefaultModel(model: string) {
 	}
 }
 
+function handleDrop(e: DragEvent) {
+	e.preventDefault();
+	e.stopPropagation();
+	isDragging = false;
+
+	const dataTransfer = new DataTransfer();
+
+	if (fileList) {
+		for (const file of fileList) {
+			dataTransfer.items.add(file);
+		}
+	}
+
+	for (const file of e.dataTransfer?.files || []) {
+		dataTransfer.items.add(file);
+	}
+
+	fileList = dataTransfer.files;
+}
+
 afterNavigate(() => {
 	inputElement?.focus();
 });
@@ -156,7 +178,28 @@ $effect(() => {
 });
 </script>
 
-<svelte:window onkeydown={handleKeydown} />
+<svelte:window
+	onkeydown={handleKeydown}
+	ondragover={(e) => {
+		e.preventDefault();
+		isDragging = true;
+	}}
+	ondragleave={() => (isDragging = false)}
+	ondrop={handleDrop}
+/>
+
+{#if isDragging}
+	<div
+		class="flex fixed inset-0 z-10 flex-col gap-4 justify-center items-center bg-black/50 backdrop-blur-sm"
+	>
+		<div
+			class="flex size-[80%] flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed text-muted-foreground"
+		>
+			<FileUp class="animate-bounce size-12" />
+			<span class="text-lg">Drop files here</span>
+		</div>
+	</div>
+{/if}
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if chat.messages.length}

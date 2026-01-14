@@ -6,7 +6,10 @@ import { requireAuth } from "./auth.remote";
 export const getChats = query(async () => {
 	const user = await requireAuth();
 	const keys = await redis.keys(`chats:${user.userId}:*`);
-	return keys.map((key) => key.split(":").at(-1));
+	return keys
+		.map((key) => key.split(":").at(-1))
+		.sort()
+		.reverse();
 });
 
 export const getTitle = query.batch(v.string(), async (ids) => {

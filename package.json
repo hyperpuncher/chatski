@@ -53,6 +53,7 @@
 		"runed": "^0.37.1",
 		"svelte-streamdown": "^3.0.1",
 		"unstorage": "^1.17.3",
+		"uuidv7": "^1.1.0",
 		"valibot": "^1.2.0"
 	},
 	"overrides": {

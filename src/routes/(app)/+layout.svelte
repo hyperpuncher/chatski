@@ -16,6 +16,7 @@ import { type ChatContext, setChatContext, setScrollContext } from "$lib/context
 import { getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
 import { isMac } from "$lib/utils";
+import { uuidv7 } from "uuidv7";
 
 // import eruda from "eruda";
 
@@ -35,9 +36,9 @@ const transport = new DefaultChatTransport({
 });
 
 const ctx = $state<ChatContext>({
-	chat: new Chat({ id: crypto.randomUUID(), transport }),
+	chat: new Chat({ id: uuidv7(), transport }),
 	newChat: () => {
-		ctx.chat = new Chat({ id: crypto.randomUUID(), transport });
+		ctx.chat = new Chat({ id: uuidv7(), transport });
 	},
 	loadChat: async (id: string) => {
 		const messages = (await getMessages(id)) ?? [];

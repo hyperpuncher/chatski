@@ -37,7 +37,7 @@ import { Spinner } from "$lib/components/ui/spinner";
 import { getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { localStorage } from "$lib/storage";
-import { cn, isMac } from "$lib/utils";
+import { cn, collapseFilename, isMac } from "$lib/utils";
 
 let { chat } = $props();
 
@@ -338,7 +338,7 @@ $effect(() => {
 									{:else}
 										<FileText />
 									{/if}
-									<span>{file.name}</span>
+									<span>{collapseFilename(file.name)}</span>
 								</Button>
 							</li>
 						{/each}

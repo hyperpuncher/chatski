@@ -3,6 +3,9 @@ import { twMerge } from "tailwind-merge";
 
 export const isMac = navigator.userAgent.includes("Mac");
 
+export const collapseFilename = (f: string) =>
+	f.length < 25 ? f : `${f.slice(0, 10)}...${f.slice(-10)}`;
+
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }

@@ -71,7 +71,7 @@ function handleKeydown(e: KeyboardEvent) {
 				{#each chats as chatId, i (chatId)}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton
-							class="truncate mask-r-from-65% mask-r-to-73% py-5"
+							class="truncate mask-r-from-65% mask-r-to-73% py-5 hover:mask-none"
 						>
 							{#snippet child({ props })}
 								<a href={`/chat/${chatId}`} {...props}>

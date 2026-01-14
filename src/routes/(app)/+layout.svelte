@@ -15,6 +15,7 @@ import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
 import { getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
+import { isMac } from "$lib/utils";
 
 // import eruda from "eruda";
 
@@ -56,7 +57,7 @@ setScrollContext(scrollCtx);
 await config.init();
 
 function handleKeydown(e: KeyboardEvent) {
-	if (e.key === "o" && (e.ctrlKey || e.metaKey)) {
+	if (e.key === "o" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		ctx.newChat();
 		goto("/");

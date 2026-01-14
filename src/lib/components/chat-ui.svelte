@@ -36,7 +36,7 @@ import { Spinner } from "$lib/components/ui/spinner";
 import { getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { localStorage } from "$lib/storage";
-import { cn } from "$lib/utils";
+import { cn, isMac } from "$lib/utils";
 
 let { chat } = $props();
 
@@ -114,7 +114,7 @@ async function handleSubmit() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-	if (e.key === "m" && (e.ctrlKey || e.metaKey)) {
+	if (e.key === "m" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		isModelsPopoverOpen = !isModelsPopoverOpen;
 	}
@@ -408,7 +408,9 @@ $effect(() => {
 								<span class="truncate">Select model</span>
 							{/if}
 
-							<Kbd.Root class="hidden sm:inline-flex">Ctrl + M</Kbd.Root>
+							<Kbd.Root class="hidden sm:inline-flex">
+								{isMac ? "⌘" : "Ctrl"} + M
+							</Kbd.Root>
 						</Popover.Trigger>
 						<Popover.Content class="p-0 w-66" side="top" align="end">
 							<Command.Root>

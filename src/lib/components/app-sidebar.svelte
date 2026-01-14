@@ -7,6 +7,7 @@ import * as Kbd from "$lib/components/ui/kbd";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { getChatContext } from "$lib/context";
 import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/remote/chats.remote";
+import { isMac } from "$lib/utils";
 
 const ctx = getChatContext();
 
@@ -42,7 +43,7 @@ function handleKeydown(e: KeyboardEvent) {
 								<MessageSquarePlus />
 								<span class="font-semibold">New Chat</span>
 								<Kbd.Root class="hidden sm:inline-flex ms-auto">
-									Ctrl + O
+									{isMac ? "⌘" : "Ctrl"} + O
 								</Kbd.Root>
 							</a>
 						{/snippet}
@@ -88,9 +89,9 @@ function handleKeydown(e: KeyboardEvent) {
 						</Button>
 						{#if i < 9}
 							<Kbd.Root
-								class="hidden absolute top-1/2 -translate-y-1/2 sm:inline-flex end-1 group-hover/menu-item:opacity-0"
+								class="hidden absolute top-1/2 tabular-nums -translate-y-1/2 sm:inline-flex end-1 group-hover/menu-item:opacity-0"
 							>
-								Ctrl + {i + 1}
+								{isMac ? "⌘" : "Ctrl"} + {i + 1}
 							</Kbd.Root>
 						{/if}
 					</Sidebar.MenuItem>

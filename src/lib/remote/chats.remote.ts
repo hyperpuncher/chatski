@@ -34,7 +34,7 @@ export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 	await redis.set(`chats:${user.userId}:${chatId}`, JSON.stringify(messages));
 	await redis.set(
 		`chat:title:${chatId}`,
-		messages.at(0)?.parts.at(-1)?.text.slice(0, 30).trim(),
+		messages.at(0)?.parts.at(-1)?.text.slice(0, 22).trim(),
 	);
 	getChats().refresh();
 });

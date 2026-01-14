@@ -47,19 +47,14 @@ export const POST: RequestHandler = async ({ request }) => {
 				start = performance.now();
 			}
 			if (part.type === "finish-step") {
-				const time = Math.round(((performance.now() - start) / 1000) * 100) / 100;
+				const tokens = part.providerMetadata?.openrouter?.usage?.completionTokens;
+				const time = roundToSignificant((performance.now() - start) / 1000);
+				const tps = Math.round(tokens / time);
 				const cost = roundToSignificant(
 					part.providerMetadata?.openrouter?.usage?.cost,
 				);
 
-				return {
-					tokens: part.providerMetadata?.openrouter?.usage?.completionTokens,
-					tps: Math.round(
-						part.providerMetadata?.openrouter?.usage?.completionTokens / time,
-					),
-					time,
-					cost,
-				};
+				return { tokens, time, tps, cost };
 			}
 		},
 		originalMessages: messages,
@@ -69,7 +64,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	});
 };
 
-function roundToSignificant(value: number, significantDigits = 3) {
+function roundToSignificant(value: number, significantDigits = 2) {
 	if (value === 0) return 0;
 	const exponent = Math.floor(Math.log10(value));
 	const scale = 10 ** (significantDigits - exponent - 1);

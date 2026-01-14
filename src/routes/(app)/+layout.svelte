@@ -64,7 +64,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 <svelte:head>
 	<link rel="icon" href={favicon}>
-	<title>chat</title>
+	<title>chatski</title>
 </svelte:head>
 
 <svelte:window onkeydown={handleKeydown} />

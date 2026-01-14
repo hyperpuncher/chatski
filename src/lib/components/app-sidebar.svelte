@@ -28,7 +28,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 <Sidebar.Root variant="floating" side="right">
 	<Sidebar.Header>
-		<h1 class="p-2 font-mono text-xl font-bold">slop</h1>
+		<h1 class="p-2 font-mono text-xl font-bold">chatski</h1>
 	</Sidebar.Header>
 
 	<Sidebar.Content class="px-2">

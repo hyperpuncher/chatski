@@ -23,8 +23,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	const openrouter = createOpenRouter({
 		apiKey: request.headers.get("x-api-key") ?? undefined,
 		headers: {
-			"HTTP-Referer": "http://localhost",
-			"X-Title": "chat",
+			"HTTP-Referer": "https://chatski.app",
+			"X-Title": "chatski",
 		},
 	});
 

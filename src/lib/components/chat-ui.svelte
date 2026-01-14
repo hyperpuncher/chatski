@@ -190,7 +190,7 @@ $effect(() => {
 
 {#if isDragging}
 	<div
-		class="flex fixed inset-0 z-10 flex-col gap-4 justify-center items-center bg-black/50 backdrop-blur-sm"
+		class="flex fixed inset-0 z-10 flex-col gap-4 justify-center items-center bg-black/25 backdrop-blur-sm"
 	>
 		<div
 			class="flex size-[80%] flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed text-muted-foreground"

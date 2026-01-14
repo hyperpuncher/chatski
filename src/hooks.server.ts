@@ -20,8 +20,7 @@ const sessionHandler: Handle = async ({ event, resolve }) => {
 		if (!AUTH_ALLOWED_EMAILS.includes(session.user.email)) {
 			error(403, "Forbidden");
 		}
-		event.locals.session = session.session;
-		event.locals.user = session.user;
+		event.locals.session = session;
 	}
 
 	if (event.url.pathname !== "/login" && !session) {

@@ -5,7 +5,7 @@ import { requireAuth } from "./auth.remote";
 
 export const getChats = query(async () => {
 	const user = await requireAuth();
-	const keys = await redis.keys(`chats:${user.id}:*`);
+	const keys = await redis.keys(`chats:${user.userId}:*`);
 	return keys.map((key) => key.split(":").at(-1));
 });
 
@@ -19,7 +19,7 @@ export const getTitle = query.batch(v.string(), async (ids) => {
 
 export const getMessages = query(v.string(), async (chatId) => {
 	const user = await requireAuth();
-	const chat = await redis.get(`chats:${user.id}:${chatId}`);
+	const chat = await redis.get(`chats:${user.userId}:${chatId}`);
 	if (chat) {
 		return JSON.parse(chat);
 	}
@@ -28,7 +28,7 @@ export const getMessages = query(v.string(), async (chatId) => {
 
 export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 	const user = await requireAuth();
-	await redis.set(`chats:${user.id}:${chatId}`, JSON.stringify(messages));
+	await redis.set(`chats:${user.userId}:${chatId}`, JSON.stringify(messages));
 	await redis.set(
 		`chat:title:${chatId}`,
 		messages.at(0)?.parts.at(-1)?.text.slice(0, 30).trim(),
@@ -38,13 +38,13 @@ export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 
 export const deleteChat = command(v.string(), async (chatId) => {
 	const user = await requireAuth();
-	await redis.del(`chats:${user.id}:${chatId}`);
+	await redis.del(`chats:${user.userId}:${chatId}`);
 	getChats().refresh();
 });
 
 export const deleteAllChats = command(async () => {
 	const user = await requireAuth();
-	const keys = await redis.keys(`chats:${user.id}:*`);
+	const keys = await redis.keys(`chats:${user.userId}:*`);
 	await redis.del(...keys);
 	getChats().refresh();
 });

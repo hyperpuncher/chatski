@@ -69,17 +69,12 @@ function handleKeydown(e: KeyboardEvent) {
 			<Sidebar.Menu class="gap-1">
 				{#each chats as chatId, i (chatId)}
 					<Sidebar.MenuItem>
-						<Sidebar.MenuButton class="py-5 truncate">
+						<Sidebar.MenuButton
+							class="truncate mask-r-from-65% mask-r-to-73% py-5"
+						>
 							{#snippet child({ props })}
 								<a href={`/chat/${chatId}`} {...props}>
-									<svelte:boundary>
-										{@const title = await getTitle(chatId)}
-										{#if title?.length > 21}
-											{title?.slice(0, 21).trimEnd()}...
-										{:else}
-											{title}
-										{/if}
-									</svelte:boundary>
+									{await getTitle(chatId)}
 								</a>
 							{/snippet}
 						</Sidebar.MenuButton>

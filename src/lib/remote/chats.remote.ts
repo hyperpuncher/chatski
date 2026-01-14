@@ -29,7 +29,10 @@ export const getMessages = query(v.string(), async (chatId) => {
 export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 	const user = await requireAuth();
 	await redis.set(`chats:${user.id}:${chatId}`, JSON.stringify(messages));
-	await redis.set(`chat:title:${chatId}`, messages.at(0)?.parts.at(-1)?.text);
+	await redis.set(
+		`chat:title:${chatId}`,
+		messages.at(0)?.parts.at(-1)?.text.slice(0, 30).trim(),
+	);
 	getChats().refresh();
 });
 

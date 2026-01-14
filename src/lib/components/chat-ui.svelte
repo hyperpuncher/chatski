@@ -317,173 +317,181 @@ $effect(() => {
 			/>
 
 			<InputGroup.Addon align="block-end">
-				<InputGroup.Button
-					variant="outline"
-					class="relative rounded-full"
-					size="icon-sm"
-					disabled={!inputModalities}
-				>
-					<label class="flex absolute inset-0 justify-center items-center">
-						<Paperclip />
-						<input
-							type="file"
-							multiple
-							class="hidden"
-							accept={inputModalities}
-							bind:files={fileList}
-						>
-					</label>
-				</InputGroup.Button>
+				{#if selectedModel}
+					<InputGroup.Button
+						variant="outline"
+						class="relative rounded-full"
+						size="icon-sm"
+						disabled={!inputModalities}
+					>
+						<label class="flex absolute inset-0 justify-center items-center">
+							<Paperclip />
+							<input
+								type="file"
+								multiple
+								class="hidden"
+								accept={inputModalities}
+								bind:files={fileList}
+							>
+						</label>
+					</InputGroup.Button>
 
-				<div class="flex gap-2 me-auto">
-					<FileText
-						class="size-4 {modalities.input.includes('file') ? 'text-violet-400' : ''}"
-					/>
-					<Image
-						class="size-4 {modalities.input.includes('image') ? 'text-violet-400' : ''}"
-					/>
-					<Music
-						class="size-4 {modalities.input.includes('audio') ? 'text-violet-400' : ''}"
-					/>
-					<Video
-						class="size-4 {modalities.input.includes('video') ? 'text-violet-400' : ''}"
-					/>
-				</div>
-
-				{#if supportedParameters.includes("reasoning")}
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							{#snippet child({ props })}
-								<Button {...props} variant="ghost" size="icon-sm">
-									<Brain
-										class={reasoning === "none" ? "" : "text-violet-400"}
-									/>
-								</Button>
-							{/snippet}
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content>
-							<DropdownMenu.Group>
-								<DropdownMenu.RadioGroup
-									bind:value={reasoning}
-									onValueChange={(v) => localStorage.set("reasoning", v)}
-								>
-									{#each reasoningOptions as option}
-										<DropdownMenu.RadioItem
-											class="list-none"
-											value={option}
-										>
-											{option}
-										</DropdownMenu.RadioItem>
-									{/each}
-								</DropdownMenu.RadioGroup>
-							</DropdownMenu.Group>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root>
+					<div class="flex gap-2">
+						<FileText
+							class="size-4 {modalities.input.includes('file') ? 'text-violet-400' : ''}"
+						/>
+						<Image
+							class="size-4 {modalities.input.includes('image') ? 'text-violet-400' : ''}"
+						/>
+						<Music
+							class="size-4 {modalities.input.includes('audio') ? 'text-violet-400' : ''}"
+						/>
+						<Video
+							class="size-4 {modalities.input.includes('video') ? 'text-violet-400' : ''}"
+						/>
+					</div>
 				{/if}
 
-				<Popover.Root
-					bind:open={isModelsPopoverOpen}
-					onOpenChangeComplete={(open) => !open && inputElement?.focus()}
-				>
-					<Popover.Trigger
-						class={cn(
-							buttonVariants({
-								variant: "secondary",
-								size: "sm",
-							}),
-							"max-w-38 bg-primary/10 text-xs text-foreground hover:bg-primary/15 sm:max-w-full",
-						)}
-					>
-						<Bot />
-
-						{#if selectedModel}
-							<span class="truncate">{selectedModel.split("/")[1]}</span>
-						{:else}
-							<span class="truncate">Select model</span>
-						{/if}
-
-						<Kbd.Root class="hidden sm:inline-flex">Ctrl + M</Kbd.Root>
-					</Popover.Trigger>
-					<Popover.Content class="p-0 w-66" side="top" align="end">
-						<Command.Root>
-							<Command.Input placeholder="Search models..." />
-							<Command.List>
-								<Command.Empty>No results found.</Command.Empty>
-								<Command.Group>
-									{#each modelsList as model (model)}
-										{@const isFavorite = favorites.has(model)}
-										{@const isDefault = defaultModel === model}
-										{@const isHovered = hoveredModel === model}
-										<Command.Item
-											class="flex gap-2 justify-between group"
-											value={model}
-											onSelect={() => {
-												selectedModel = model;
-												localStorage.set("selectedModel", model);
-												isModelsPopoverOpen = false;
-											}}
-											onmouseenter={() => (hoveredModel = model)}
-											onmouseleave={() => (hoveredModel = "")}
-										>
-											<span class="truncate">
-												{model.split("/")[1]}
-											</span>
-
-											{#if isHovered || isFavorite || isDefault}
-												<div class="flex gap-2">
-													<Button
-														class="invisible transition-none group-hover:visible
-														{isDefault ? 'visible' : ''}"
-														variant="ghost"
-														size="icon-xs"
-														onclick={(e) => {
-															e.stopPropagation();
-															handleDefaultModel(model);
-														}}
-													>
-														{#if isDefault}
-															<Lock />
-														{:else}
-															<LockOpen />
-														{/if}
-													</Button>
-													<Button
-														class="invisible transition-none group-hover:visible
-														{isFavorite ? 'visible' : ''}"
-														variant="ghost"
-														size="icon-xs"
-														onclick={(e) => {
-															e.stopPropagation();
-															handleFavorite(model);
-														}}
-													>
-														<Star
-															class={isFavorite ? "fill-yellow-400 text-yellow-400" : ""}
-														/>
-													</Button>
-												</div>
-											{/if}
-										</Command.Item>
-									{/each}
-								</Command.Group>
-							</Command.List>
-						</Command.Root>
-					</Popover.Content>
-				</Popover.Root>
-
-				<InputGroup.Button
-					variant={chat.status === "streaming" ? "destructive" : "default"}
-					class="ml-1 rounded-full"
-					size="icon-sm"
-					type="submit"
-					disabled={chat.status !== "streaming" && (!input.trim() || !selectedModel)}
-				>
-					{#if chat.status === "streaming"}
-						<Square />
-					{:else}
-						<ArrowUp />
+				<div class="flex gap-2 ms-auto">
+					{#if supportedParameters?.includes("reasoning")}
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger>
+								{#snippet child({ props })}
+									<Button {...props} variant="ghost" size="icon-sm">
+										<Brain
+											class={reasoning === "none" ? "" : "text-violet-400"}
+										/>
+									</Button>
+								{/snippet}
+							</DropdownMenu.Trigger>
+							<DropdownMenu.Content>
+								<DropdownMenu.Group>
+									<DropdownMenu.RadioGroup
+										bind:value={reasoning}
+										onValueChange={(v) => localStorage.set("reasoning", v)}
+									>
+										{#each reasoningOptions as option}
+											<DropdownMenu.RadioItem
+												class="list-none"
+												value={option}
+											>
+												{option}
+											</DropdownMenu.RadioItem>
+										{/each}
+									</DropdownMenu.RadioGroup>
+								</DropdownMenu.Group>
+							</DropdownMenu.Content>
+						</DropdownMenu.Root>
 					{/if}
-				</InputGroup.Button>
+
+					<Popover.Root
+						bind:open={isModelsPopoverOpen}
+						onOpenChangeComplete={(open) => !open && inputElement?.focus()}
+					>
+						<Popover.Trigger
+							class={cn(
+								buttonVariants({
+									variant: "secondary",
+									size: "sm",
+								}),
+								"max-w-38 bg-primary/10 text-xs text-foreground hover:bg-primary/15 sm:max-w-full",
+							)}
+						>
+							<Bot />
+
+							{#if selectedModel}
+								<span class="truncate"
+									>{selectedModel.split("/")[1]}</span
+								>
+							{:else}
+								<span class="truncate">Select model</span>
+							{/if}
+
+							<Kbd.Root class="hidden sm:inline-flex">Ctrl + M</Kbd.Root>
+						</Popover.Trigger>
+						<Popover.Content class="p-0 w-66" side="top" align="end">
+							<Command.Root>
+								<Command.Input placeholder="Search models..." />
+								<Command.List>
+									<Command.Empty>No results found.</Command.Empty>
+									<Command.Group>
+										{#each modelsList as model (model)}
+											{@const isFavorite = favorites.has(model)}
+											{@const isDefault = defaultModel === model}
+											{@const isHovered = hoveredModel === model}
+											<Command.Item
+												class="flex gap-2 justify-between group"
+												value={model}
+												onSelect={() => {
+													selectedModel = model;
+													localStorage.set("selectedModel", model);
+													isModelsPopoverOpen = false;
+												}}
+												onmouseenter={() => (hoveredModel = model)}
+												onmouseleave={() => (hoveredModel = "")}
+											>
+												<span class="truncate">
+													{model.split("/")[1]}
+												</span>
+
+												{#if isHovered || isFavorite || isDefault}
+													<div class="flex gap-2">
+														<Button
+															class="invisible transition-none group-hover:visible
+														{isDefault ? 'visible' : ''}"
+															variant="ghost"
+															size="icon-xs"
+															onclick={(e) => {
+																e.stopPropagation();
+																handleDefaultModel(model);
+															}}
+														>
+															{#if isDefault}
+																<Lock />
+															{:else}
+																<LockOpen />
+															{/if}
+														</Button>
+														<Button
+															class="invisible transition-none group-hover:visible
+														{isFavorite ? 'visible' : ''}"
+															variant="ghost"
+															size="icon-xs"
+															onclick={(e) => {
+																e.stopPropagation();
+																handleFavorite(model);
+															}}
+														>
+															<Star
+																class={isFavorite
+																	? "fill-yellow-400 text-yellow-400"
+																	: ""}
+															/>
+														</Button>
+													</div>
+												{/if}
+											</Command.Item>
+										{/each}
+									</Command.Group>
+								</Command.List>
+							</Command.Root>
+						</Popover.Content>
+					</Popover.Root>
+
+					<InputGroup.Button
+						variant={chat.status === "streaming" ? "destructive" : "default"}
+						class="ml-1 rounded-full"
+						size="icon-sm"
+						type="submit"
+						disabled={chat.status !== "streaming" && (!input.trim() || !selectedModel)}
+					>
+						{#if chat.status === "streaming"}
+							<Square />
+						{:else}
+							<ArrowUp />
+						{/if}
+					</InputGroup.Button>
+				</div>
 			</InputGroup.Addon>
 		</InputGroup.Root>
 	</form>

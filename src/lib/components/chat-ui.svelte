@@ -1,13 +1,14 @@
 <script lang="ts">
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
-import CircleX from "@lucide/svelte/icons/circle-x";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
+import CircleX from "@lucide/svelte/icons/circle-x";
 import Clock from "@lucide/svelte/icons/clock";
 import Copy from "@lucide/svelte/icons/copy";
 import DollarSign from "@lucide/svelte/icons/dollar-sign";
 import FileText from "@lucide/svelte/icons/file-text";
 import FileUp from "@lucide/svelte/icons/file-up";
+import FileX from "@lucide/svelte/icons/file-x";
 import Gauge from "@lucide/svelte/icons/gauge";
 import Image from "@lucide/svelte/icons/image";
 import Lock from "@lucide/svelte/icons/lock";
@@ -75,17 +76,20 @@ const modalities = $derived(models.filter((m) => m.id === selectedModel)[0]?.mod
 const inputModalities = $derived.by(() => {
 	let types = [];
 	if (modalities.input.includes("image")) {
-		types.push("image/*");
+		types.push("image/png,image/jpeg,image/webp,image/heic,image/heif");
 	}
 	if (modalities.input.includes("audio")) {
-		types.push("audio/*");
+		types.push(
+			"audio/x-aac,audio/flac,audio/mp3,audio/m4a,audio/mpeg,audio/mpga,audio/mp4,audio/ogg,audio/pcm,audio/wav,audio/webm",
+		);
 	}
 	if (modalities.input.includes("video")) {
-		types.push("video/*");
+		types.push(
+			"video/x-flv,video/quicktime,video/mpeg,video/mpegs,video/mpg,video/mp4,video/webm,video/wmv,video/3gpp",
+		);
 	}
 	if (modalities.input.includes("file")) {
-		types.push("application/pdf");
-		types.push("text/plain");
+		types.push("application/pdf,text/plain");
 	}
 	return types.join(",");
 });
@@ -158,6 +162,10 @@ function handleDrop(e: DragEvent) {
 	const files = [...(fileList || []), ...(e.dataTransfer?.files || [])];
 
 	for (const file of files) {
+		if (!file.type || !inputModalities.includes(file.type)) {
+			toast.error("Unsupported file type");
+			continue;
+		}
 		dataTransfer.items.add(file);
 	}
 
@@ -202,8 +210,13 @@ $effect(() => {
 		<div
 			class="flex size-[80%] flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed text-muted-foreground"
 		>
-			<FileUp class="animate-bounce size-12" />
-			<span class="text-lg">Drop files here</span>
+			{#if inputModalities}
+				<FileUp class="animate-bounce size-12" />
+				<span class="text-lg">Drop files here</span>
+			{:else}
+				<FileX class="size-12" />
+				<span class="text-lg"> This model doesn't support file inputs </span>
+			{/if}
 		</div>
 	</div>
 {/if}

@@ -330,7 +330,7 @@ $effect(() => {
 		<InputGroup.Root
 			class="py-1 px-2 rounded-3xl bg-muted/85 backdrop-blur-md dark:bg-muted/85"
 		>
-			{#if fileList}
+			{#if fileList?.length}
 				<InputGroup.Addon align="block-start">
 					<ul class="flex gap-2">
 						{#each fileList as file}

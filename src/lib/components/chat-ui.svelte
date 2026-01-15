@@ -154,13 +154,9 @@ function handleDrop(e: DragEvent) {
 
 	const dataTransfer = new DataTransfer();
 
-	if (fileList) {
-		for (const file of fileList) {
-			dataTransfer.items.add(file);
-		}
-	}
+	const files = [...(fileList || []), ...(e.dataTransfer?.files || [])];
 
-	for (const file of e.dataTransfer?.files || []) {
+	for (const file of files) {
 		dataTransfer.items.add(file);
 	}
 

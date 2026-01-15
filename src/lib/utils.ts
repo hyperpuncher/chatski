@@ -1,5 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
+import { MediaQuery } from "svelte/reactivity";
 import { twMerge } from "tailwind-merge";
+
+const MOBILE_BREAKPOINT = 768;
+
+export const isMobile = new MediaQuery(`(max-width: ${MOBILE_BREAKPOINT}px)`, false);
 
 export const isMac = navigator.userAgent.includes("Mac");
 

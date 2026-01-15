@@ -15,7 +15,7 @@ import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
 import { getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
-import { isMac } from "$lib/utils";
+import { isMac, isMobile } from "$lib/utils";
 import { uuidv7 } from "uuidv7";
 
 // import eruda from "eruda";
@@ -83,10 +83,13 @@ function handleKeydown(e: KeyboardEvent) {
 <Sidebar.Provider bind:open={isSidebarOpen}>
 	<main class="w-full">
 		<header
-			class="flex fixed top-0 right-0 left-0 justify-between items-center p-4 w-full"
+			class="flex fixed top-0 right-0 left-0 z-10 justify-between items-center p-4 w-full"
 		>
 			<Settings />
-			<Sidebar.Trigger class={isSidebarOpen ? "-translate-x-64" : ""} />
+			<Sidebar.Trigger
+				variant={isMobile.current ? "secondary" : "ghost"}
+				class={isSidebarOpen ? "-translate-x-64" : ""}
+			/>
 		</header>
 
 		{#if config.isConfigured}

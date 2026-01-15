@@ -7,6 +7,7 @@ import * as Dialog from "$lib/components/ui/dialog";
 import { Input } from "$lib/components/ui/input";
 import { Label } from "$lib/components/ui/label";
 import { config } from "$lib/config.svelte";
+import { isMobile } from "$lib/utils";
 
 let input = $state("");
 let open = $state(false);
@@ -23,7 +24,12 @@ $effect(() => {
 
 <Dialog.Root bind:open>
 	<form>
-		<Dialog.Trigger class={buttonVariants({ variant: "ghost", size: "icon" })}>
+		<Dialog.Trigger
+			class={buttonVariants({
+				variant: isMobile.current ? "secondary" : "ghost",
+				size: "icon",
+			})}
+		>
 			<Settings />
 		</Dialog.Trigger>
 		<Dialog.Content class="sm:max-w-md">

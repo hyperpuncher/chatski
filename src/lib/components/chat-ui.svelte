@@ -210,7 +210,7 @@ $effect(() => {
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if chat.messages.length}
-		<ul class="px-4 mt-20 mb-32 space-y-10 w-full h-full sm:px-5" in:slide>
+		<ul class="px-2 mt-20 space-y-10 w-full h-full sm:px-5" in:slide>
 			{#each chat.messages as message, messageIndex (messageIndex)}
 				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}
@@ -230,13 +230,13 @@ $effect(() => {
 						{:else if part.type === "text"}
 							{#if message.role === "user"}
 								<p
-									class="py-1.5 px-3.5 max-w-full leading-7 rounded-2xl ms-auto w-fit rounded-tr-[3px] bg-primary text-primary-foreground sm:max-w-5/6"
+									class="py-1.5 px-3.5 max-w-full text-sm rounded-2xl sm:leading-7 ms-auto w-fit rounded-tr-[3px] bg-primary leading-6.5 text-primary-foreground sm:max-w-5/6"
 								>
 									{part.text}
 								</p>
 							{:else}
 								<Streamdown
-									class="leading-7.5"
+									class="leading-7 sm:leading-7.5"
 									content={part.text}
 									components={{ code: Code }}
 									baseTheme="shadcn"
@@ -246,7 +246,7 @@ $effect(() => {
 									theme={{
 										code: {
 											container: "bg-[#171717]",
-											pre: "bg-[#171717] text-base text-primary-foreground dark:text-foreground",
+											pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground",
 										},
 									}}
 								/>

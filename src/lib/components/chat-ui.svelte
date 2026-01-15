@@ -1,5 +1,6 @@
 <script lang="ts">
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
+import CircleX from "@lucide/svelte/icons/circle-x";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
 import Clock from "@lucide/svelte/icons/clock";
@@ -160,6 +161,16 @@ function handleDrop(e: DragEvent) {
 		dataTransfer.items.add(file);
 	}
 
+	fileList = dataTransfer.files;
+}
+
+function handleRemoveFile(file: File) {
+	const dataTransfer = new DataTransfer();
+	for (const f of fileList!) {
+		if (f !== file) {
+			dataTransfer.items.add(f);
+		}
+	}
 	fileList = dataTransfer.files;
 }
 
@@ -324,7 +335,12 @@ $effect(() => {
 					<ul class="flex gap-2">
 						{#each fileList as file}
 							<li>
-								<Button variant="outline" size="sm">
+								<Button
+									variant="outline"
+									size="sm"
+									class="relative group"
+									onclick={() => handleRemoveFile(file)}
+								>
 									{#if file.type.startsWith("image")}
 										<Image />
 									{:else if file.type.startsWith("audio")}
@@ -335,6 +351,10 @@ $effect(() => {
 										<FileText />
 									{/if}
 									<span>{collapseFilename(file.name)}</span>
+
+									<CircleX
+										class="absolute -top-1.5 -right-1.5 md:invisible group-hover:visible size-4.5 text-foreground"
+									/>
 								</Button>
 							</li>
 						{/each}

@@ -365,9 +365,10 @@ $effect(() => {
 			<InputGroup.Textarea
 				bind:ref={inputElement}
 				bind:value={input}
-				class="md:text-base"
+				class="max-h-36 md:text-base"
 				autofocus
 				placeholder="Generate slop..."
+				rows={1}
 				onkeydown={async (e) => {
 					if (e.key === "Enter" && !e.shiftKey && input.trim()) {
 						e.preventDefault();

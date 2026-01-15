@@ -9,6 +9,7 @@ RUN bun run build
 
 # Stage 2: Runtime
 FROM oven/bun:alpine
+LABEL org.opencontainers.image.source="https://github.com/hyperpuncher/chatski"
 WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/package.json ./

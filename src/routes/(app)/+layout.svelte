@@ -7,6 +7,7 @@ import { ModeWatcher } from "mode-watcher";
 import { ScrollState } from "runed";
 import { tick } from "svelte";
 import { uuidv7 } from "uuidv7";
+import { dev } from "$app/environment";
 import { goto } from "$app/navigation";
 import AppSidebar from "$lib/components/app-sidebar.svelte";
 import Settings from "$lib/components/settings.svelte";
@@ -94,6 +95,14 @@ function handleKeydown(e: KeyboardEvent) {
 
 		{#if config.isConfigured}
 			{@render children()}
+		{/if}
+
+		{#if dev}
+			<span
+				class="fixed top-5 py-1.5 px-3 font-mono text-xs text-black bg-amber-300 rounded-full left-15"
+			>
+				DEV
+			</span>
 		{/if}
 	</main>
 	<AppSidebar />

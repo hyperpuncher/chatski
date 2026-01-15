@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { getRequestEvent } from "$app/server";
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 
 export const auth = betterAuth({
 	user: {
@@ -11,8 +11,8 @@ export const auth = betterAuth({
 	},
 	socialProviders: {
 		github: {
-			clientId: GITHUB_CLIENT_ID,
-			clientSecret: GITHUB_CLIENT_SECRET,
+			clientId: env.GITHUB_CLIENT_ID,
+			clientSecret: env.GITHUB_CLIENT_SECRET,
 			scope: ["read:user", " user:email"],
 
 			getUserInfo: async ({ accessToken }) => {

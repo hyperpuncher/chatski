@@ -20,7 +20,7 @@ function isDigitKey(key: string) {
 function handleKeydown(e: KeyboardEvent) {
 	if (isDigitKey(e.key) && e.ctrlKey) {
 		e.preventDefault();
-		ctx.loadChat(chats[Number(e.key) - 1]);
+		ctx.loadChat(chats[Number(e.key) - 1]!);
 	}
 }
 </script>

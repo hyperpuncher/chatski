@@ -1,4 +1,5 @@
 <script lang="ts">
+import { Chat } from "@ai-sdk/svelte";
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
@@ -41,7 +42,7 @@ import { getModels } from "$lib/remote/openrouter.remote";
 import { localStorage } from "$lib/storage";
 import { cn, collapseFilename, isMac } from "$lib/utils";
 
-let { chat } = $props();
+let { chat }: { chat: Chat } = $props();
 
 const scroll = getScrollContext();
 

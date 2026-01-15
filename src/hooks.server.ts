@@ -5,8 +5,6 @@ import { building } from "$app/environment";
 import { env } from "$env/dynamic/private";
 import { auth } from "$lib/server/auth";
 
-const AUTH_ALLOWED_EMAILS = env.AUTH_ALLOWED_EMAILS.split(",");
-
 const authHandler: Handle = async ({ event, resolve }) => {
 	return svelteKitHandler({ event, resolve, auth, building });
 };
@@ -17,7 +15,8 @@ const sessionHandler: Handle = async ({ event, resolve }) => {
 	});
 
 	if (session) {
-		if (!AUTH_ALLOWED_EMAILS.includes(session.user.email)) {
+		const emails = env.AUTH_ALLOWED_EMAILS.split(",").map((e) => e.trim());
+		if (!emails.includes(session.user.email)) {
 			error(403, "Forbidden");
 		}
 		event.locals.session = session;

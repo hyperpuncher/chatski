@@ -6,4 +6,4 @@ RUN bun i
 RUN bun run build
 
 EXPOSE 3000
-CMD ["bun", "./build"]
+CMD ["bun", "run", "start"]

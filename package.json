@@ -7,6 +7,7 @@
 		"dev": "bun -b vite dev --host",
 		"build": "bun -b vite build",
 		"preview": "bun -b vite preview --host",
+		"start": "bun -b ./build",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

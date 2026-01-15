@@ -6,6 +6,7 @@ import { DefaultChatTransport } from "ai";
 import { ModeWatcher } from "mode-watcher";
 import { ScrollState } from "runed";
 import { tick } from "svelte";
+import { uuidv7 } from "uuidv7";
 import { goto } from "$app/navigation";
 import AppSidebar from "$lib/components/app-sidebar.svelte";
 import Settings from "$lib/components/settings.svelte";
@@ -16,7 +17,6 @@ import { type ChatContext, setChatContext, setScrollContext } from "$lib/context
 import { getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
 import { isMac, isMobile } from "$lib/utils";
-import { uuidv7 } from "uuidv7";
 
 // import eruda from "eruda";
 

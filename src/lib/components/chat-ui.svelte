@@ -215,7 +215,7 @@ $effect(() => {
 				<span class="text-lg">Drop files here</span>
 			{:else}
 				<FileX class="size-12" />
-				<span class="text-lg"> This model doesn't support file inputs </span>
+				<span class="text-lg">This model doesn't support file inputs</span>
 			{/if}
 		</div>
 	</div>

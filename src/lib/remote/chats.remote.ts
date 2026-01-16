@@ -33,10 +33,16 @@ export const getMessages = query(v.string(), async (chatId) => {
 export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 	const user = await requireAuth();
 	await redis.set(`chats:${user.userId}:${chatId}`, JSON.stringify(messages));
-	await redis.set(
-		`chat:title:${chatId}`,
-		messages.at(0)?.parts.at(-1)?.text.slice(0, 22).trim(),
-	);
+	if (!(await redis.exists(`chat:title:${chatId}`))) {
+		await redis.set(
+			`chat:title:${chatId}`,
+			messages
+				.at(0)
+				.parts.find((p: any) => p.type === "text")
+				?.text.slice(0, 22)
+				.trim(),
+		);
+	}
 	getChats().refresh();
 });
 

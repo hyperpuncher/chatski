@@ -74,7 +74,7 @@ function handleKeydown(e: KeyboardEvent) {
 						<Sidebar.MenuButton
 							class="truncate mask-r-from-65% mask-r-to-73% py-5 hover:mask-none
 							{isSelected
-								? 'bg-violet-300 mask-none hover:bg-violet-300 dark:text-primary-foreground dark:hover:text-primary-foreground'
+								? 'bg-violet-100 mask-none shadow-sm hover:bg-violet-100 dark:bg-violet-300 dark:text-primary-foreground dark:hover:text-primary-foreground'
 								: ''}"
 						>
 							{#snippet child({ props })}
@@ -84,7 +84,8 @@ function handleKeydown(e: KeyboardEvent) {
 							{/snippet}
 						</Sidebar.MenuButton>
 						<Button
-							class="absolute top-1/2 opacity-0 transition-none -translate-y-1/2 end-1 group-hover/menu-item:opacity-100"
+							class="absolute end-1 top-1/2 -translate-y-1/2 opacity-0 transition-none group-hover/menu-item:opacity-100 
+							{isSelected ? 'dark:text-primary-foreground' : ''}"
 							variant="ghost"
 							size="icon-sm"
 							onclick={() => deleteChat(chatId)}

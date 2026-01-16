@@ -36,14 +36,12 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { Spinner } from "$lib/components/ui/spinner";
-import { getScrollContext } from "$lib/context";
+import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { localStorage } from "$lib/storage";
-import type { MyChat } from "$lib/types";
 import { cn, collapseFilename, isMac } from "$lib/utils";
 
-let { chat }: { chat: MyChat } = $props();
-
+const ctx = getChatContext();
 const scroll = getScrollContext();
 
 let input = $state("");
@@ -58,12 +56,13 @@ let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
 let isModelsPopoverOpen = $state(false);
 let hoveredModel = $state("");
 let isStreaming = $derived(
-	chat.status !== "error" &&
-		chat.status !== "ready" &&
-		chat.lastMessage?.role === "user",
+	ctx.chat.status !== "error" &&
+		ctx.chat.status !== "ready" &&
+		ctx.chat.lastMessage?.role === "user",
 );
 let isThinking = $derived(
-	chat.status === "streaming" && chat.lastMessage?.parts.at(-1)?.type === "reasoning",
+	ctx.chat.status === "streaming" &&
+		ctx.chat.lastMessage?.parts.at(-1)?.type === "reasoning",
 );
 let isDragging = $state(false);
 
@@ -104,13 +103,13 @@ let reasoning = $state((await localStorage.get<string>("reasoning")) || "none");
 const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 
 async function handleSubmit() {
-	if (chat.status === "streaming") {
-		chat.stop();
+	if (ctx.chat.status === "streaming") {
+		ctx.chat.stop();
 	} else {
 		if (page.url.pathname === "/") {
-			await goto(`/chat/${chat.id}`, { replaceState: true });
+			await goto(`/chat/${ctx.chat.id}`, { replaceState: true });
 		}
-		chat.sendMessage({
+		ctx.chat.sendMessage({
 			text: input,
 			files: fileList,
 		});
@@ -188,8 +187,8 @@ afterNavigate(() => {
 });
 
 $effect(() => {
-	if (chat.error) {
-		toast.error(chat.error.message || "Something went wrong");
+	if (ctx.chat.error) {
+		toast.error(ctx.chat.error.message || "Something went wrong");
 	}
 });
 </script>
@@ -223,9 +222,9 @@ $effect(() => {
 {/if}
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
-	{#if chat.messages.length}
+	{#if ctx.chat.messages.length}
 		<ul class="px-2 mt-20 space-y-10 w-full h-full sm:px-5" in:slide>
-			{#each chat.messages as message, messageIndex (messageIndex)}
+			{#each ctx.chat.messages as message, messageIndex (messageIndex)}
 				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}
 						{#if part.type === "file"}
@@ -270,8 +269,8 @@ $effect(() => {
 
 					<div
 						class:ms-auto={message.role === "user"}
-						class:hidden={messageIndex === chat.messages.length - 1 &&
-							chat.status === "streaming"}
+						class:hidden={messageIndex === ctx.chat.messages.length - 1 &&
+							ctx.chat.status === "streaming"}
 						class="flex gap-2 items-center"
 					>
 						<Button
@@ -559,13 +558,14 @@ $effect(() => {
 					</Popover.Root>
 
 					<InputGroup.Button
-						variant={chat.status === "streaming" ? "destructive" : "default"}
+						variant={ctx.chat.status === "streaming" ? "destructive" : "default"}
 						class="ml-1 rounded-full"
 						size="icon-sm"
 						type="submit"
-						disabled={chat.status !== "streaming" && (!input.trim() || !selectedModel)}
+						disabled={ctx.chat.status !== "streaming" &&
+							(!input.trim() || !selectedModel)}
 					>
-						{#if chat.status === "streaming"}
+						{#if ctx.chat.status === "streaming"}
 							<Square />
 						{:else}
 							<ArrowUp />

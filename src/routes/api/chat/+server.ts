@@ -3,7 +3,6 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { RequestHandler } from "@sveltejs/kit";
 import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
 import { dev } from "$app/environment";
-import { saveChat } from "$lib/remote/chats.remote";
 import type { MyUIMessage } from "$lib/types";
 
 type Request = {
@@ -30,7 +29,7 @@ type OpenRouterMetadata = {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { messages, id, selectedModel, reasoning }: Request = await request.json();
+	const { messages, selectedModel, reasoning }: Request = await request.json();
 
 	const openrouter = createOpenRouter({
 		apiKey: request.headers.get("x-api-key") ?? undefined,
@@ -69,9 +68,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		},
 		originalMessages: messages,
-		onFinish: ({ messages }) => {
-			saveChat({ chatId: id, messages });
-		},
 	});
 };
 

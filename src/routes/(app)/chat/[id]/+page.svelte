@@ -14,4 +14,4 @@ $effect(() => {
 });
 </script>
 
-<ChatUi chat={ctx.chat} />
+<ChatUi />

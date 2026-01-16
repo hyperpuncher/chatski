@@ -15,7 +15,7 @@ import * as Sidebar from "$lib/components/ui/sidebar";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
 import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
-import { getMessages } from "$lib/remote/chats.remote";
+import { getMessages, saveChat } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
 import type { MyUIMessage } from "$lib/types";
 import { isMac, isMobile } from "$lib/utils";
@@ -33,14 +33,26 @@ const transport = new DefaultChatTransport({
 	}),
 });
 
+function createChat(id?: string, messages?: MyUIMessage[]) {
+	if (!id) {
+		id = uuidv7();
+	}
+	return new Chat<MyUIMessage>({
+		id,
+		transport,
+		messages,
+		onFinish: ({ messages }) => saveChat({ chatId: id, messages }),
+	});
+}
+
 const ctx = $state<ChatContext>({
-	chat: new Chat<MyUIMessage>({ id: uuidv7(), transport }),
+	chat: createChat(),
 	newChat: () => {
-		ctx.chat = new Chat<MyUIMessage>({ id: uuidv7(), transport });
+		ctx.chat = createChat();
 	},
 	loadChat: async (id: string) => {
 		const messages = (await getMessages(id)) ?? [];
-		ctx.chat = new Chat<MyUIMessage>({ id, messages, transport });
+		ctx.chat = createChat(id, messages);
 		await tick();
 		scrollCtx.scrollToBottom();
 	},

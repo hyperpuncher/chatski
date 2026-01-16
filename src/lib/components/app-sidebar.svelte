@@ -69,9 +69,13 @@ function handleKeydown(e: KeyboardEvent) {
 		<Sidebar.GroupContent>
 			<Sidebar.Menu class="gap-1">
 				{#each chats as chatId, i (chatId)}
+					{@const isSelected = chatId === ctx.chat.id}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton
-							class="truncate mask-r-from-65% mask-r-to-73% py-5 hover:mask-none"
+							class="truncate mask-r-from-65% mask-r-to-73% py-5 hover:mask-none
+							{isSelected
+								? 'bg-violet-300 mask-none hover:bg-violet-300 dark:text-primary-foreground dark:hover:text-primary-foreground'
+								: ''}"
 						>
 							{#snippet child({ props })}
 								<a href={`/chat/${chatId}`} {...props}>
@@ -87,7 +91,7 @@ function handleKeydown(e: KeyboardEvent) {
 						>
 							<Trash />
 						</Button>
-						{#if i < 9}
+						{#if i < 9 && !isSelected}
 							<Kbd.Root
 								class="hidden absolute top-1/2 tabular-nums -translate-y-1/2 sm:inline-flex end-1 group-hover/menu-item:opacity-0"
 							>

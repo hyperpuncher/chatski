@@ -8,6 +8,7 @@ export const getChats = query(async () => {
 	const keys = await redis.keys(`chats:${user.userId}:*`);
 	return keys
 		.map((key) => key.split(":").at(-1))
+		.filter((id) => id !== undefined)
 		.sort()
 		.reverse();
 });

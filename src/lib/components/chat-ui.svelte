@@ -1,5 +1,4 @@
 <script lang="ts">
-import { Chat } from "@ai-sdk/svelte";
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
@@ -40,9 +39,10 @@ import { Spinner } from "$lib/components/ui/spinner";
 import { getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
 import { localStorage } from "$lib/storage";
+import type { MyChat } from "$lib/types";
 import { cn, collapseFilename, isMac } from "$lib/utils";
 
-let { chat }: { chat: Chat } = $props();
+let { chat }: { chat: MyChat } = $props();
 
 const scroll = getScrollContext();
 
@@ -128,8 +128,8 @@ function handleKeydown(e: KeyboardEvent) {
 	}
 }
 
-function handleCopy(data: string) {
-	navigator.clipboard.writeText(data);
+function handleCopy(data: string | number) {
+	navigator.clipboard.writeText(String(data));
 	toast.success("Copied to clipboard");
 }
 
@@ -277,7 +277,10 @@ $effect(() => {
 						<Button
 							variant="ghost"
 							size="icon-sm"
-							onclick={() => handleCopy(message.parts.at(-1)?.text)}
+							onclick={() => {
+								const text = message.parts.find((p) => p.type === "text")?.text;
+								if (text) handleCopy(text);
+							}}
 						>
 							<Copy />
 						</Button>

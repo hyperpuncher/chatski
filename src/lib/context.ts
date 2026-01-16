@@ -1,9 +1,9 @@
-import type { Chat } from "@ai-sdk/svelte";
 import type { ScrollState } from "runed";
 import { createContext } from "svelte";
+import type { MyChat } from "$lib/types";
 
 export type ChatContext = {
-	chat: Chat;
+	chat: MyChat;
 	newChat: () => void;
 	loadChat: (id: string) => Promise<void>;
 };

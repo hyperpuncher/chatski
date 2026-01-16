@@ -1,20 +1,32 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { RequestHandler } from "@sveltejs/kit";
-import {
-	convertToModelMessages,
-	streamText,
-	type UIMessage,
-	wrapLanguageModel,
-} from "ai";
+import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
 import { dev } from "$app/environment";
 import { saveChat } from "$lib/remote/chats.remote";
+import type { MyUIMessage } from "$lib/types";
 
 type Request = {
-	messages: UIMessage[];
+	messages: MyUIMessage[];
 	id: string;
 	selectedModel: string;
 	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
+};
+
+type OpenRouterMetadata = {
+	usage: {
+		promptTokens: number;
+		promptTokensDetails: {
+			cachedTokens: number;
+		};
+		completionTokens: number;
+		completionTokensDetails: {
+			reasoningTokens: number;
+		};
+		cost: number;
+		totalTokens: number;
+	};
+	provider: string;
 };
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -47,12 +59,11 @@ export const POST: RequestHandler = async ({ request }) => {
 				start = performance.now();
 			}
 			if (part.type === "finish-step") {
-				const tokens = part.providerMetadata?.openrouter?.usage?.completionTokens;
+				const metadata = part.providerMetadata?.openrouter as OpenRouterMetadata;
+				const tokens = metadata.usage.completionTokens;
 				const time = roundToSignificant((performance.now() - start) / 1000);
 				const tps = Math.round(tokens / time);
-				const cost = roundToSignificant(
-					part.providerMetadata?.openrouter?.usage?.cost,
-				);
+				const cost = roundToSignificant(metadata.usage.cost);
 
 				return { tokens, time, tps, cost };
 			}

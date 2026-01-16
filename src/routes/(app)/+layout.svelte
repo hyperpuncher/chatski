@@ -17,11 +17,8 @@ import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
 import { getMessages } from "$lib/remote/chats.remote";
 import { localStorage } from "$lib/storage";
+import type { MyUIMessage } from "$lib/types";
 import { isMac, isMobile } from "$lib/utils";
-
-// import eruda from "eruda";
-
-// eruda.init();
 
 let { children } = $props();
 let isSidebarOpen = $state(false);
@@ -37,13 +34,13 @@ const transport = new DefaultChatTransport({
 });
 
 const ctx = $state<ChatContext>({
-	chat: new Chat({ id: uuidv7(), transport }),
+	chat: new Chat<MyUIMessage>({ id: uuidv7(), transport }),
 	newChat: () => {
-		ctx.chat = new Chat({ id: uuidv7(), transport });
+		ctx.chat = new Chat<MyUIMessage>({ id: uuidv7(), transport });
 	},
 	loadChat: async (id: string) => {
 		const messages = (await getMessages(id)) ?? [];
-		ctx.chat = new Chat({ id, messages, transport });
+		ctx.chat = new Chat<MyUIMessage>({ id, messages, transport });
 		await tick();
 		scrollCtx.scrollToBottom();
 	},

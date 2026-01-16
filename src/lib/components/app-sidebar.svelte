@@ -8,6 +8,7 @@ import * as Sidebar from "$lib/components/ui/sidebar";
 import { getChatContext } from "$lib/context";
 import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/remote/chats.remote";
 import { isMac } from "$lib/utils";
+import { goto } from "$app/navigation";
 
 const ctx = getChatContext();
 
@@ -61,7 +62,11 @@ function handleKeydown(e: KeyboardEvent) {
 				class="ms-auto"
 				variant="ghost"
 				size="xs"
-				onclick={() => deleteAllChats()}
+				onclick={() => {
+					deleteAllChats();
+					ctx.newChat();
+					goto("/");
+				}}
 			>
 				Clear
 			</Button>

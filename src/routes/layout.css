@@ -117,4 +117,11 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+	::selection {
+		background-color: var(--color-violet-300);
+		color: var(--foreground);
+	}
+	.dark ::selection {
+		color: var(--primary-foreground);
+	}
 }

@@ -28,7 +28,7 @@ export const getModels = query(async () => {
 
 	redis.setex(
 		"openrouter:models",
-		60 * 60 * 24, // 1 day
+		60 * 60 * 4, // 4 hours
 		JSON.stringify(json.data),
 	);
 

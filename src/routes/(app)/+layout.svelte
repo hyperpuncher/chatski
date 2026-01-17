@@ -70,6 +70,7 @@ const scrollCtx = new ScrollState({
 
 setChatContext(ctx);
 setScrollContext(scrollCtx);
+await config.init();
 
 function handleKeydown(e: KeyboardEvent) {
 	if (e.key === "o" && (isMac ? e.metaKey : e.ctrlKey)) {

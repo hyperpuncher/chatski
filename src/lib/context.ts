@@ -4,6 +4,7 @@ import type { MyChat } from "$lib/types";
 
 export type ChatContext = {
 	chat: MyChat;
+	isLoading: boolean;
 	newChat: () => void;
 	loadChat: (id: string) => Promise<void>;
 };

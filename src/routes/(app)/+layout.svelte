@@ -47,14 +47,19 @@ function createChat(id?: string, messages?: MyUIMessage[]) {
 
 const ctx = $state<ChatContext>({
 	chat: createChat(),
+	isLoading: false,
 	newChat: () => {
 		ctx.chat = createChat();
 	},
 	loadChat: async (id: string) => {
+		ctx.isLoading = true;
 		const messages = (await getMessages(id)) ?? [];
 		ctx.chat = createChat(id, messages);
 		await tick();
+		ctx.isLoading = false;
+		scrollCtx.behavior = "auto";
 		scrollCtx.scrollToBottom();
+		scrollCtx.behavior = "smooth";
 	},
 });
 
@@ -65,7 +70,6 @@ const scrollCtx = new ScrollState({
 
 setChatContext(ctx);
 setScrollContext(scrollCtx);
-await config.init();
 
 function handleKeydown(e: KeyboardEvent) {
 	if (e.key === "o" && (isMac ? e.metaKey : e.ctrlKey)) {

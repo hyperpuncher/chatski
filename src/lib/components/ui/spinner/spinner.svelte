@@ -1,12 +1,12 @@
 <script lang="ts">
-import Loader2Icon from "@lucide/svelte/icons/loader-2";
+import Loader from "@lucide/svelte/icons/loader";
 import type { ComponentProps } from "svelte";
 import { cn } from "$lib/utils.js";
 
-let { class: className, ...restProps }: ComponentProps<typeof Loader2Icon> = $props();
+let { class: className, ...restProps }: ComponentProps<typeof Loader> = $props();
 </script>
 
-<Loader2Icon
+<Loader
 	role="status"
 	aria-label="Loading"
 	class={cn("size-4 animate-spin", className)}

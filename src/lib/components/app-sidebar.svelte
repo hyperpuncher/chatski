@@ -2,13 +2,15 @@
 import MessageSquarePlus from "@lucide/svelte/icons/message-square-plus";
 import MessagesSquare from "@lucide/svelte/icons/messages-square";
 import Trash from "@lucide/svelte/icons/trash";
+import { goto } from "$app/navigation";
+import { page } from "$app/state";
 import { Button } from "$lib/components/ui/button";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Sidebar from "$lib/components/ui/sidebar";
+import { Spinner } from "$lib/components/ui/spinner";
 import { getChatContext } from "$lib/context";
 import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/remote/chats.remote";
 import { isMac } from "$lib/utils";
-import { goto } from "$app/navigation";
 
 const ctx = getChatContext();
 
@@ -21,7 +23,7 @@ function isDigitKey(key: string) {
 function handleKeydown(e: KeyboardEvent) {
 	if (isDigitKey(e.key) && e.ctrlKey) {
 		e.preventDefault();
-		ctx.loadChat(chats[Number(e.key) - 1]!);
+		goto(`/chat/${chats[Number(e.key) - 1]}`);
 	}
 }
 </script>
@@ -74,7 +76,7 @@ function handleKeydown(e: KeyboardEvent) {
 		<Sidebar.GroupContent>
 			<Sidebar.Menu class="gap-1">
 				{#each chats as chatId, i (chatId)}
-					{@const isSelected = chatId === ctx.chat.id}
+					{@const isSelected = chatId === page.params.id}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton
 							class="truncate mask-r-from-65% mask-r-to-73% py-5 hover:mask-none
@@ -88,15 +90,22 @@ function handleKeydown(e: KeyboardEvent) {
 								</a>
 							{/snippet}
 						</Sidebar.MenuButton>
+
 						<Button
 							class="absolute end-1 top-1/2 -translate-y-1/2 opacity-0 transition-none group-hover/menu-item:opacity-100 
-							{isSelected ? 'dark:text-primary-foreground' : ''}"
+							{isSelected ? 'dark:text-primary-foreground' : ''}
+							{ctx.isLoading ? 'opacity-100' : ''}"
 							variant="ghost"
 							size="icon-sm"
 							onclick={() => deleteChat(chatId)}
 						>
-							<Trash />
+							{#if ctx.isLoading}
+								<Spinner />
+							{:else}
+								<Trash />
+							{/if}
 						</Button>
+
 						{#if i < 9 && !isSelected}
 							<Kbd.Root
 								class="hidden absolute top-1/2 tabular-nums -translate-y-1/2 sm:inline-flex end-1 group-hover/menu-item:opacity-0"

@@ -94,7 +94,7 @@ function handleKeydown(e: KeyboardEvent) {
 						<Button
 							class="absolute end-1 top-1/2 -translate-y-1/2 opacity-0 transition-none group-hover/menu-item:opacity-100 
 							{isSelected ? 'dark:text-primary-foreground' : ''}
-							{ctx.isLoading ? 'opacity-100' : ''}"
+							{ctx.isLoading && isSelected ? 'opacity-100' : ''}"
 							variant="ghost"
 							size="icon-sm"
 							onclick={() => deleteChat(chatId)}

@@ -3,13 +3,14 @@ import { ModeWatcher } from "mode-watcher";
 import favicon from "$lib/assets/favicon.svg";
 import "./layout.css";
 import { pwaInfo } from "virtual:pwa-info";
+import { dev } from "$app/environment";
 
 let { children } = $props();
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon}>
-	<title>chatski</title>
+	<title>{dev ? "chatski-dev" : "chatski"}</title>
 	<meta name="description" content="chatski with your slop generators">
 	<meta property="og:title" content="chatski">
 	<meta property="og:description" content="chatski with your slop generators">

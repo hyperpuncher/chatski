@@ -1,9 +1,6 @@
 <script lang="ts">
-import favicon from "$lib/assets/favicon.svg";
-import "../layout.css";
 import { Chat } from "@ai-sdk/svelte";
 import { DefaultChatTransport } from "ai";
-import { ModeWatcher } from "mode-watcher";
 import { ScrollState } from "runed";
 import { tick } from "svelte";
 import { uuidv7 } from "uuidv7";
@@ -81,17 +78,7 @@ function handleKeydown(e: KeyboardEvent) {
 }
 </script>
 
-<svelte:head>
-	<link rel="icon" href={favicon}>
-	<title>chatski</title>
-	<meta property="og:title" content="chatski">
-	<meta property="og:description" content="Chatski with your slop generators">
-	<meta property="og:type" content="website">
-</svelte:head>
-
 <svelte:window onkeydown={handleKeydown} />
-
-<ModeWatcher />
 
 <Toaster richColors position="top-center" />
 

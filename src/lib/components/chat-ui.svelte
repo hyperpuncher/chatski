@@ -125,6 +125,24 @@ function handleCopy(data: string | number) {
 	toast.success("Copied to clipboard");
 }
 
+function handlePaste(e: ClipboardEvent) {
+	const files = e.clipboardData?.files;
+	if (!files?.length) return;
+
+	e.preventDefault();
+	const dataTransfer = new DataTransfer();
+
+	for (const file of [...(fileList || []), ...files]) {
+		if (!file.type || !inputModalities.includes(file.type)) {
+			toast.error("Unsupported file type");
+			continue;
+		}
+		dataTransfer.items.add(file);
+	}
+
+	fileList = dataTransfer.files;
+}
+
 function handleFavorite(model: string) {
 	if (favorites.has(model)) {
 		favorites.delete(model);
@@ -194,6 +212,7 @@ $effect(() => {
 	}}
 	ondragleave={() => (isDragging = false)}
 	ondrop={handleDrop}
+	onpaste={handlePaste}
 />
 
 {#if isDragging}

@@ -3,6 +3,7 @@ import { localStorage } from "./storage";
 type Settings = {
 	apiKey: string;
 	defaultModel: string;
+	selectedModel: string;
 	favorites: string[];
 	labs: string[];
 	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
@@ -12,6 +13,7 @@ type Settings = {
 const defaultSettings: Settings = {
 	apiKey: "",
 	defaultModel: "moonshotai/kimi-k2-0905",
+	selectedModel: "moonshotai/kimi-k2-0905",
 	favorites: ["moonshotai/kimi-k2-0905"],
 	labs: [
 		"anthropic",

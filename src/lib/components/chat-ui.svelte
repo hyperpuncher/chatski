@@ -46,7 +46,6 @@ const scroll = getScrollContext();
 let input = $state("");
 let inputElement = $state<HTMLTextAreaElement | null>(null);
 let fileList = $state<FileList>();
-let selectedModel = $state(config.settings.defaultModel);
 let hoveredModel = $state("");
 let isModelsPopoverOpen = $state(false);
 let isStreaming = $derived(
@@ -67,7 +66,9 @@ const modelsList = $derived([
 	...models.filter((m) => !favorites.has(m.id)).map((m) => m.id),
 ]);
 
-const modalities = $derived(models.filter((m) => m.id === selectedModel)[0]?.modalities);
+const modalities = $derived(
+	models.filter((m) => m.id === config.settings.selectedModel)[0]?.modalities,
+);
 const inputModalities = $derived.by(() => {
 	let types = [];
 	if (modalities.input.includes("image")) {
@@ -90,7 +91,8 @@ const inputModalities = $derived.by(() => {
 });
 
 const supportedParameters = $derived(
-	selectedModel && models.find((m) => m.id === selectedModel)?.supportedParameters,
+	config.settings.selectedModel &&
+		models.find((m) => m.id === config.settings.selectedModel)?.supportedParameters,
 );
 
 const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
@@ -157,7 +159,7 @@ function handleDefaultModel(model: string) {
 	if (config.settings.defaultModel === model) {
 		config.settings.defaultModel = "";
 	} else {
-		selectedModel = model;
+		config.settings.selectedModel = model;
 		config.settings.defaultModel = model;
 	}
 	config.save();
@@ -406,7 +408,7 @@ $effect(() => {
 			/>
 
 			<InputGroup.Addon align="block-end">
-				{#if selectedModel}
+				{#if config.settings.selectedModel}
 					<InputGroup.Button
 						variant="outline"
 						class="relative rounded-full"
@@ -490,9 +492,9 @@ $effect(() => {
 						>
 							<Bot />
 
-							{#if selectedModel}
+							{#if config.settings.selectedModel}
 								<span class="truncate"
-									>{selectedModel.split("/")[1]}</span
+									>{config.settings.selectedModel.split("/")[1]}</span
 								>
 							{:else}
 								<span class="truncate">Select model</span>
@@ -516,8 +518,9 @@ $effect(() => {
 												class="flex gap-2 justify-between group"
 												value={model}
 												onSelect={() => {
-													selectedModel = model;
+													config.settings.selectedModel = model;
 													isModelsPopoverOpen = false;
+													config.save();
 												}}
 												onmouseenter={() => (hoveredModel = model)}
 												onmouseleave={() => (hoveredModel = "")}
@@ -576,7 +579,7 @@ $effect(() => {
 						size="icon-sm"
 						type="submit"
 						disabled={ctx.chat.status !== "streaming" &&
-							(!input.trim() || !selectedModel)}
+							(!input.trim() || !config.settings.selectedModel)}
 					>
 						{#if ctx.chat.status === "streaming"}
 							<Square />

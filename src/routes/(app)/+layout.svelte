@@ -13,7 +13,6 @@ import { Toaster } from "$lib/components/ui/sonner/index.js";
 import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
 import { getMessages, saveChat } from "$lib/remote/chats.remote";
-import { localStorage } from "$lib/storage";
 import type { MyUIMessage } from "$lib/types";
 import { isMac, isMobile } from "$lib/utils";
 
@@ -25,8 +24,8 @@ const transport = new DefaultChatTransport({
 		"x-api-key": `${config.settings.apiKey}`,
 	}),
 	body: async () => ({
-		selectedModel: await localStorage.get<string>("selectedModel"),
-		reasoning: await localStorage.get<string>("reasoning"),
+		selectedModel: config.settings.selectedModel,
+		reasoning: config.settings.reasoning,
 	}),
 });
 

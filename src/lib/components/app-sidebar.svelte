@@ -83,12 +83,9 @@ function handleKeydown(e: KeyboardEvent) {
 							{isSelected
 								? 'bg-violet-100 mask-none shadow-sm hover:bg-violet-100 dark:bg-violet-300 dark:text-primary-foreground dark:hover:text-primary-foreground'
 								: ''}"
+							onclick={() => goto(`/chat/${chatId}`)}
 						>
-							{#snippet child({ props })}
-								<a href={`/chat/${chatId}`} {...props}>
-									{await getTitle(chatId)}
-								</a>
-							{/snippet}
+							{await getTitle(chatId)}
 						</Sidebar.MenuButton>
 
 						<Button

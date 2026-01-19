@@ -21,7 +21,6 @@ import Video from "@lucide/svelte/icons/video";
 import WholeWord from "@lucide/svelte/icons/whole-word";
 import dracula from "@shikijs/themes/dracula";
 import { tick } from "svelte";
-import { SvelteSet } from "svelte/reactivity";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
 import { Streamdown } from "svelte-streamdown";
@@ -36,9 +35,9 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { Spinner } from "$lib/components/ui/spinner";
+import { config } from "$lib/config.svelte";
 import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
-import { localStorage } from "$lib/storage";
 import { cn, collapseFilename, isMac } from "$lib/utils";
 
 const ctx = getChatContext();
@@ -47,14 +46,9 @@ const scroll = getScrollContext();
 let input = $state("");
 let inputElement = $state<HTMLTextAreaElement | null>(null);
 let fileList = $state<FileList>();
-let defaultModel = $state(await localStorage.get<string>("defaultModel"));
-let selectedModel = $state(
-	(await localStorage.get<string>("selectedModel")) ??
-		(defaultModel || "moonshotai/kimi-k2-0905"),
-);
-let favorites = new SvelteSet(await localStorage.get<Set<string>>("favorites"));
-let isModelsPopoverOpen = $state(false);
+let selectedModel = $state(config.settings.defaultModel);
 let hoveredModel = $state("");
+let isModelsPopoverOpen = $state(false);
 let isStreaming = $derived(
 	ctx.chat.status !== "error" &&
 		ctx.chat.status !== "ready" &&
@@ -66,7 +60,8 @@ let isThinking = $derived(
 );
 let isDragging = $state(false);
 
-const models = $derived(await getModels());
+const favorites = $derived(new Set(config.settings.favorites));
+const models = $derived(await getModels(config.settings.labs));
 const modelsList = $derived([
 	...favorites,
 	...models.filter((m) => !favorites.has(m.id)).map((m) => m.id),
@@ -97,8 +92,6 @@ const inputModalities = $derived.by(() => {
 const supportedParameters = $derived(
 	selectedModel && models.find((m) => m.id === selectedModel)?.supportedParameters,
 );
-
-let reasoning = $state((await localStorage.get<string>("reasoning")) || "none");
 
 const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 
@@ -138,18 +131,18 @@ function handleFavorite(model: string) {
 	} else {
 		favorites.add(model);
 	}
-	localStorage.set("favorites", [...favorites].sort());
+	config.settings.favorites = [...favorites].sort();
+	config.save();
 }
 
 function handleDefaultModel(model: string) {
-	if (defaultModel === model) {
-		defaultModel = "";
-		localStorage.remove("defaultModel");
+	if (config.settings.defaultModel === model) {
+		config.settings.defaultModel = "";
 	} else {
 		selectedModel = model;
-		defaultModel = model;
-		localStorage.set("defaultModel", defaultModel);
+		config.settings.defaultModel = model;
 	}
+	config.save();
 }
 
 function handleDrop(e: DragEvent) {
@@ -436,7 +429,9 @@ $effect(() => {
 								{#snippet child({ props })}
 									<Button {...props} variant="ghost" size="icon-sm">
 										<Brain
-											class={reasoning === "none" ? "" : "text-violet-400"}
+											class={config.settings.reasoning === "none"
+												? ""
+												: "text-violet-400"}
 										/>
 									</Button>
 								{/snippet}
@@ -444,8 +439,8 @@ $effect(() => {
 							<DropdownMenu.Content>
 								<DropdownMenu.Group>
 									<DropdownMenu.RadioGroup
-										bind:value={reasoning}
-										onValueChange={(v) => localStorage.set("reasoning", v)}
+										bind:value={config.settings.reasoning}
+										onValueChange={() => config.save()}
 									>
 										{#each reasoningOptions as option}
 											<DropdownMenu.RadioItem
@@ -496,14 +491,13 @@ $effect(() => {
 									<Command.Group>
 										{#each modelsList as model (model)}
 											{@const isFavorite = favorites.has(model)}
-											{@const isDefault = defaultModel === model}
+											{@const isDefault = config.settings.defaultModel === model}
 											{@const isHovered = hoveredModel === model}
 											<Command.Item
 												class="flex gap-2 justify-between group"
 												value={model}
 												onSelect={() => {
 													selectedModel = model;
-													localStorage.set("selectedModel", model);
 													isModelsPopoverOpen = false;
 												}}
 												onmouseenter={() => (hoveredModel = model)}

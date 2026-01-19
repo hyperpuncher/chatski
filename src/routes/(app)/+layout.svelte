@@ -22,7 +22,7 @@ let isSidebarOpen = $state(false);
 
 const transport = new DefaultChatTransport({
 	headers: async () => ({
-		"x-api-key": `${config.apiKey}`,
+		"x-api-key": `${config.settings.apiKey}`,
 	}),
 	body: async () => ({
 		selectedModel: await localStorage.get<string>("selectedModel"),
@@ -67,7 +67,6 @@ const scrollCtx = new ScrollState({
 
 setChatContext(ctx);
 setScrollContext(scrollCtx);
-await config.init();
 
 function handleKeydown(e: KeyboardEvent) {
 	if (e.key === "o" && (isMac ? e.metaKey : e.ctrlKey)) {
@@ -94,7 +93,7 @@ function handleKeydown(e: KeyboardEvent) {
 			/>
 		</header>
 
-		{#if config.isConfigured}
+		{#if config.isInitialized}
 			{@render children()}
 		{/if}
 

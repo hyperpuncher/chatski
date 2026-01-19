@@ -1,87 +1,88 @@
 <script lang="ts">
 import Settings from "@lucide/svelte/icons/settings";
-import SquareArrowOutUpRight from "@lucide/svelte/icons/square-arrow-out-up-right";
-import Trash from "@lucide/svelte/icons/trash";
 import { Button, buttonVariants } from "$lib/components/ui/button";
 import * as Dialog from "$lib/components/ui/dialog";
+import * as Field from "$lib/components/ui/field";
 import { Input } from "$lib/components/ui/input";
 import { Label } from "$lib/components/ui/label";
+import * as Select from "$lib/components/ui/select";
 import { config } from "$lib/config.svelte";
+import { getLabs } from "$lib/remote/openrouter.remote";
 import { isMobile } from "$lib/utils";
 
-let input = $state("");
-let open = $state(false);
+let open = $state(!config.settings.apiKey);
 
-async function handleSubmit() {
-	config.save(input);
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	config.save();
 	open = false;
 }
-
-$effect(() => {
-	open = !config.isConfigured;
-});
 </script>
 
 <Dialog.Root bind:open>
-	<form>
-		<Dialog.Trigger
-			class={buttonVariants({
-				variant: isMobile.current ? "secondary" : "ghost",
-				size: "icon",
-			})}
-		>
-			<Settings />
-		</Dialog.Trigger>
-		<Dialog.Content class="sm:max-w-md">
-			<Dialog.Header>
-				<Dialog.Title>Settings</Dialog.Title>
-			</Dialog.Header>
+	<Dialog.Trigger
+		class={buttonVariants({
+			variant: isMobile.current ? "secondary" : "ghost",
+			size: "icon",
+		})}
+	>
+		<Settings />
+	</Dialog.Trigger>
 
-			<div class="grid gap-4">
-				<div class="grid gap-2">
-					<Label>
-						OpenRouter API Key
-						<Button
-							class="text-muted-foreground"
-							variant="ghost"
-							size="icon-sm"
-							href="https://openrouter.ai/settings/keys"
-							target="_blank"
-						>
-							<SquareArrowOutUpRight />
-						</Button>
-					</Label>
-					<div class="flex gap-2 items-center">
+	<Dialog.Content class="sm:max-w-md">
+		<Dialog.Header>
+			<Dialog.Title>Settings</Dialog.Title>
+		</Dialog.Header>
+
+		<form onsubmit={handleSubmit}>
+			<Field.Set>
+				<Field.Group>
+					<Field.Field>
+						<Field.Label>OpenRouter API Key</Field.Label>
 						<Input
 							type="password"
-							bind:value={input}
+							bind:value={config.settings.apiKey}
+							required
 							name="apiKey"
-							placeholder="sk-or-*******************************************************************"
-							onkeydown={async (e) => {
-								if (e.key === "Enter") {
-									e.preventDefault();
-									await handleSubmit();
-								}
-							}}
+							placeholder="sk-or-***********************************************"
 						/>
-						<Button
-							variant="destructive"
-							size="icon-sm"
-							onclick={() => config.clear()}
-							hidden={!config.apiKey}
-						>
-							<Trash />
-						</Button>
-					</div>
-				</div>
-			</div>
+						<Field.Description>
+							You can get your API key
+							<a href="https://openrouter.ai/settings/keys" target="_blank"
+								>here</a
+							>.
+						</Field.Description>
+					</Field.Field>
+				</Field.Group>
 
-			<Dialog.Footer>
+				<Field.Group>
+					<Field.Field>
+						<Field.Label>Select Labs</Field.Label>
+						<Select.Root bind:value={config.settings.labs}>
+							<Select.Trigger class="w-full">
+								<Label class="truncate">
+									{config.settings.labs.join(", ")}
+								</Label>
+							</Select.Trigger>
+							<Select.Content class="overflow-y-scroll max-h-64">
+								{#each await getLabs() as lab}
+									<Select.Item value={lab}>{lab}</Select.Item>
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					</Field.Field>
+				</Field.Group>
+			</Field.Set>
+
+			<div class="flex flex-col-reverse gap-2 mt-4 sm:flex-row sm:justify-end">
+				<Button class="me-auto" variant="destructive" onclick={config.clear}>
+					Reset
+				</Button>
 				<Dialog.Close class={buttonVariants({ variant: "outline" })}>
 					Cancel
 				</Dialog.Close>
-				<Button type="submit" onclick={handleSubmit}>Save settings</Button>
-			</Dialog.Footer>
-		</Dialog.Content>
-	</form>
+				<Button type="submit">Save settings</Button>
+			</div>
+		</form>
+	</Dialog.Content>
 </Dialog.Root>

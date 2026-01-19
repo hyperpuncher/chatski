@@ -1,23 +1,12 @@
 import { redis } from "bun";
+import * as v from "valibot";
 import { query } from "$app/server";
 import { env } from "$env/dynamic/private";
 
-const labs = new Set([
-	"anthropic",
-	"deepseek",
-	"google",
-	"minimax",
-	"moonshotai",
-	"openai",
-	"x-ai",
-	"xiaomi",
-	"z-ai",
-]);
-
-export const getModels = query(async () => {
-	const cached = await redis.get("openrouter:models");
+export const getModels = query(v.array(v.string()), async (labs) => {
+	const cached = await redis.get("openrouter:data");
 	if (cached) {
-		return parseModels(JSON.parse(cached));
+		return parseModels(JSON.parse(cached), labs);
 	}
 
 	const res = await fetch("https://openrouter.ai/api/v1/models", {
@@ -27,17 +16,40 @@ export const getModels = query(async () => {
 	const json = await res.json();
 
 	redis.setex(
-		"openrouter:models",
+		"openrouter:data",
 		60 * 60 * 4, // 4 hours
 		JSON.stringify(json.data),
 	);
 
-	return parseModels(json.data);
+	return parseModels(json.data, labs);
 });
 
-function parseModels(models: string[]) {
-	return models
-		.filter((model: any) => labs.has(model.id.split("/")[0]))
+export const getLabs = query(async () => {
+	const cached = await redis.get("openrouter:data");
+	if (cached) {
+		return parseLabs(JSON.parse(cached));
+	}
+
+	const res = await fetch("https://openrouter.ai/api/v1/models", {
+		headers: { Authorization: `Bearer ${env.OPENROUTER_API_KEY}` },
+	});
+
+	const json = await res.json();
+
+	redis.setex(
+		"openrouter:data",
+		60 * 60 * 4, // 4 hours
+		JSON.stringify(json.data),
+	);
+
+	return parseLabs(json.data);
+});
+
+function parseModels(data: string[], labs: string[]) {
+	const labsSet = new Set(labs);
+
+	return data
+		.filter((model: any) => labsSet.has(model.id.split("/")[0]))
 		.map((model: any) => ({
 			id: model.id,
 			name: model.name,
@@ -48,4 +60,8 @@ function parseModels(models: string[]) {
 			supportedParameters: model.supported_parameters,
 		}))
 		.sort((a, b) => a.id.localeCompare(b.id));
+}
+
+function parseLabs(data: string[]) {
+	return new Set(data.map((lab: any) => lab.id.split("/")[0]).sort());
 }

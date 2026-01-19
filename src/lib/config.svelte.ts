@@ -1,22 +1,57 @@
 import { localStorage } from "./storage";
 
-class Config {
-	apiKey = $state<string | null>(null);
-	isConfigured = $derived(!!this.apiKey);
+type Settings = {
+	apiKey: string;
+	defaultModel: string;
+	favorites: string[];
+	labs: string[];
+	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
+	sidebarSide: "left" | "right";
+};
+
+const defaultSettings: Settings = {
+	apiKey: "",
+	defaultModel: "moonshotai/kimi-k2-0905",
+	favorites: ["moonshotai/kimi-k2-0905"],
+	labs: [
+		"anthropic",
+		"deepseek",
+		"google",
+		"minimax",
+		"moonshotai",
+		"openai",
+		"x-ai",
+		"xiaomi",
+		"z-ai",
+	],
+	reasoning: "none",
+	sidebarSide: "right",
+};
+
+class ConfigStore {
+	settings = $state<Settings>(defaultSettings);
+	isInitialized = $state(false);
 
 	init = async () => {
-		this.apiKey = await localStorage.get<string>("apiKey");
+		const saved = await localStorage.get<Partial<Settings>>("config");
+		if (!saved) return;
+		this.settings = {
+			...defaultSettings,
+			...saved,
+		};
+		this.isInitialized = true;
 	};
 
-	save = async (key: string) => {
-		this.apiKey = key;
-		await localStorage.set("apiKey", this.apiKey);
+	save = async () => {
+		await localStorage.set("config", this.settings);
+		this.isInitialized = true;
 	};
 
 	clear = async () => {
-		this.apiKey = "";
-		await localStorage.remove("apiKey");
+		this.settings = defaultSettings;
+		await localStorage.remove("config");
+		this.isInitialized = false;
 	};
 }
 
-export const config = new Config();
+export const config = new ConfigStore();

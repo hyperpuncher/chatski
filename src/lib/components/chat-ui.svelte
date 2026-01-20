@@ -27,6 +27,7 @@ import { Streamdown } from "svelte-streamdown";
 import Code from "svelte-streamdown/code";
 import { afterNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
+import FileIcon from "$lib/components/file-icon.svelte";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
 import * as Command from "$lib/components/ui/command/index.js";
@@ -89,6 +90,12 @@ const inputModalities = $derived.by(() => {
 	}
 	return types.join(",");
 });
+const modalityIcons = [
+	{ icon: FileText, key: "file" },
+	{ icon: Image, key: "image" },
+	{ icon: Music, key: "audio" },
+	{ icon: Video, key: "video" },
+] as const;
 
 const supportedParameters = $derived(
 	config.settings.selectedModel &&
@@ -243,15 +250,7 @@ $effect(() => {
 					{#each message.parts as part, partIndex (partIndex)}
 						{#if part.type === "file"}
 							<Button variant="outline" size="sm" class="ms-auto">
-								{#if part.type.startsWith("image")}
-									<Image />
-								{:else if part.type.startsWith("audio")}
-									<Music />
-								{:else if part.type.startsWith("video")}
-									<Video />
-								{:else}
-									<FileText />
-								{/if}
+								<FileIcon type={part.type} />
 								<span>{part.filename}</span>
 							</Button>
 						{:else if part.type === "text"}
@@ -371,15 +370,7 @@ $effect(() => {
 									class="relative group"
 									onclick={() => handleRemoveFile(file)}
 								>
-									{#if file.type.startsWith("image")}
-										<Image />
-									{:else if file.type.startsWith("audio")}
-										<Music />
-									{:else if file.type.startsWith("video")}
-										<Video />
-									{:else}
-										<FileText />
-									{/if}
+									<FileIcon type={file.type} />
 									<span>{collapseFilename(file.name)}</span>
 
 									<CircleX
@@ -428,18 +419,11 @@ $effect(() => {
 					</InputGroup.Button>
 
 					<div class="flex gap-2">
-						<FileText
-							class="size-4 {modalities.input.includes('file') ? 'text-violet-400' : ''}"
-						/>
-						<Image
-							class="size-4 {modalities.input.includes('image') ? 'text-violet-400' : ''}"
-						/>
-						<Music
-							class="size-4 {modalities.input.includes('audio') ? 'text-violet-400' : ''}"
-						/>
-						<Video
-							class="size-4 {modalities.input.includes('video') ? 'text-violet-400' : ''}"
-						/>
+						{#each modalityIcons as { icon: Icon, key }}
+							<Icon
+								class="size-4 {modalities.input.includes(key) ? 'text-violet-400' : ''}"
+							/>
+						{/each}
 					</div>
 				{/if}
 

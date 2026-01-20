@@ -15,6 +15,7 @@ import Lock from "@lucide/svelte/icons/lock";
 import LockOpen from "@lucide/svelte/icons/lock-open";
 import Music from "@lucide/svelte/icons/music";
 import Paperclip from "@lucide/svelte/icons/paperclip";
+import RefreshCcw from "@lucide/svelte/icons/refresh-ccw";
 import Square from "@lucide/svelte/icons/square";
 import Star from "@lucide/svelte/icons/star";
 import Video from "@lucide/svelte/icons/video";
@@ -291,7 +292,7 @@ $effect(() => {
 					<div
 						class:ms-auto={isUser}
 						class:hidden={isLastMessage && isStreaming}
-						class="flex gap-2 items-center"
+						class="flex gap-1 items-center"
 					>
 						<Button
 							variant="ghost"
@@ -305,6 +306,14 @@ $effect(() => {
 						</Button>
 
 						{#if isAssistant && message.metadata}
+							<Button
+								variant="ghost"
+								size="icon-sm"
+								onclick={() => ctx.chat.regenerate({ messageId: message.id })}
+							>
+								<RefreshCcw />
+							</Button>
+
 							{@const { tokens, cost, tps, time } = message.metadata}
 							<div class="text-muted-foreground">
 								<Button

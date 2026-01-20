@@ -244,7 +244,7 @@ $effect(() => {
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if ctx.chat.messages.length}
-		<ul class="px-2 mt-20 space-y-10 w-full h-full sm:px-5" in:slide>
+		<ul class="px-2 my-20 space-y-10 w-full h-full sm:px-5" in:slide>
 			{#each ctx.chat.messages as message, messageIndex (messageIndex)}
 				<li class="flex flex-col space-y-2 w-full">
 					{#each message.parts as part, partIndex (partIndex)}

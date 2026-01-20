@@ -49,15 +49,17 @@ let inputElement = $state<HTMLTextAreaElement | null>(null);
 let fileList = $state<FileList>();
 let hoveredModel = $state("");
 let isModelsPopoverOpen = $state(false);
-let isStreaming = $derived(
+let isResponding = $derived(
 	ctx.chat.status !== "error" &&
 		ctx.chat.status !== "ready" &&
-		ctx.chat.lastMessage?.role === "user",
+		ctx.chat.lastMessage?.role !== "assistant",
 );
+let isStreaming = $derived(ctx.chat.status === "streaming");
 let isThinking = $derived(
 	ctx.chat.status === "streaming" &&
 		ctx.chat.lastMessage?.parts.at(-1)?.type === "reasoning",
 );
+
 let isDragging = $state(false);
 
 const favorites = $derived(new Set(config.settings.favorites));
@@ -246,7 +248,13 @@ $effect(() => {
 	{#if ctx.chat.messages.length}
 		<ul class="px-2 my-20 space-y-10 w-full h-full sm:px-5" in:slide>
 			{#each ctx.chat.messages as message, messageIndex (messageIndex)}
-				<li class="flex flex-col space-y-2 w-full">
+				{@const isLastMessage = messageIndex === ctx.chat.messages.length - 1}
+				{@const isAssistant = message.role === "assistant"}
+				{@const isUser = message.role === "user"}
+				<li
+					class="flex flex-col space-y-2 w-full"
+					class:hidden={isLastMessage && isAssistant && (isResponding || isThinking)}
+				>
 					{#each message.parts as part, partIndex (partIndex)}
 						{#if part.type === "file"}
 							<Button variant="outline" size="sm" class="ms-auto">
@@ -254,7 +262,7 @@ $effect(() => {
 								<span>{part.filename}</span>
 							</Button>
 						{:else if part.type === "text"}
-							{#if message.role === "user"}
+							{#if isUser}
 								<p
 									class="py-1.5 px-3.5 max-w-full rounded-2xl sm:leading-7 ms-auto w-fit rounded-tr-[3px] bg-primary leading-6.5 text-primary-foreground sm:max-w-5/6"
 								>
@@ -281,9 +289,8 @@ $effect(() => {
 					{/each}
 
 					<div
-						class:ms-auto={message.role === "user"}
-						class:hidden={messageIndex === ctx.chat.messages.length - 1 &&
-							ctx.chat.status === "streaming"}
+						class:ms-auto={isUser}
+						class:hidden={isLastMessage && isStreaming}
 						class="flex gap-2 items-center"
 					>
 						<Button
@@ -297,7 +304,7 @@ $effect(() => {
 							<Copy />
 						</Button>
 
-						{#if message.role === "assistant" && message.metadata}
+						{#if isAssistant && message.metadata}
 							{@const { tokens, cost, tps, time } = message.metadata}
 							<div class="text-muted-foreground">
 								<Button
@@ -338,14 +345,13 @@ $effect(() => {
 				</li>
 			{/each}
 
-			<div class="flex gap-2 items-center">
-				{#if isStreaming}
+			<span class="flex items-center h-6 text-muted-foreground">
+				{#if isResponding}
 					<Spinner />
+				{:else if isThinking}
+					Thinking...
 				{/if}
-				{#if isThinking}
-					<span class="text-muted-foreground">Thinking...</span>
-				{/if}
-			</div>
+			</span>
 		</ul>
 	{/if}
 

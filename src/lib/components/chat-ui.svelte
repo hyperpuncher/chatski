@@ -17,6 +17,7 @@ import Music from "@lucide/svelte/icons/music";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import RefreshCcw from "@lucide/svelte/icons/refresh-ccw";
 import Square from "@lucide/svelte/icons/square";
+import SquarePen from "@lucide/svelte/icons/square-pen";
 import Star from "@lucide/svelte/icons/star";
 import Video from "@lucide/svelte/icons/video";
 import WholeWord from "@lucide/svelte/icons/whole-word";
@@ -205,6 +206,13 @@ function handleRemoveFile(file: File) {
 	fileList = dataTransfer.files;
 }
 
+function handleEdit(messageIndex: number) {
+	const message = ctx.chat.messages[messageIndex];
+	input = message.parts.find((p) => p.type === "text")?.text ?? "";
+	ctx.chat.messages = ctx.chat.messages.slice(0, messageIndex);
+	inputElement?.focus();
+}
+
 afterNavigate(() => {
 	inputElement?.focus();
 });
@@ -304,6 +312,16 @@ $effect(() => {
 						>
 							<Copy />
 						</Button>
+
+						{#if !isAssistant}
+							<Button
+								variant="ghost"
+								size="icon-sm"
+								onclick={() => handleEdit(messageIndex)}
+							>
+								<SquarePen />
+							</Button>
+						{/if}
 
 						{#if isAssistant && message.metadata}
 							<Button

@@ -45,6 +45,7 @@ const ctx = $state<ChatContext>({
 	chat: createChat(),
 	isLoading: false,
 	newChat: () => {
+		config.settings.selectedModel = config.settings.defaultModel;
 		ctx.chat = createChat();
 	},
 	loadChat: async (id: string) => {

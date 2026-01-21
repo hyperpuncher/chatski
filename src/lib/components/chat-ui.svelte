@@ -46,8 +46,6 @@ import { cn, collapseFilename, isMac } from "$lib/utils";
 const ctx = getChatContext();
 const scroll = getScrollContext();
 
-config.settings.selectedModel = config.settings.defaultModel;
-
 let input = $state("");
 let inputElement = $state<HTMLTextAreaElement | null>(null);
 let fileList = $state<FileList>();

@@ -239,7 +239,7 @@ $effect(() => {
 		class="flex fixed inset-0 z-10 flex-col gap-4 justify-center items-center bg-black/25 backdrop-blur-sm"
 	>
 		<div
-			class="flex size-[80%] flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed text-muted-foreground"
+			class="flex size-[80%] flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed border-primary-foreground text-primary-foreground dark:border-muted-foreground dark:text-muted-foreground"
 		>
 			{#if inputModalities}
 				<FileUp class="animate-bounce size-12" />

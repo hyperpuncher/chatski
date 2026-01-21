@@ -62,7 +62,8 @@ let isThinking = $derived(
 		ctx.chat.lastMessage?.parts.at(-1)?.type === "reasoning",
 );
 
-let isDragging = $state(false);
+let dragCounter = $state(0);
+let isDragging = $derived(dragCounter > 0);
 
 const favorites = $derived(new Set(config.settings.favorites));
 const models = $derived(await getModels(config.settings.labs));
@@ -179,7 +180,7 @@ function handleDefaultModel(model: string) {
 function handleDrop(e: DragEvent) {
 	e.preventDefault();
 	e.stopPropagation();
-	isDragging = false;
+	dragCounter = 0;
 
 	const dataTransfer = new DataTransfer();
 
@@ -226,11 +227,9 @@ $effect(() => {
 
 <svelte:window
 	onkeydown={handleKeydown}
-	ondragover={(e) => {
-		e.preventDefault();
-		isDragging = true;
-	}}
-	ondragleave={() => (isDragging = false)}
+	ondragover={(e) => e.preventDefault()}
+	ondragenter={() => dragCounter++}
+	ondragleave={() => dragCounter--}
 	ondrop={handleDrop}
 	onpaste={handlePaste}
 />

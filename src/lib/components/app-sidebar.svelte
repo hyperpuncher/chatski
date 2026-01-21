@@ -1,7 +1,7 @@
 <script lang="ts">
 import MessageSquarePlus from "@lucide/svelte/icons/message-square-plus";
 import MessagesSquare from "@lucide/svelte/icons/messages-square";
-import Trash from "@lucide/svelte/icons/trash";
+import Trash2 from "@lucide/svelte/icons/trash-2";
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
 import { Button } from "$lib/components/ui/button";
@@ -98,7 +98,7 @@ function handleKeydown(e: KeyboardEvent) {
 							{#if ctx.isLoading && isSelected}
 								<Spinner />
 							{:else}
-								<Trash />
+								<Trash2 />
 							{/if}
 						</Button>
 

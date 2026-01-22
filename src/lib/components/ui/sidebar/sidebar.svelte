@@ -42,7 +42,7 @@ const sidebar = useSidebar();
 			data-sidebar="sidebar"
 			data-slot="sidebar"
 			data-mobile="true"
-			class="fixed inset-y-0 m-2 h-[dvh-0.5rem] w-(--sidebar-width) rounded-lg border border-sidebar-border bg-sidebar p-0 text-sidebar-foreground shadow-sm [&>button]:hidden"
+			class="fixed inset-y-0 h-[dvh-0.5rem] w-(--sidebar-width) border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm [&>button]:hidden"
 			style="--sidebar-width: {SIDEBAR_WIDTH_MOBILE};"
 			{side}
 		>

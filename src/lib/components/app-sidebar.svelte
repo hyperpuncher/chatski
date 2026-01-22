@@ -30,7 +30,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 <svelte:window onkeydown={handleKeydown} />
 
-<Sidebar.Root variant="floating" side="right">
+<Sidebar.Root side="right">
 	<Sidebar.Header>
 		<h1 class="p-2 font-mono text-xl font-bold">chatski</h1>
 	</Sidebar.Header>

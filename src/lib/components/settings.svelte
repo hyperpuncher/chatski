@@ -1,16 +1,20 @@
 <script lang="ts">
+import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
 import Settings from "@lucide/svelte/icons/settings";
 import { Button, buttonVariants } from "$lib/components/ui/button";
+import * as Command from "$lib/components/ui/command/index.js";
 import * as Dialog from "$lib/components/ui/dialog";
 import * as Field from "$lib/components/ui/field";
 import { Input } from "$lib/components/ui/input";
 import { Label } from "$lib/components/ui/label";
+import * as Popover from "$lib/components/ui/popover/index.js";
 import * as Select from "$lib/components/ui/select";
 import { config } from "$lib/config.svelte";
-import { getLabs } from "$lib/remote/openrouter.remote";
-import { isMobile } from "$lib/utils";
+import { getLabs, getModels } from "$lib/remote/openrouter.remote";
+import { cn, isMobile } from "$lib/utils";
 
 let open = $state(!config.settings.apiKey);
+let isDefaultModelPopoverOpen = $state(false);
 
 async function handleSubmit(e: Event) {
 	e.preventDefault();
@@ -57,7 +61,7 @@ async function handleSubmit(e: Event) {
 
 				<Field.Group>
 					<Field.Field>
-						<Field.Label>Select Labs</Field.Label>
+						<Field.Label>Labs</Field.Label>
 						<Select.Root bind:value={config.settings.labs}>
 							<Select.Trigger class="w-full">
 								<Label class="truncate">
@@ -70,6 +74,54 @@ async function handleSubmit(e: Event) {
 								{/each}
 							</Select.Content>
 						</Select.Root>
+					</Field.Field>
+				</Field.Group>
+
+				<Field.Group>
+					<Field.Field>
+						<Field.Label>Default Model</Field.Label>
+						<Popover.Root bind:open={isDefaultModelPopoverOpen}>
+							<Popover.Trigger
+								class={cn(
+									buttonVariants({
+										variant: "outline",
+									}),
+									"justify-between",
+								)}
+							>
+								{#if config.settings.defaultModel}
+									<span class="truncate"
+										>{config.settings.defaultModel.split("/")[1]}</span
+									>
+								{:else}
+									<span>Select model</span>
+								{/if}
+								<ChevronDownIcon class="opacity-50 size-4" />
+							</Popover.Trigger>
+							<Popover.Content class="p-0 w-full" side="bottom">
+								<Command.Root>
+									<Command.Input placeholder="Search models..." />
+									<Command.List>
+										<Command.Empty>No results found.</Command.Empty>
+										<Command.Group>
+											{#each await getModels(config.settings.labs) as model (model.id)}
+												<Command.Item
+													value={model.id}
+													onSelect={() => {
+														config.settings.defaultModel = model.id;
+														isDefaultModelPopoverOpen = false;
+													}}
+												>
+													<span class="truncate">
+														{model.id.split("/")[1]}
+													</span>
+												</Command.Item>
+											{/each}
+										</Command.Group>
+									</Command.List>
+								</Command.Root>
+							</Popover.Content>
+						</Popover.Root>
 					</Field.Field>
 				</Field.Group>
 			</Field.Set>

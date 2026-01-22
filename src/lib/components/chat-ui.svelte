@@ -332,7 +332,9 @@ $effect(() => {
 							</Button>
 
 							{@const { tokens, cost, tps, time } = message.metadata}
-							<div class="text-muted-foreground">
+							<div
+								class="grid grid-cols-2 justify-items-start sm:flex sm:gap-1 text-muted-foreground"
+							>
 								<Button
 									variant="ghost"
 									size="xs"
@@ -450,7 +452,7 @@ $effect(() => {
 						</label>
 					</InputGroup.Button>
 
-					<div class="flex gap-2">
+					<div class="hidden gap-2 sm:flex">
 						{#each modalityIcons as { icon: Icon, key }}
 							<Icon
 								class="size-4 {modalities.input.includes(key) ? 'text-violet-400' : ''}"
@@ -503,7 +505,7 @@ $effect(() => {
 									variant: "secondary",
 									size: "sm",
 								}),
-								"max-w-38 bg-primary/10 text-xs text-foreground hover:bg-primary/15 sm:max-w-full",
+								"max-w-48 bg-primary/10 text-xs text-foreground hover:bg-primary/15 sm:max-w-full",
 							)}
 						>
 							<Bot />

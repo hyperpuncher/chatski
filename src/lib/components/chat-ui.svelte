@@ -373,13 +373,14 @@ $effect(() => {
 				</li>
 			{/each}
 
-			<span class="flex items-center h-6 text-muted-foreground">
+			<div class="flex gap-2 items-center mb-10 h-6 text-muted-foreground">
 				{#if isResponding}
 					<Spinner />
 				{:else if isThinking}
-					Thinking...
+					<Spinner />
+					<span>Thinking...</span>
 				{/if}
-			</span>
+			</div>
 		</ul>
 	{/if}
 

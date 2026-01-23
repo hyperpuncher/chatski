@@ -22,7 +22,6 @@ import Star from "@lucide/svelte/icons/star";
 import Video from "@lucide/svelte/icons/video";
 import WholeWord from "@lucide/svelte/icons/whole-word";
 import dracula from "@shikijs/themes/dracula";
-import { Throttled } from "runed";
 import { tick } from "svelte";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
@@ -110,13 +109,6 @@ const supportedParameters = $derived(
 
 const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 
-let lastUserMessageIndex = $derived(
-	ctx.chat.messages.findLastIndex((m) => m.role === "user"),
-);
-let lastUserMessageElement = $state<HTMLElement | null>(null);
-const throttledParts = new Throttled(() => ctx.chat.lastMessage?.parts, 100);
-let userHasScrolled = $state(false);
-
 async function handleSubmit() {
 	if (ctx.chat.status === "streaming") {
 		ctx.chat.stop();
@@ -128,7 +120,6 @@ async function handleSubmit() {
 			text: input,
 			files: fileList,
 		});
-		userHasScrolled = false;
 		await tick();
 		scroll.scrollToBottom();
 	}
@@ -232,28 +223,6 @@ $effect(() => {
 		toast.error(ctx.chat.error.message || "Something went wrong");
 	}
 });
-
-$effect(() => {
-	if (
-		isStreaming &&
-		!userHasScrolled &&
-		!scroll.arrived.bottom &&
-		throttledParts.current
-	) {
-		if (
-			Number(lastUserMessageElement?.dataset.messageIndex) !== lastUserMessageIndex
-		) {
-			lastUserMessageElement = document.querySelector<HTMLElement>(
-				"[data-last-user-message]",
-			);
-		}
-		if (!lastUserMessageElement) return;
-		const rect = lastUserMessageElement.getBoundingClientRect();
-		if (rect.top > 80) {
-			lastUserMessageElement.scrollIntoView({ behavior: "smooth", block: "start" });
-		}
-	}
-});
 </script>
 
 <svelte:window
@@ -263,7 +232,6 @@ $effect(() => {
 	ondragleave={() => dragCounter--}
 	ondrop={handleDrop}
 	onpaste={handlePaste}
-	onwheel={() => (userHasScrolled = true)}
 />
 
 {#if isDragging}
@@ -286,16 +254,13 @@ $effect(() => {
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if ctx.chat.messages.length}
-		<ul class="px-2 mt-20 mb-6 space-y-10 w-full h-full sm:px-5" in:slide>
+		<ul class="px-2 my-20 space-y-10 w-full h-full sm:px-5" in:slide>
 			{#each ctx.chat.messages as message, messageIndex (messageIndex)}
 				{@const isLastMessage = messageIndex === ctx.chat.messages.length - 1}
 				{@const isAssistant = message.role === "assistant"}
 				{@const isUser = message.role === "user"}
-				{@const isLastUserMessage = messageIndex === lastUserMessageIndex && isUser}
 				<li
-					data-message-index={messageIndex}
-					data-last-user-message={isLastUserMessage || undefined}
-					class="flex flex-col space-y-2 w-full scroll-mt-20"
+					class="flex flex-col space-y-2 w-full"
 					class:hidden={isLastMessage && isAssistant && (isResponding || isThinking)}
 				>
 					{#each message.parts as part, partIndex (partIndex)}

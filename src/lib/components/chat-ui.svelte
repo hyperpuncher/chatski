@@ -288,7 +288,7 @@ $effect(() => {
 									theme={{
 										code: {
 											container: "bg-[#171717]",
-											pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground",
+											pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground no-scrollbar",
 										},
 									}}
 								/>

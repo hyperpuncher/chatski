@@ -125,3 +125,7 @@
 		color: var(--primary-foreground);
 	}
 }
+
+@utility no-scrollbar {
+	@apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}

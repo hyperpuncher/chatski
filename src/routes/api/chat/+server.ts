@@ -4,7 +4,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { RequestHandler } from "@sveltejs/kit";
-import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
+import { convertToModelMessages, stepCountIs, streamText, wrapLanguageModel } from "ai";
 import { dev } from "$app/environment";
 import type { MCP } from "$lib/config.svelte";
 import type { MyUIMessage } from "$lib/types";
@@ -83,6 +83,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		model: dev ? wrapper : model,
 		messages: await convertToModelMessages(messages),
 		tools,
+		stopWhen: stepCountIs(20),
 		onFinish: async () => {
 			mcpClients.forEach(async (mcpClient) => await mcpClient.close());
 		},

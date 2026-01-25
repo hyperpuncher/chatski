@@ -55,6 +55,7 @@ function deleteMCP(name: string) {
 }
 
 function editMCP(mcp: MCP) {
+	deleteMCP(mcp.name);
 	mcpInput = { ...mcp };
 	isMCPInputOpen = true;
 }

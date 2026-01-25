@@ -14,5 +14,6 @@ WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/package.json ./
 RUN bun install --production
+RUN apk add --no-cache python3 uv
 EXPOSE 3000
 CMD ["bun", "run", "start"]

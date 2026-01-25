@@ -1,8 +1,12 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
+import { createMCPClient, type MCPClient } from "@ai-sdk/mcp";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { RequestHandler } from "@sveltejs/kit";
 import { convertToModelMessages, streamText, wrapLanguageModel } from "ai";
 import { dev } from "$app/environment";
+import type { MCP } from "$lib/config.svelte";
 import type { MyUIMessage } from "$lib/types";
 
 type Request = {
@@ -10,6 +14,7 @@ type Request = {
 	id: string;
 	selectedModel: string;
 	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
+	mcps: MCP[];
 };
 
 type OpenRouterMetadata = {
@@ -29,7 +34,7 @@ type OpenRouterMetadata = {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	const { messages, selectedModel, reasoning }: Request = await request.json();
+	const { messages, selectedModel, reasoning, mcps }: Request = await request.json();
 
 	const openrouter = createOpenRouter({
 		apiKey: request.headers.get("x-api-key") ?? undefined,
@@ -46,9 +51,41 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const wrapper = wrapLanguageModel({ model, middleware: devToolsMiddleware() });
 
+	let tools = {};
+	const mcpClients: MCPClient[] = [];
+
+	for (const mcp of mcps) {
+		if (!mcp.enabled) continue;
+
+		let mcpClient: MCPClient;
+
+		try {
+			if (mcp.type === "http") {
+				mcpClient = await createMCPClient({
+					transport: new StreamableHTTPClientTransport(new URL(mcp.url)),
+				});
+			} else {
+				mcpClient = await createMCPClient({
+					transport: new StdioClientTransport({
+						command: mcp.command,
+						args: mcp.args.split(" "),
+					}),
+				});
+			}
+			mcpClients.push(mcpClient);
+			tools = { ...tools, ...(await mcpClient.tools()) };
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
 	const result = streamText({
 		model: dev ? wrapper : model,
 		messages: await convertToModelMessages(messages),
+		tools,
+		onFinish: async () => {
+			mcpClients.forEach(async (mcpClient) => await mcpClient.close());
+		},
 	});
 
 	let start = 0;

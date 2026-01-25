@@ -26,6 +26,7 @@ const transport = new DefaultChatTransport({
 	body: async () => ({
 		selectedModel: config.settings.selectedModel,
 		reasoning: config.settings.reasoning,
+		mcps: config.settings.mcps,
 	}),
 });
 

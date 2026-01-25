@@ -8,6 +8,16 @@ type Settings = {
 	labs: string[];
 	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
 	sidebarSide: "left" | "right";
+	mcps: MCP[];
+};
+
+export type MCP = {
+	type: "http" | "stdio";
+	name: string;
+	url: string;
+	command: string;
+	args: string;
+	enabled: boolean;
 };
 
 const defaultSettings: Settings = {
@@ -28,6 +38,7 @@ const defaultSettings: Settings = {
 	],
 	reasoning: "none",
 	sidebarSide: "right",
+	mcps: [],
 };
 
 class ConfigStore {

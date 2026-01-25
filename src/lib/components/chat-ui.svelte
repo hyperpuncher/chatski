@@ -21,14 +21,12 @@ import SquarePen from "@lucide/svelte/icons/square-pen";
 import Star from "@lucide/svelte/icons/star";
 import Video from "@lucide/svelte/icons/video";
 import WholeWord from "@lucide/svelte/icons/whole-word";
-import dracula from "@shikijs/themes/dracula";
 import { tick } from "svelte";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
-import { Streamdown } from "svelte-streamdown";
-import Code from "svelte-streamdown/code";
 import { afterNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
+import AiMessage from "$lib/components/ai-message.svelte";
 import FileIcon from "$lib/components/file-icon.svelte";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
@@ -264,35 +262,25 @@ $effect(() => {
 					class:hidden={isLastMessage && isAssistant && (isResponding || isThinking)}
 				>
 					{#each message.parts as part, partIndex (partIndex)}
-						{#if part.type === "file"}
-							<Button variant="outline" size="sm" class="ms-auto">
-								<FileIcon type={part.type} />
-								<span>{part.filename}</span>
-							</Button>
-						{:else if part.type === "text"}
-							{#if isUser}
+						{#if isUser}
+							{#if part.type === "file"}
+								<Button variant="outline" size="sm" class="ms-auto">
+									<FileIcon type={part.type} />
+									<span>{part.filename}</span>
+								</Button>
+							{:else if part.type === "text"}
 								<p
 									class="py-1.5 px-3.5 max-w-full rounded-2xl sm:leading-7 ms-auto w-fit rounded-tr-[3px] bg-primary leading-6.5 text-primary-foreground sm:max-w-5/6"
 								>
 									{part.text}
 								</p>
-							{:else}
-								<Streamdown
-									class="leading-7 sm:leading-7.5"
-									content={part.text}
-									components={{ code: Code }}
-									baseTheme="shadcn"
-									animation={{ enabled: isStreaming, type: "fade", duration: 200 }}
-									shikiTheme="dracula"
-									shikiThemes={{ dracula }}
-									theme={{
-										code: {
-											container: "bg-[#171717]",
-											pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground no-scrollbar",
-										},
-									}}
-								/>
 							{/if}
+						{:else if part.type === "text"}
+							<AiMessage content={part.text} {isStreaming} />
+						{:else if part.type === "dynamic-tool"}
+							{#each part.output.content as content, contentIndex (contentIndex)}
+								<AiMessage content={content.text} {isStreaming} />
+							{/each}
 						{/if}
 					{/each}
 

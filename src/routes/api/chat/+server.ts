@@ -1,7 +1,6 @@
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { createMCPClient, type MCPClient } from "@ai-sdk/mcp";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { Experimental_StdioMCPTransport } from "@ai-sdk/mcp/mcp-stdio";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { RequestHandler } from "@sveltejs/kit";
 import { convertToModelMessages, stepCountIs, streamText, wrapLanguageModel } from "ai";
@@ -51,32 +50,35 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const wrapper = wrapLanguageModel({ model, middleware: devToolsMiddleware() });
 
-	let tools = {};
+	const tools = {};
 	const mcpClients: MCPClient[] = [];
 
-	for (const mcp of mcps) {
-		if (!mcp.enabled) continue;
 
-		let mcpClient: MCPClient;
+	const enabledMCPs = await Promise.all(
+		mcps
+			.filter((mcp) => mcp.enabled)
+			.map(async (mcp) => {
+				try {
+					const transport =
+						mcp.type === "http"
+							? { type: "http", url: mcp.url }
+							: new Experimental_StdioMCPTransport({
+									command: mcp.command,
+									args: mcp.args.trim().split(" "),
+								});
+					const mcpClient = await createMCPClient({ transport });
+					const tools = await mcpClient.tools();
+					return { mcpClient, tools };
+				} catch (e) {
+					console.error(e);
+				}
+			}),
+	);
 
-		try {
-			if (mcp.type === "http") {
-				mcpClient = await createMCPClient({
-					transport: new StreamableHTTPClientTransport(new URL(mcp.url)),
-				});
-			} else {
-				mcpClient = await createMCPClient({
-					transport: new StdioClientTransport({
-						command: mcp.command,
-						args: mcp.args.split(" "),
-					}),
-				});
-			}
-			mcpClients.push(mcpClient);
-			tools = { ...tools, ...(await mcpClient.tools()) };
-		} catch (e) {
-			console.error(e);
-		}
+	for (const mcp of enabledMCPs) {
+		if (!mcp) continue;
+		mcpClients.push(mcp.mcpClient);
+		Object.assign(tools, mcp.tools);
 	}
 
 	const result = streamText({

@@ -21,7 +21,7 @@ function isDigitKey(key: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-	if (isDigitKey(e.key) && (isMac ? e.metaKey : e.ctrlKey)) {
+	if (isDigitKey(e.key) && e.key !== "0" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		goto(`/chat/${chats[Number(e.key) - 1]}`);
 	}

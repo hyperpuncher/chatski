@@ -22,9 +22,9 @@ export type MCP = {
 
 const defaultSettings: Settings = {
 	apiKey: "",
-	defaultModel: "moonshotai/kimi-k2-0905",
-	selectedModel: "moonshotai/kimi-k2-0905",
-	favorites: ["moonshotai/kimi-k2-0905"],
+	defaultModel: "moonshotai/kimi-k2.5",
+	selectedModel: "moonshotai/kimi-k2.5",
+	favorites: ["moonshotai/kimi-k2.5"],
 	labs: [
 		"anthropic",
 		"deepseek",

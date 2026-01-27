@@ -301,6 +301,14 @@ $effect(() => {
 							<Copy />
 						</Button>
 
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onclick={() => ctx.chat.regenerate({ messageId: message.id })}
+						>
+							<RefreshCcw />
+						</Button>
+
 						{#if !isAssistant}
 							<Button
 								variant="ghost"
@@ -312,14 +320,6 @@ $effect(() => {
 						{/if}
 
 						{#if isAssistant && message.metadata}
-							<Button
-								variant="ghost"
-								size="icon-sm"
-								onclick={() => ctx.chat.regenerate({ messageId: message.id })}
-							>
-								<RefreshCcw />
-							</Button>
-
 							{@const { tokens, cost, tps, time } = message.metadata}
 							<div
 								class="grid grid-cols-2 justify-items-start sm:flex sm:gap-1 text-muted-foreground"

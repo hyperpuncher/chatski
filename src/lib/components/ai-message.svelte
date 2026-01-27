@@ -15,6 +15,9 @@ let { content, isStreaming } = $props();
 	shikiTheme="dracula"
 	shikiThemes={{ dracula }}
 	theme={{
+		li: {
+			base: "dark:marker:text-muted-foreground",
+		},
 		code: {
 			container: "bg-[#171717]",
 			pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground no-scrollbar",

@@ -70,7 +70,7 @@ setChatContext(ctx);
 setScrollContext(scrollCtx);
 
 function handleKeydown(e: KeyboardEvent) {
-	if (e.key === "o" && (isMac ? e.metaKey : e.ctrlKey)) {
+	if (e.code === "KeyO" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		ctx.newChat();
 		goto("/");

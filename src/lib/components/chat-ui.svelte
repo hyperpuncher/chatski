@@ -126,7 +126,7 @@ async function handleSubmit() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-	if (e.key === "m" && (isMac ? e.metaKey : e.ctrlKey)) {
+	if (e.code === "KeyM" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		isModelsPopoverOpen = !isModelsPopoverOpen;
 	}

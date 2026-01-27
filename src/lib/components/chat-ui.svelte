@@ -276,9 +276,12 @@ $effect(() => {
 								</p>
 							{/if}
 						{:else if part.type === "dynamic-tool"}
-							<p class="font-mono text-muted-foreground">
+							<p class="font-mono text-sm text-muted-foreground">
 								• {part.toolName}
-								{part.input && Object.values(part.input)}
+								{part.input &&
+									Object.entries(part.input)
+										.map(([key, value]) => `${key}=${value}`)
+										.join(" ")}
 							</p>
 						{:else if part.type === "text"}
 							<AiMessage content={part.text} {isStreaming} />

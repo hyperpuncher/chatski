@@ -4,6 +4,8 @@ import favicon from "$lib/assets/favicon.svg";
 import "./layout.css";
 import { pwaInfo } from "virtual:pwa-info";
 import { dev } from "$app/environment";
+import "@fontsource-variable/cascadia-code";
+import "@fontsource-variable/inter";
 
 let { children } = $props();
 </script>

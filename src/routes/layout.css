@@ -111,6 +111,17 @@
 
 	--font-sans: "Inter Variable", ui-sans-serif, system-ui;
 	--font-mono: "Cascadia Code Variable", ui-monospace, monospace;
+
+	--animate-gradient: gradient-loop 3s linear infinite;
+
+	@keyframes gradient-loop {
+		0% {
+			background-position: 0% 50%;
+		}
+		100% {
+			background-position: 200% 50%;
+		}
+	}
 }
 
 @layer base {

@@ -28,6 +28,7 @@ import { afterNavigate, goto } from "$app/navigation";
 import { page } from "$app/state";
 import AiMessage from "$lib/components/ai-message.svelte";
 import FileIcon from "$lib/components/file-icon.svelte";
+import Loader from "$lib/components/loader.svelte";
 import { Button } from "$lib/components/ui/button";
 import { buttonVariants } from "$lib/components/ui/button/index.js";
 import * as Command from "$lib/components/ui/command/index.js";
@@ -35,7 +36,6 @@ import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
-import { Spinner } from "$lib/components/ui/spinner";
 import { config } from "$lib/config.svelte";
 import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
@@ -365,12 +365,9 @@ $effect(() => {
 				</li>
 			{/each}
 
-			<div class="flex gap-2 items-center mb-10 h-6 text-muted-foreground">
-				{#if isResponding}
-					<Spinner />
-				{:else if isThinking}
-					<Spinner />
-					<span>Thinking...</span>
+			<div class="mb-10">
+				{#if isResponding || isThinking}
+					<Loader {isThinking} />
 				{/if}
 			</div>
 		</ul>

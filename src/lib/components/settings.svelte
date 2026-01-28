@@ -99,6 +99,7 @@ function editMCP(mcp: MCP) {
 								>.
 							</Field.Description>
 						</Field.Field>
+
 						<Field.Field>
 							<Field.Label>Labs</Field.Label>
 							<Select.Root bind:value={config.settings.labs}>
@@ -114,56 +115,56 @@ function editMCP(mcp: MCP) {
 								</Select.Content>
 							</Select.Root>
 						</Field.Field>
+
+						<Field.Field>
+							<Field.Label>Default Model</Field.Label>
+							<Popover.Root bind:open={isDefaultModelPopoverOpen}>
+								<Popover.Trigger
+									class={cn(
+										buttonVariants({
+											variant: "outline",
+										}),
+										"justify-between",
+									)}
+								>
+									{#if config.settings.defaultModel}
+										<span class="truncate"
+											>{config.settings.defaultModel.split("/")[1]}</span
+										>
+									{:else}
+										<span>Select model</span>
+									{/if}
+									<ChevronDownIcon class="opacity-50 size-4" />
+								</Popover.Trigger>
+								<Popover.Content class="p-0 w-full" side="bottom">
+									<Command.Root>
+										<Command.Input placeholder="Search models..." />
+										<Command.List>
+											<Command.Empty>
+												No results found.
+											</Command.Empty>
+											<Command.Group>
+												{#each await getModels(config.settings.labs) as model (model.id)}
+													<Command.Item
+														value={model.id}
+														onSelect={() => {
+															config.settings.defaultModel = model.id;
+															isDefaultModelPopoverOpen = false;
+														}}
+													>
+														<span class="truncate">
+															{model.id.split("/")[1]}
+														</span>
+													</Command.Item>
+												{/each}
+											</Command.Group>
+										</Command.List>
+									</Command.Root>
+								</Popover.Content>
+							</Popover.Root>
+						</Field.Field>
 					</Field.Group>
 				</Field.Set>
-
-				<Field.Group>
-					<Field.Field>
-						<Field.Label>Default Model</Field.Label>
-						<Popover.Root bind:open={isDefaultModelPopoverOpen}>
-							<Popover.Trigger
-								class={cn(
-									buttonVariants({
-										variant: "outline",
-									}),
-									"justify-between",
-								)}
-							>
-								{#if config.settings.defaultModel}
-									<span class="truncate"
-										>{config.settings.defaultModel.split("/")[1]}</span
-									>
-								{:else}
-									<span>Select model</span>
-								{/if}
-								<ChevronDownIcon class="opacity-50 size-4" />
-							</Popover.Trigger>
-							<Popover.Content class="p-0 w-full" side="bottom">
-								<Command.Root>
-									<Command.Input placeholder="Search models..." />
-									<Command.List>
-										<Command.Empty>No results found.</Command.Empty>
-										<Command.Group>
-											{#each await getModels(config.settings.labs) as model (model.id)}
-												<Command.Item
-													value={model.id}
-													onSelect={() => {
-														config.settings.defaultModel = model.id;
-														isDefaultModelPopoverOpen = false;
-													}}
-												>
-													<span class="truncate">
-														{model.id.split("/")[1]}
-													</span>
-												</Command.Item>
-											{/each}
-										</Command.Group>
-									</Command.List>
-								</Command.Root>
-							</Popover.Content>
-						</Popover.Root>
-					</Field.Field>
-				</Field.Group>
 
 				<Field.Separator />
 

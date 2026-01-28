@@ -16,6 +16,7 @@ import LockOpen from "@lucide/svelte/icons/lock-open";
 import Music from "@lucide/svelte/icons/music";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import RefreshCcw from "@lucide/svelte/icons/refresh-ccw";
+import Server from "@lucide/svelte/icons/server";
 import Square from "@lucide/svelte/icons/square";
 import SquarePen from "@lucide/svelte/icons/square-pen";
 import Star from "@lucide/svelte/icons/star";
@@ -323,7 +324,7 @@ $effect(() => {
 						{/if}
 
 						{#if isAssistant && message.metadata}
-							{@const { tokens, cost, tps, time } = message.metadata}
+							{@const { tokens, cost, tps, time, provider } = message.metadata}
 							<div
 								class="grid grid-cols-2 justify-items-start sm:flex sm:gap-1 text-muted-foreground"
 							>
@@ -358,6 +359,14 @@ $effect(() => {
 								>
 									<Gauge />
 									{tps} tokens/s
+								</Button>
+								<Button
+									variant="ghost"
+									size="xs"
+									onclick={() => handleCopy(provider)}
+								>
+									<Server />
+									{provider}
 								</Button>
 							</div>
 						{/if}

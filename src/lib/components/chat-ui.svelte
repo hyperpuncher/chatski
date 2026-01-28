@@ -286,6 +286,12 @@ $effect(() => {
 							</p>
 						{:else if part.type === "text"}
 							<AiMessage content={part.text} {isStreaming} />
+						{:else if part.type === "file"}
+							{#if part.mediaType.startsWith("image/")}
+								<a href={part.url} download aria-label="Download image">
+									<img class="rounded-2xl" src={part.url}>
+								</a>
+							{/if}
 						{/if}
 					{/each}
 

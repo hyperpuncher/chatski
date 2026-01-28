@@ -53,31 +53,33 @@ export const POST: RequestHandler = async ({ request }) => {
 	const tools = {};
 	const mcpClients: MCPClient[] = [];
 
-	const enabledMCPs = await Promise.all(
-		mcps
-			.filter((mcp) => mcp.enabled)
-			.map(async (mcp) => {
-				try {
-					const transport =
-						mcp.type === "http"
-							? { type: "http", url: mcp.url }
-							: new Experimental_StdioMCPTransport({
-									command: mcp.command,
-									args: mcp.args.trim().split(" "),
-								});
-					const mcpClient = await createMCPClient({ transport });
-					const tools = await mcpClient.tools();
-					return { mcpClient, tools };
-				} catch (e) {
-					console.error(e);
-				}
-			}),
-	);
+	if (!selectedModel.includes("image")) {
+		const enabledMCPs = await Promise.all(
+			mcps
+				.filter((mcp) => mcp.enabled)
+				.map(async (mcp) => {
+					try {
+						const transport =
+							mcp.type === "http"
+								? { type: "http", url: mcp.url }
+								: new Experimental_StdioMCPTransport({
+										command: mcp.command,
+										args: mcp.args.trim().split(" "),
+									});
+						const mcpClient = await createMCPClient({ transport });
+						const tools = await mcpClient.tools();
+						return { mcpClient, tools };
+					} catch (e) {
+						console.error(e);
+					}
+				}),
+		);
 
-	for (const mcp of enabledMCPs) {
-		if (!mcp) continue;
-		mcpClients.push(mcp.mcpClient);
-		Object.assign(tools, mcp.tools);
+		for (const mcp of enabledMCPs) {
+			if (!mcp) continue;
+			mcpClients.push(mcp.mcpClient);
+			Object.assign(tools, mcp.tools);
+		}
 	}
 
 	const result = streamText({

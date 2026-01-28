@@ -71,7 +71,7 @@ function editMCP(mcp: MCP) {
 		<Settings />
 	</Dialog.Trigger>
 
-	<Dialog.Content class="sm:max-w-md">
+	<Dialog.Content class="overflow-y-auto sm:max-w-md no-scrollbar max-h-[95dvh]">
 		<Dialog.Header>
 			<Dialog.Title>Settings</Dialog.Title>
 		</Dialog.Header>

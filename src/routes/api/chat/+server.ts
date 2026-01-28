@@ -91,19 +91,25 @@ export const POST: RequestHandler = async ({ request }) => {
 	});
 
 	let start = 0;
+	let tokens = 0;
+	let cost = 0;
+	let provider = "";
+
 	return result.toUIMessageStreamResponse({
 		messageMetadata: ({ part }) => {
-			if (part.type === "start-step") {
+			if (part.type === "start") {
 				start = performance.now();
-			}
-			if (part.type === "finish-step") {
+			} else if (part.type === "finish-step") {
 				const metadata = part.providerMetadata?.openrouter as OpenRouterMetadata;
-				const tokens = metadata.usage.completionTokens;
+				tokens += metadata.usage.completionTokens;
+				cost += metadata.usage.cost;
+				provider = metadata.provider;
+			} else if (part.type === "finish") {
 				const time = roundToSignificant((performance.now() - start) / 1000);
 				const tps = Math.round(tokens / time);
-				const cost = roundToSignificant(metadata.usage.cost);
+				cost = roundToSignificant(cost);
 
-				return { tokens, time, tps, cost, provider: metadata.provider };
+				return { tokens, time, tps, cost, provider };
 			}
 		},
 		originalMessages: messages,

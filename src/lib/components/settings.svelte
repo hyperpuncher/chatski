@@ -78,44 +78,44 @@ function editMCP(mcp: MCP) {
 
 		<form onsubmit={handleSubmit}>
 			<Field.Set>
-				<Field.Group>
-					<Field.Field>
-						<Field.Label>OpenRouter API Key</Field.Label>
-						<Input
-							type="password"
-							bind:value={config.settings.apiKey}
-							required
-							name="apiKey"
-							placeholder="sk-or-***********************************************"
-						/>
-						<Field.Description>
-							You can get your API key
-							<a href="https://openrouter.ai/settings/keys" target="_blank"
-								>here</a
-							>.
-						</Field.Description>
-					</Field.Field>
-				</Field.Group>
-
-				<Field.Separator />
-
-				<Field.Group>
-					<Field.Field>
-						<Field.Label>Labs</Field.Label>
-						<Select.Root bind:value={config.settings.labs}>
-							<Select.Trigger class="w-full">
-								<Label class="truncate">
-									{config.settings.labs.join(", ")}
-								</Label>
-							</Select.Trigger>
-							<Select.Content class="overflow-y-scroll max-h-64">
-								{#each await getLabs() as lab}
-									<Select.Item value={lab}>{lab}</Select.Item>
-								{/each}
-							</Select.Content>
-						</Select.Root>
-					</Field.Field>
-				</Field.Group>
+				<Field.Set>
+					<Field.Legend>Provider Settings</Field.Legend>
+					<Field.Group>
+						<Field.Field>
+							<Field.Label>OpenRouter API Key</Field.Label>
+							<Input
+								type="password"
+								bind:value={config.settings.apiKey}
+								required
+								name="apiKey"
+								placeholder="sk-or-***********************************************"
+							/>
+							<Field.Description>
+								You can get your API key
+								<a
+									href="https://openrouter.ai/settings/keys"
+									target="_blank"
+									>here</a
+								>.
+							</Field.Description>
+						</Field.Field>
+						<Field.Field>
+							<Field.Label>Labs</Field.Label>
+							<Select.Root bind:value={config.settings.labs}>
+								<Select.Trigger class="w-full">
+									<Label class="truncate">
+										{config.settings.labs.join(", ")}
+									</Label>
+								</Select.Trigger>
+								<Select.Content class="overflow-y-scroll max-h-64">
+									{#each await getLabs() as lab}
+										<Select.Item value={lab}>{lab}</Select.Item>
+									{/each}
+								</Select.Content>
+							</Select.Root>
+						</Field.Field>
+					</Field.Group>
+				</Field.Set>
 
 				<Field.Group>
 					<Field.Field>
@@ -167,9 +167,26 @@ function editMCP(mcp: MCP) {
 
 				<Field.Separator />
 
-				<Field.Group>
-					<Field.Field>
-						<Field.Label>MCP Servers</Field.Label>
+				<Field.Set>
+					<Field.Legend>UI</Field.Legend>
+					<Field.Group>
+						<Field.Field orientation="horizontal">
+							<Field.Content>
+								<Field.Label>Message Stats</Field.Label>
+								<Field.Description>
+									Show token usage and cost for each message.
+								</Field.Description>
+							</Field.Content>
+							<Switch id="stats" bind:checked={config.settings.stats} />
+						</Field.Field>
+					</Field.Group>
+				</Field.Set>
+
+				<Field.Separator />
+
+				<Field.Set>
+					<Field.Legend>MCP Servers</Field.Legend>
+					<Field.Group class="gap-3">
 						{#each config.settings.mcps as mcp (mcp.name)}
 							<Field.Field orientation="horizontal">
 								<Field.Label>{mcp.name}</Field.Label>
@@ -267,8 +284,8 @@ function editMCP(mcp: MCP) {
 								</Button>
 							</Field.Field>
 						{/if}
-					</Field.Field>
-				</Field.Group>
+					</Field.Group>
+				</Field.Set>
 
 				<Field.Separator />
 			</Field.Set>

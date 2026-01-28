@@ -53,7 +53,6 @@ export const POST: RequestHandler = async ({ request }) => {
 	const tools = {};
 	const mcpClients: MCPClient[] = [];
 
-
 	const enabledMCPs = await Promise.all(
 		mcps
 			.filter((mcp) => mcp.enabled)
@@ -104,7 +103,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				const tps = Math.round(tokens / time);
 				const cost = roundToSignificant(metadata.usage.cost);
 
-				return { tokens, time, tps, cost };
+				return { tokens, time, tps, cost, provider: metadata.provider };
 			}
 		},
 		originalMessages: messages,

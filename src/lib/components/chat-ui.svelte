@@ -323,7 +323,7 @@ $effect(() => {
 							</Button>
 						{/if}
 
-						{#if isAssistant && message.metadata}
+						{#if config.settings.stats && isAssistant && message.metadata}
 							{@const { tokens, cost, tps, time, provider } = message.metadata}
 							<div
 								class="grid grid-cols-2 justify-items-start sm:flex sm:gap-1 text-muted-foreground"

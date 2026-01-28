@@ -8,6 +8,7 @@ type Settings = {
 	labs: string[];
 	reasoning: "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
 	sidebarSide: "left" | "right";
+	stats: boolean;
 	mcps: MCP[];
 };
 
@@ -38,6 +39,7 @@ const defaultSettings: Settings = {
 	],
 	reasoning: "none",
 	sidebarSide: "right",
+	stats: false,
 	mcps: [],
 };
 

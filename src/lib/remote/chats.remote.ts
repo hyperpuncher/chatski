@@ -49,6 +49,7 @@ export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 export const deleteChat = command(v.string(), async (chatId) => {
 	const user = await requireAuth();
 	await redis.del(`chats:${user.userId}:${chatId}`);
+	await redis.del(`chat:title:${chatId}`);
 	getChats().refresh();
 });
 

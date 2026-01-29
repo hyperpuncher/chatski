@@ -5,6 +5,7 @@ type MessageMetadata = {
 	time: number;
 	tps: number;
 	cost: number;
+	provider: string;
 };
 
 export type MyUIMessage = UIMessage<MessageMetadata>;

@@ -304,7 +304,10 @@ $effect(() => {
 							variant="ghost"
 							size="icon-sm"
 							onclick={() => {
-								const text = message.parts.find((p) => p.type === "text")?.text;
+								const text = message.parts
+									.filter((p) => p.type === "text")
+									.map((p) => p.text)
+									.join("\n");
 								if (text) handleCopy(text);
 							}}
 						>

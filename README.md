@@ -1,6 +1,8 @@
-<div align="center">
-	<h1>🤖 chatski</h1>
-    <p>minimal self-hosted ai chat interface for openrouter</p>
+# 🤖 chatski
+
+> minimal self-hosted ai chat interface for openrouter
+
+<div>
 	<picture>
 		<source
 			srcset=".github/assets/screenshot-dark.png"
@@ -20,6 +22,8 @@
 - **self-hosted**
 - **keyboard driven**
 - **no bloat**
+- **mcp support**
+- **image generation**
 
 ## self-host
 
@@ -27,10 +31,13 @@ just throw `compose.yaml` at your preferred deployment platform and fill in the 
 
 ## shortcuts
 
-- `ctrl` + `o` - new chat
-- `ctrl` + `m` - toggle models
-- `ctrl` + `b` - toggle sidebar
-- `ctrl` + `1-9` - switch chats
+| shortcut       | action          |
+| -------------- | --------------- |
+| `ctrl` + `o`   | new chat        |
+| `ctrl` + `m`   | toggle models   |
+| `ctrl` + `b`   | toggle sidebar  |
+| `ctrl` + `,`   | toggle settings |
+| `ctrl` + `1-9` | switch chats    |
 
 ## local dev
 

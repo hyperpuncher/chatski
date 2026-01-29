@@ -16,7 +16,7 @@ import { Switch } from "$lib/components/ui/switch";
 import * as Tabs from "$lib/components/ui/tabs/index.js";
 import { config, type MCP } from "$lib/config.svelte";
 import { getLabs, getModels } from "$lib/remote/openrouter.remote";
-import { cn, isMobile } from "$lib/utils";
+import { cn, isMac, isMobile } from "$lib/utils";
 
 let open = $state(!config.settings.apiKey);
 let isDefaultModelPopoverOpen = $state(false);
@@ -59,7 +59,16 @@ function editMCP(mcp: MCP) {
 	mcpInput = { ...mcp };
 	isMCPInputOpen = true;
 }
+
+function handleKeydown(e: KeyboardEvent) {
+	if (e.code === "Comma" && (isMac ? e.metaKey : e.ctrlKey)) {
+		e.preventDefault();
+		open = !open;
+	}
+}
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger

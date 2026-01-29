@@ -59,14 +59,16 @@ export const POST: RequestHandler = async ({ request }) => {
 				.filter((mcp) => mcp.enabled)
 				.map(async (mcp) => {
 					try {
-						const transport =
-							mcp.type === "http"
-								? { type: "http", url: mcp.url }
-								: new Experimental_StdioMCPTransport({
+						const mcpClient = await (mcp.type === "http"
+							? createMCPClient({
+									transport: { type: "http", url: mcp.url },
+								})
+							: createMCPClient({
+									transport: new Experimental_StdioMCPTransport({
 										command: mcp.command,
 										args: mcp.args.trim().split(" "),
-									});
-						const mcpClient = await createMCPClient({ transport });
+									}),
+								}));
 						const tools = await mcpClient.tools();
 						return { mcpClient, tools };
 					} catch (e) {

@@ -277,7 +277,9 @@ $effect(() => {
 								</p>
 							{/if}
 						{:else if part.type === "dynamic-tool"}
-							<p class="font-mono text-sm text-muted-foreground">
+							<p
+								class="font-mono text-sm wrap-anywhere text-muted-foreground"
+							>
 								• {part.toolName}
 								{part.input &&
 									Object.entries(part.input)

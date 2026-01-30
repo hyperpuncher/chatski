@@ -83,7 +83,7 @@ function handleKeydown(e: KeyboardEvent) {
 <Toaster richColors position="top-center" />
 
 <Sidebar.Provider bind:open={isSidebarOpen}>
-	<main class="overflow-hidden w-full">
+	<main class="w-full">
 		<header
 			class="flex fixed top-0 right-0 left-0 z-10 justify-between items-center p-4 w-full"
 		>

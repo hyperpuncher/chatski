@@ -253,7 +253,10 @@ $effect(() => {
 
 <div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
 	{#if ctx.chat.messages.length}
-		<ul class="px-2 mt-20 mb-6 space-y-10 w-full h-full sm:px-5" in:slide>
+		<ul
+			class="overflow-hidden px-2 mt-20 mb-6 space-y-10 w-full h-full sm:px-5"
+			in:slide
+		>
 			{#each ctx.chat.messages as message, messageIndex (messageIndex)}
 				{@const isLastMessage = messageIndex === ctx.chat.messages.length - 1}
 				{@const isAssistant = message.role === "assistant"}

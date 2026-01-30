@@ -285,7 +285,10 @@ $effect(() => {
 										.join(" ")}
 							</p>
 						{:else if part.type === "text"}
-							<AiMessage content={part.text} {isStreaming} />
+							<AiMessage
+								content={part.text}
+								isStreaming={isStreaming && isLastMessage}
+							/>
 						{:else if part.type === "file"}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">

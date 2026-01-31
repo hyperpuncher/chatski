@@ -2,7 +2,7 @@
 let { isThinking } = $props();
 
 const length = 18;
-const interval = 50;
+const interval = 60;
 const chars =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
@@ -17,24 +17,29 @@ for (let i = 0; i < length; i++) {
 }
 
 $effect(() => {
-	const activeIntervals:
-		| ReturnType<typeof setInterval>
-		| ReturnType<typeof setTimeout>[] = [];
+	const nextUpdate: number[] = [];
+	const now = performance.now();
 
 	for (let i = 0; i < length; i++) {
-		const initialDelay = Math.random() * interval;
-
-		const setupTimeout = setTimeout(() => {
-			const id = setInterval(() => {
-				displayText[i] = getRandomChar();
-			}, interval);
-			activeIntervals.push(id);
-		}, initialDelay);
-
-		activeIntervals.push(setupTimeout);
+		nextUpdate[i] = now + Math.random() * interval;
 	}
+
+	let frame: number;
+
+	const loop = (time: number) => {
+		for (let i = 0; i < length; i++) {
+			if (time >= nextUpdate[i]) {
+				displayText[i] = getRandomChar();
+				nextUpdate[i] += interval;
+			}
+		}
+		frame = requestAnimationFrame(loop);
+	};
+
+	frame = requestAnimationFrame(loop);
+
 	return () => {
-		activeIntervals.forEach((id) => clearInterval(id));
+		cancelAnimationFrame(frame);
 	};
 });
 </script>

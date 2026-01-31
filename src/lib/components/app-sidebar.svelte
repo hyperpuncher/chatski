@@ -74,40 +74,45 @@ function handleKeydown(e: KeyboardEvent) {
 			</Button>
 		</Sidebar.GroupLabel>
 		<Sidebar.GroupContent>
-			<Sidebar.Menu class="gap-1">
+			<Sidebar.Menu>
 				{#each chats as chatId, i (chatId)}
-					{@const isSelected = chatId === page.params.id}
+					{@const isActive = chatId === page.params.id}
+					{@const hasBadge = i < 9 && !isActive}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton
-							class="truncate mask-r-from-65% mask-r-to-73% py-5 hover:mask-none
-							{isSelected
-								? 'bg-violet-100 mask-none shadow-sm hover:bg-violet-100 dark:bg-violet-300 dark:text-primary-foreground dark:hover:text-primary-foreground'
-								: ''}"
+							class="h-9"
+							{isActive}
 							onclick={() => goto(`/chat/${chatId}`)}
 						>
-							{await getTitle(chatId)}
+							<span
+								class="w-full {hasBadge
+									? 'mask-r-from-60% mask-r-to-75%'
+									: 'mask-r-from-70% mask-r-to-85%'}"
+							>
+								{await getTitle(chatId)}
+							</span>
 						</Sidebar.MenuButton>
 
-						<Button
-							class="absolute end-1 top-1/2 -translate-y-1/2 opacity-0 transition-none group-hover/menu-item:opacity-100 
-							{isSelected ? 'dark:text-primary-foreground' : ''}"
-							variant="ghost"
-							size="icon-sm"
+						<Sidebar.MenuAction
+							class="top-1/2 -translate-y-1/2 end-0.5 bg-sidebar hover:bg-sidebar-accent"
 							onclick={() => deleteChat(chatId)}
+							showOnHover
 						>
-							{#if ctx.isLoading && isSelected}
-								<Spinner />
-							{:else}
-								<Trash2 />
-							{/if}
-						</Button>
+							<div class="rounded-md p-2 [&>svg]:size-4">
+								{#if ctx.isLoading && isActive}
+									<Spinner />
+								{:else}
+									<Trash2 />
+								{/if}
+							</div>
+						</Sidebar.MenuAction>
 
-						{#if i < 9 && !isSelected}
-							<Kbd.Root
-								class="hidden absolute top-1/2 tabular-nums -translate-y-1/2 sm:inline-flex end-1 group-hover/menu-item:opacity-0"
+						{#if hasBadge}
+							<Sidebar.MenuBadge
+								class="top-1/2 -translate-y-1/2 end-1 bg-sidebar group-hover/menu-item:opacity-0"
 							>
-								{isMac ? "⌘" : "Ctrl"} + {i + 1}
-							</Kbd.Root>
+								<Kbd.Root>{isMac ? "⌘" : "Ctrl"} + {i + 1}</Kbd.Root>
+							</Sidebar.MenuBadge>
 						{/if}
 					</Sidebar.MenuItem>
 				{/each}

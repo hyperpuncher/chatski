@@ -39,7 +39,7 @@ export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 			messages
 				.at(0)
 				.parts.find((p: any) => p.type === "text")
-				?.text.slice(0, 22)
+				?.text.slice(0, 60)
 				.trim(),
 		),
 	]);

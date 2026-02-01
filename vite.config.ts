@@ -13,11 +13,17 @@ export default defineConfig({
 			registerType: "autoUpdate",
 			manifest: {
 				name: "chatski",
-				short_name: "chatski",
 				description: "chatski with your slop generators",
+				theme_color: "#ffffff",
 				icons: [
 					{
-						src: "/favicon.svg",
+						src: "/icon-android.svg",
+						sizes: "any",
+						type: "image/svg+xml",
+						purpose: "maskable",
+					},
+					{
+						src: "/icon-desktop.svg",
 						sizes: "any",
 						type: "image/svg+xml",
 					},

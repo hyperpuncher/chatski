@@ -94,11 +94,11 @@ function handleKeydown(e: KeyboardEvent) {
 						</Sidebar.MenuButton>
 
 						<Sidebar.MenuAction
-							class="top-1/2 -translate-y-1/2 end-0.5 bg-sidebar hover:bg-sidebar-accent"
+							class="top-1/2 -translate-y-1/2 end-1 bg-sidebar hover:bg-sidebar-accent"
 							onclick={() => deleteChat(chatId)}
 							showOnHover
 						>
-							<div class="rounded-md p-2 [&>svg]:size-4">
+							<div class="rounded-md p-1.75 [&>svg]:size-3.5">
 								{#if ctx.isLoading && isActive}
 									<Spinner />
 								{:else}

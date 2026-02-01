@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mode, ModeWatcher } from "mode-watcher";
+import { ModeWatcher, mode } from "mode-watcher";
 import favicon from "$lib/assets/favicon.svg";
 import "./layout.css";
 import { pwaInfo } from "virtual:pwa-info";

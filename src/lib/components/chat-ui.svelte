@@ -254,6 +254,7 @@ $effect(() => {
 	ondrop={handleDrop}
 	onpaste={handlePaste}
 	onwheel={() => (userHasScrolled = true)}
+	ontouchmove={() => (userHasScrolled = true)}
 />
 
 {#if isDragging}

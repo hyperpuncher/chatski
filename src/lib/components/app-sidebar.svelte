@@ -94,7 +94,7 @@ function handleKeydown(e: KeyboardEvent) {
 						</Sidebar.MenuButton>
 
 						<Sidebar.MenuAction
-							class="top-1/2 -translate-y-1/2 end-1 bg-sidebar hover:bg-sidebar-accent"
+							class="top-1/2 -translate-y-1/2 end-1 hover:bg-primary/10"
 							onclick={() => deleteChat(chatId)}
 							showOnHover
 						>

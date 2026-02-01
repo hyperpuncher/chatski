@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ModeWatcher } from "mode-watcher";
+import { mode, ModeWatcher } from "mode-watcher";
 import favicon from "$lib/assets/favicon.svg";
 import "./layout.css";
 import { pwaInfo } from "virtual:pwa-info";
@@ -20,6 +20,7 @@ let { children } = $props();
 	{#if pwaInfo}
 		{@html pwaInfo.webManifest.linkTag}
 	{/if}
+	<meta name="theme-color" content={mode.current === "dark" ? "#0a0a0a" : "#ffffff"}>
 </svelte:head>
 
 <ModeWatcher />

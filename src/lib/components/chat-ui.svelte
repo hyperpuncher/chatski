@@ -108,6 +108,13 @@ const supportedParameters = $derived(
 
 const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 
+let userHasScrolled = $state(false);
+let messageRefs = $state<Record<number, HTMLElement>>({});
+const lastUserMessageIndex = $derived(
+	ctx.chat.messages.findLastIndex((m) => m.role === "user"),
+);
+const lastUserMessageElement = $derived(messageRefs[lastUserMessageIndex]);
+
 async function handleSubmit() {
 	if (ctx.chat.status === "streaming") {
 		ctx.chat.stop();
@@ -121,6 +128,7 @@ async function handleSubmit() {
 		});
 		await tick();
 		scroll.scrollToBottom();
+		userHasScrolled = false;
 	}
 	input = "";
 	fileList = undefined;
@@ -222,6 +230,20 @@ $effect(() => {
 		toast.error(ctx.chat.error.message || "Something went wrong");
 	}
 });
+
+$effect(() => {
+	if (
+		(isStreaming || isThinking) &&
+		!userHasScrolled &&
+		ctx.chat.lastMessage?.parts &&
+		lastUserMessageElement
+	) {
+		const rect = lastUserMessageElement.getBoundingClientRect();
+		if (rect.top > 48) {
+			lastUserMessageElement.scrollIntoView({ block: "start", behavior: "smooth" });
+		}
+	}
+});
 </script>
 
 <svelte:window
@@ -231,6 +253,7 @@ $effect(() => {
 	ondragleave={() => dragCounter--}
 	ondrop={handleDrop}
 	onpaste={handlePaste}
+	onwheel={() => (userHasScrolled = true)}
 />
 
 {#if isDragging}
@@ -262,8 +285,9 @@ $effect(() => {
 				{@const isAssistant = message.role === "assistant"}
 				{@const isUser = message.role === "user"}
 				<li
-					class="flex flex-col space-y-2 w-full"
+					class="flex flex-col space-y-2 w-full scroll-mt-12"
 					class:hidden={isLastMessage && isAssistant && (isResponding || isThinking)}
+					bind:this={messageRefs[messageIndex]}
 				>
 					{#each message.parts as part, partIndex (partIndex)}
 						{#if isUser}

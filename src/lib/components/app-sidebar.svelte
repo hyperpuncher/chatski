@@ -109,7 +109,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 						{#if hasBadge}
 							<Sidebar.MenuBadge
-								class="top-1/2 -translate-y-1/2 end-1 bg-sidebar group-hover/menu-item:opacity-0"
+								class="hidden top-1/2 -translate-y-1/2 sm:flex end-1 bg-sidebar group-hover/menu-item:opacity-0"
 							>
 								<Kbd.Root>{isMac ? "⌘" : "Ctrl"} + {i + 1}</Kbd.Root>
 							</Sidebar.MenuBadge>

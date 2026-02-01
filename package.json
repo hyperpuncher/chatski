@@ -17,7 +17,7 @@
 		"clean": "rm -rf node_modules/ .svelte-kit/ build/ bun.lock"
 	},
 	"devDependencies": {
-		"@ai-sdk/devtools": "^0.0.10",
+		"@ai-sdk/devtools": "^0.0.11",
 		"@internationalized/date": "^3.10.0",
 		"@lucide/svelte": "^0.563.1",
 		"@sveltejs/adapter-node": "^5.5.2",

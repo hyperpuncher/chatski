@@ -88,7 +88,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		model: dev ? wrapper : model,
 		messages: await convertToModelMessages(messages),
 		tools,
-		stopWhen: stepCountIs(20),
+		stopWhen: stepCountIs(10),
+		maxRetries: 3,
 		onFinish: async () => {
 			mcpClients.forEach(async (mcpClient) => await mcpClient.close());
 		},

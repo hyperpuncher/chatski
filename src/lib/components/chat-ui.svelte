@@ -299,7 +299,7 @@ $effect(() => {
 								</Button>
 							{:else if part.type === "text"}
 								<p
-									class="py-1.5 px-3.5 max-w-full rounded-2xl sm:leading-7 ms-auto w-fit rounded-tr-[3px] bg-primary leading-6.5 text-primary-foreground sm:max-w-5/6"
+									class="py-1.5 px-3.5 max-w-full whitespace-pre-wrap rounded-2xl sm:leading-7 ms-auto w-fit rounded-tr-[3px] bg-primary leading-6.5 text-primary-foreground sm:max-w-5/6"
 								>
 									{part.text}
 								</p>

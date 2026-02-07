@@ -17,7 +17,7 @@
 		"clean": "rm -rf node_modules/ .svelte-kit/ build/ bun.lock"
 	},
 	"devDependencies": {
-		"@ai-sdk/devtools": "^0.0.11",
+		"@ai-sdk/devtools": "^0.0.12",
 		"@internationalized/date": "^3.11.0",
 		"@lucide/svelte": "^0.563.1",
 		"@sveltejs/adapter-node": "^5.5.2",
@@ -36,7 +36,7 @@
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"rollup-plugin-visualizer": "^6.0.5",
-		"svelte": "^5.49.2",
+		"svelte": "^5.50.0",
 		"svelte-check": "^4.3.6",
 		"svelte-render-scan": "^1.1.0",
 		"svelte-sonner": "^1.0.7",
@@ -48,13 +48,13 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
-		"@ai-sdk/mcp": "^1.0.17",
-		"@ai-sdk/svelte": "^4.0.73",
+		"@ai-sdk/mcp": "^1.0.19",
+		"@ai-sdk/svelte": "^4.0.75",
 		"@fontsource-variable/cascadia-code": "^5.2.2",
 		"@fontsource-variable/inter": "^5.2.8",
 		"@openrouter/ai-sdk-provider": "2.1.1",
-		"ai": "^6.0.73",
-		"better-auth": "1.5.0-beta.11",
+		"ai": "^6.0.75",
+		"better-auth": "1.5.0-beta.12",
 		"mode-watcher": "^1.1.0",
 		"runed": "^0.37.1",
 		"svelte-streamdown": "^3.0.1",

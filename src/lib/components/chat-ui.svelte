@@ -110,10 +110,8 @@ const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 
 let userHasScrolled = $state(false);
 let messageRefs = $state<Record<number, HTMLElement>>({});
-const lastUserMessageIndex = $derived(
-	ctx.chat.messages.findLastIndex((m) => m.role === "user"),
-);
-const lastUserMessageElement = $derived(messageRefs[lastUserMessageIndex]);
+const lastMessageIndex = $derived(ctx.chat.messages.length - 1);
+const lastMessageElement = $derived(messageRefs[lastMessageIndex]);
 
 async function handleSubmit() {
 	if (ctx.chat.status === "streaming") {
@@ -236,11 +234,11 @@ $effect(() => {
 		(isStreaming || isThinking) &&
 		!userHasScrolled &&
 		ctx.chat.lastMessage?.parts &&
-		lastUserMessageElement
+		lastMessageElement
 	) {
-		const rect = lastUserMessageElement.getBoundingClientRect();
+		const rect = lastMessageElement.getBoundingClientRect();
 		if (rect.top > 48) {
-			lastUserMessageElement.scrollIntoView({ block: "start", behavior: "smooth" });
+			lastMessageElement.scrollIntoView({ block: "start", behavior: "smooth" });
 		}
 	}
 });

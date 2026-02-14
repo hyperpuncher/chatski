@@ -320,7 +320,11 @@ $effect(() => {
 						{:else if part.type === "file"}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">
-									<img class="rounded-2xl" src={part.url}>
+									<img
+										class="rounded-2xl"
+										src={part.url}
+										alt={part.filename}
+									>
 								</a>
 							{/if}
 						{/if}

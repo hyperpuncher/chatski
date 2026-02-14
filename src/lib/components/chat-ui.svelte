@@ -40,7 +40,7 @@ import * as Popover from "$lib/components/ui/popover/index.js";
 import { config } from "$lib/config.svelte";
 import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/remote/openrouter.remote";
-import { cn, collapseFilename, isMac } from "$lib/utils";
+import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
 
 const ctx = getChatContext();
 const scroll = getScrollContext();
@@ -338,6 +338,7 @@ $effect(() => {
 						<Button
 							variant="ghost"
 							size="icon-sm"
+							aria-label="Copy message"
 							onclick={() => {
 								const text = message.parts
 									.filter((p) => p.type === "text")
@@ -346,24 +347,26 @@ $effect(() => {
 								if (text) handleCopy(text);
 							}}
 						>
-							<Copy />
+							<Copy aria-hidden="true" />
 						</Button>
 
 						<Button
 							variant="ghost"
 							size="icon-sm"
+							aria-label="Regenerate response"
 							onclick={() => ctx.chat.regenerate({ messageId: message.id })}
 						>
-							<RefreshCcw />
+							<RefreshCcw aria-hidden="true" />
 						</Button>
 
 						{#if !isAssistant}
 							<Button
 								variant="ghost"
 								size="icon-sm"
+								aria-label="Edit message"
 								onclick={() => handleEdit(messageIndex)}
 							>
-								<SquarePen />
+								<SquarePen aria-hidden="true" />
 							</Button>
 						{/if}
 
@@ -375,41 +378,46 @@ $effect(() => {
 								<Button
 									variant="ghost"
 									size="xs"
+									aria-label="Copy token count"
 									onclick={() => handleCopy(tokens)}
 								>
-									<WholeWord />
+									<WholeWord aria-hidden="true" />
 									{tokens} tokens
 								</Button>
 								<Button
 									variant="ghost"
 									size="xs"
+									aria-label="Copy cost"
 									onclick={() => handleCopy(cost)}
 								>
-									<DollarSign />
+									<DollarSign aria-hidden="true" />
 									{cost}
 								</Button>
 								<Button
 									variant="ghost"
 									size="xs"
+									aria-label="Copy response time"
 									onclick={() => handleCopy(time)}
 								>
-									<Clock />
+									<Clock aria-hidden="true" />
 									{time}s
 								</Button>
 								<Button
 									variant="ghost"
 									size="xs"
+									aria-label="Copy tokens per second"
 									onclick={() => handleCopy(tps)}
 								>
-									<Gauge />
+									<Gauge aria-hidden="true" />
 									{tps} tokens/s
 								</Button>
 								<Button
 									variant="ghost"
 									size="xs"
+									aria-label="Copy provider"
 									onclick={() => handleCopy(provider)}
 								>
-									<Server />
+									<Server aria-hidden="true" />
 									{provider}
 								</Button>
 							</div>
@@ -464,8 +472,8 @@ $effect(() => {
 				bind:ref={inputElement}
 				bind:value={input}
 				class="max-h-36 md:text-base"
-				autofocus
-				placeholder="Generate slop..."
+				autofocus={!isMobile.current}
+				placeholder="Generate slop…"
 				rows={1}
 				onkeydown={async (e) => {
 					if (e.key === "Enter" && !e.shiftKey && input.trim()) {
@@ -482,9 +490,10 @@ $effect(() => {
 						class="relative rounded-full"
 						size="icon-sm"
 						disabled={!inputModalities}
+						aria-label="Attach files"
 					>
 						<label class="flex absolute inset-0 justify-center items-center">
-							<Paperclip />
+							<Paperclip aria-hidden="true" />
 							<input
 								type="file"
 								multiple
@@ -509,8 +518,14 @@ $effect(() => {
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
-									<Button {...props} variant="ghost" size="icon-sm">
+									<Button
+										{...props}
+										variant="ghost"
+										size="icon-sm"
+										aria-label="Reasoning level"
+									>
 										<Brain
+											aria-hidden="true"
 											class={config.settings.reasoning === "none"
 												? ""
 												: "text-violet-400"}
@@ -597,15 +612,22 @@ $effect(() => {
 														{isDefault ? 'visible' : ''}"
 															variant="ghost"
 															size="icon-xs"
+															aria-label={isFavorite
+																? "Remove from favorites"
+																: "Add to favorites"}
 															onclick={(e) => {
 																e.stopPropagation();
 																handleDefaultModel(model);
 															}}
 														>
 															{#if isDefault}
-																<Lock />
+																<Lock
+																	aria-hidden="true"
+																/>
 															{:else}
-																<LockOpen />
+																<LockOpen
+																	aria-hidden="true"
+																/>
 															{/if}
 														</Button>
 														<Button
@@ -613,12 +635,16 @@ $effect(() => {
 														{isFavorite ? 'visible' : ''}"
 															variant="ghost"
 															size="icon-xs"
+															aria-label={isFavorite
+																? "Remove from favorites"
+																: "Add to favorites"}
 															onclick={(e) => {
 																e.stopPropagation();
 																handleFavorite(model);
 															}}
 														>
 															<Star
+																aria-hidden="true"
 																class={isFavorite
 																	? "fill-yellow-400 text-yellow-400"
 																	: ""}
@@ -639,13 +665,16 @@ $effect(() => {
 						class="ml-1 rounded-full"
 						size="icon-sm"
 						type="submit"
+						aria-label={ctx.chat.status === "streaming"
+							? "Stop generation"
+							: "Send message"}
 						disabled={ctx.chat.status !== "streaming" &&
 							(!input.trim() || !config.settings.selectedModel)}
 					>
 						{#if ctx.chat.status === "streaming"}
-							<Square />
+							<Square aria-hidden="true" />
 						{:else}
-							<ArrowUp />
+							<ArrowUp aria-hidden="true" />
 						{/if}
 					</InputGroup.Button>
 				</div>

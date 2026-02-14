@@ -4,7 +4,8 @@ import MessagesSquare from "@lucide/svelte/icons/messages-square";
 import Trash2 from "@lucide/svelte/icons/trash-2";
 import { goto } from "$app/navigation";
 import { page } from "$app/state";
-import { Button } from "$lib/components/ui/button";
+import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+import { Button, buttonVariants } from "$lib/components/ui/button";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Spinner } from "$lib/components/ui/spinner";
@@ -15,6 +16,8 @@ import { isMac } from "$lib/utils";
 const ctx = getChatContext();
 
 const chats = $derived(await getChats());
+
+let isClearAllAlertOpen = $state(false);
 
 function isDigitKey(key: string) {
 	return /^\d$/.test(key);
@@ -58,17 +61,13 @@ function handleKeydown(e: KeyboardEvent) {
 
 		<Sidebar.Group />
 		<Sidebar.GroupLabel>
-			<MessagesSquare />
+			<MessagesSquare aria-hidden="true" />
 			<span class="ml-1">Threads</span>
 			<Button
 				class="ms-auto"
 				variant="ghost"
 				size="xs"
-				onclick={() => {
-					deleteAllChats();
-					ctx.newChat();
-					goto("/");
-				}}
+				onclick={() => (isClearAllAlertOpen = true)}
 			>
 				Clear
 			</Button>
@@ -96,13 +95,14 @@ function handleKeydown(e: KeyboardEvent) {
 						<Sidebar.MenuAction
 							class="top-1/2 -translate-y-1/2 end-1 hover:bg-primary/10"
 							onclick={() => deleteChat(chatId)}
+							aria-label="Delete chat"
 							showOnHover
 						>
 							<div class="rounded-md p-1.75 [&>svg]:size-3.5">
 								{#if ctx.isLoading && isActive}
 									<Spinner />
 								{:else}
-									<Trash2 />
+									<Trash2 aria-hidden="true" />
 								{/if}
 							</div>
 						</Sidebar.MenuAction>
@@ -120,6 +120,31 @@ function handleKeydown(e: KeyboardEvent) {
 		</Sidebar.GroupContent>
 		<Sidebar.Group />
 	</Sidebar.Content>
+
+	<AlertDialog.Root bind:open={isClearAllAlertOpen}>
+		<AlertDialog.Content>
+			<AlertDialog.Header>
+				<AlertDialog.Title>Clear All Chats?</AlertDialog.Title>
+				<AlertDialog.Description>
+					This will delete all your chats. This action cannot be undone.
+				</AlertDialog.Description>
+			</AlertDialog.Header>
+			<AlertDialog.Footer>
+				<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+				<AlertDialog.Action
+					class={buttonVariants({ variant: "destructive" })}
+					onclick={() => {
+						deleteAllChats();
+						ctx.newChat();
+						goto("/");
+						isClearAllAlertOpen = false;
+					}}
+				>
+					Clear All
+				</AlertDialog.Action>
+			</AlertDialog.Footer>
+		</AlertDialog.Content>
+	</AlertDialog.Root>
 
 	<Sidebar.Footer />
 </Sidebar.Root>

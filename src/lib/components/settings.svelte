@@ -4,6 +4,7 @@ import Pencil from "@lucide/svelte/icons/pencil";
 import PlusIcon from "@lucide/svelte/icons/plus";
 import Settings from "@lucide/svelte/icons/settings";
 import Trash2 from "@lucide/svelte/icons/trash-2";
+import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 import { Button, buttonVariants } from "$lib/components/ui/button";
 import * as Command from "$lib/components/ui/command/index.js";
 import * as Dialog from "$lib/components/ui/dialog";
@@ -21,6 +22,9 @@ import { cn, isMac, isMobile } from "$lib/utils";
 let open = $state(!config.settings.apiKey);
 let isDefaultModelPopoverOpen = $state(false);
 let isMCPInputOpen = $state(false);
+let mcpToDelete = $state<string | null>(null);
+let isDeleteMCPAlertOpen = $state(false);
+let isResetAlertOpen = $state(false);
 
 async function handleSubmit(e: Event) {
 	e.preventDefault();
@@ -76,8 +80,9 @@ function handleKeydown(e: KeyboardEvent) {
 			variant: isMobile.current ? "secondary" : "ghost",
 			size: "icon",
 		})}
+		aria-label="Settings"
 	>
-		<Settings />
+		<Settings aria-hidden="true" />
 	</Dialog.Trigger>
 
 	<Dialog.Content class="overflow-y-auto sm:max-w-md no-scrollbar max-h-[95dvh]">
@@ -104,7 +109,8 @@ function handleKeydown(e: KeyboardEvent) {
 								<a
 									href="https://openrouter.ai/settings/keys"
 									target="_blank"
-									>here</a
+									rel="noopener noreferrer"
+									>here ↗</a
 								>.
 							</Field.Description>
 						</Field.Field>
@@ -129,12 +135,7 @@ function handleKeydown(e: KeyboardEvent) {
 							<Field.Label>Default Model</Field.Label>
 							<Popover.Root bind:open={isDefaultModelPopoverOpen}>
 								<Popover.Trigger
-									class={cn(
-										buttonVariants({
-											variant: "outline",
-										}),
-										"justify-between",
-									)}
+									class={cn(buttonVariants({ variant: "outline" }), "justify-between")}
 								>
 									{#if config.settings.defaultModel}
 										<span class="truncate"
@@ -161,9 +162,9 @@ function handleKeydown(e: KeyboardEvent) {
 															isDefaultModelPopoverOpen = false;
 														}}
 													>
-														<span class="truncate">
-															{model.id.split("/")[1]}
-														</span>
+														<span class="truncate"
+															>{model.id.split("/")[1]}</span
+														>
 													</Command.Item>
 												{/each}
 											</Command.Group>
@@ -204,23 +205,27 @@ function handleKeydown(e: KeyboardEvent) {
 								<Button
 									size="icon-sm"
 									variant="outline"
+									aria-label="Edit {mcp.name}"
 									onclick={() => editMCP(mcp)}
 								>
-									<Pencil />
+									<Pencil aria-hidden="true" />
 								</Button>
 								<Button
 									variant="destructive"
 									size="icon-sm"
-									onclick={() => deleteMCP(mcp.name)}
+									aria-label="Delete {mcp.name}"
+									onclick={() => {
+										mcpToDelete = mcp.name;
+										isDeleteMCPAlertOpen = true;
+									}}
 								>
-									<Trash2 />
+									<Trash2 aria-hidden="true" />
 								</Button>
 							</Field.Field>
 						{/each}
 
 						{#if isMCPInputOpen}
 							<Field.Separator />
-
 							<Field.Field>
 								<Field.Label>New MCP Server</Field.Label>
 								<Tabs.Root
@@ -252,7 +257,6 @@ function handleKeydown(e: KeyboardEvent) {
 												required
 												bind:value={mcpInput.name}
 											/>
-
 											<div class="flex gap-2">
 												<Input
 													placeholder="bunx"
@@ -294,6 +298,36 @@ function handleKeydown(e: KeyboardEvent) {
 								</Button>
 							</Field.Field>
 						{/if}
+
+						<AlertDialog.Root bind:open={isDeleteMCPAlertOpen}>
+							<AlertDialog.Content>
+								<AlertDialog.Header>
+									<AlertDialog.Title>
+										Delete MCP Server?
+									</AlertDialog.Title>
+									<AlertDialog.Description>
+										This will permanently delete "{mcpToDelete}".
+									</AlertDialog.Description>
+								</AlertDialog.Header>
+								<AlertDialog.Footer>
+									<AlertDialog.Cancel
+										onclick={() => (isDeleteMCPAlertOpen = false)}
+									>
+										Cancel
+									</AlertDialog.Cancel>
+									<AlertDialog.Action
+										class={buttonVariants({ variant: "destructive" })}
+										onclick={() => {
+											if (mcpToDelete) deleteMCP(mcpToDelete);
+											isDeleteMCPAlertOpen = false;
+											mcpToDelete = null;
+										}}
+									>
+										Delete
+									</AlertDialog.Action>
+								</AlertDialog.Footer>
+							</AlertDialog.Content>
+						</AlertDialog.Root>
 					</Field.Group>
 				</Field.Set>
 
@@ -301,9 +335,38 @@ function handleKeydown(e: KeyboardEvent) {
 			</Field.Set>
 
 			<div class="flex gap-2 mt-6 sm:justify-end">
-				<Button class="me-auto" variant="destructive" onclick={config.clear}>
+				<Button
+					class="me-auto"
+					variant="destructive"
+					onclick={() => (isResetAlertOpen = true)}
+				>
 					Reset
 				</Button>
+
+				<AlertDialog.Root bind:open={isResetAlertOpen}>
+					<AlertDialog.Content>
+						<AlertDialog.Header>
+							<AlertDialog.Title>Reset All Settings?</AlertDialog.Title>
+							<AlertDialog.Description>
+								This will reset all settings to default. This action
+								cannot be undone.
+							</AlertDialog.Description>
+						</AlertDialog.Header>
+						<AlertDialog.Footer>
+							<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+							<AlertDialog.Action
+								class={buttonVariants({ variant: "destructive" })}
+								onclick={() => {
+									config.clear();
+									isResetAlertOpen = false;
+								}}
+							>
+								Reset
+							</AlertDialog.Action>
+						</AlertDialog.Footer>
+					</AlertDialog.Content>
+				</AlertDialog.Root>
+
 				<Dialog.Close class={buttonVariants({ variant: "outline" })}>
 					Cancel
 				</Dialog.Close>

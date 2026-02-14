@@ -51,6 +51,6 @@ $effect(() => {
 		{displayText.join("")}
 	</span>
 	{#if isThinking}
-		<span class="animate-in text-muted-foreground fade-in">Thinking...</span>
+		<span class="animate-in text-muted-foreground fade-in">Thinking…</span>
 	{/if}
 </span>

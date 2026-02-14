@@ -8,11 +8,11 @@ let { type } = $props();
 </script>
 
 {#if type.startsWith("image")}
-	<Image />
+	<Image aria-hidden="true" />
 {:else if type.startsWith("audio")}
-	<Music />
+	<Music aria-hidden="true" />
 {:else if type.startsWith("video")}
-	<Video />
+	<Video aria-hidden="true" />
 {:else}
-	<FileText />
+	<FileText aria-hidden="true" />
 {/if}

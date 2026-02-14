@@ -14,11 +14,15 @@ bun run build
 # Preview production build
 bun run preview
 
+# Start production server
+bun run start
+
 # Generate types and sync SvelteKit
 bun run prepare
 
 # Type checking
 bun run check
+bun run check:watch
 
 # Format code (Prettier + Biome + Rustywind)
 bun run format
@@ -49,17 +53,18 @@ Note: This project has no test suite.
 - Render children with `{@render children?.()}`
 - Use `$bindable()` for two-way binding
 - Use `bind:this` for element references
+- Module-level script: `<script lang="ts" module>` for shared types/exports
 
 ### Component Structure
 
 ```svelte
 <script lang="ts" module>
-// Module-level imports and types
+// Module-level imports, types, and exports
 </script>
 
 <script lang="ts">
 // Instance-level state and props
-let { class: className, ...rest } = $props();
+let { class: className, variant = "default", children, ...rest } = $props();
 </script>
 
 <markup>
@@ -73,14 +78,18 @@ let { class: className, ...rest } = $props();
 
 ### Styling
 
-- Use TailwindCSS utility classes
+- Use TailwindCSS v4 utility classes
 - Use tailwind-variants (tv) for component variants
 - Merge classes with `cn()` utility: `cn(baseClass, conditionalClass)`
 - shadcn-svelte component patterns with `data-slot` attributes
+- Tailwind stylesheet: `src/routes/layout.css`
 
 ### Imports
 
-- Use path aliases: `$lib`, `$lib/components/ui`, `$lib/hooks`
+- Use path aliases:
+  - `$lib` → src/lib
+  - `$lib/components/ui` → src/lib/components/ui
+  - `$lib/hooks` → src/lib/hooks
 - Create barrel files (index.ts) for re-exports
 - Named exports for components: `export { ComponentName }`
 - Server-only modules in `$lib/server/`
@@ -90,7 +99,8 @@ let { class: className, ...rest } = $props();
 - Strict mode enabled in tsconfig.json
 - Explicit types for component props and function parameters
 - Use `WithElementRef<T>` type for components with refs
-- Zod for runtime validation: `import * as z from "zod/v4"`
+- Valibot for runtime validation: `import * as v from "valibot"`
+- Use `rewriteRelativeImportExtensions: true` for `.js` imports
 
 ### Naming Conventions
 
@@ -102,14 +112,8 @@ let { class: className, ...rest } = $props();
 ### Error Handling
 
 - Throw errors with descriptive messages: `throw new Error("message")`
-- Use Zod schemas for input validation
+- Use Valibot schemas for input validation
 - Simple error propagation in remote procedures
-
-### Remote Procedures
-
-- Use `$app/server` for server functions: `query()` and `command()`
-- Batch queries with `.batch()` for efficiency
-- Call `.refresh()` after mutations to update cached data
 
 ## Architecture
 
@@ -119,36 +123,73 @@ let { class: className, ...rest } = $props();
 - API endpoints: `src/routes/api/[endpoint]/+server.ts`
 - Layouts: `+layout.svelte` / `+layout.ts`
 - Pages: `+page.svelte`
+- Route groups: `(app)/`, `(auth)/`
 
 ### State Management
 
 - Svelte 5 runes for local state
-- Context API for shared state (e.g., Sidebar)
-- $app/state for page-level state
-- localStorage for persistent preferences
+- Context API for shared state (createContext from svelte)
+- localStorage via `$lib/storage.ts` for persistent preferences
+- Config store: `$lib/config.svelte.ts`
 
 ### AI Integration
 
-- AI SDK + OpenRouter for LLM calls
+- AI SDK (@ai-sdk/svelte) + OpenRouter for LLM calls
 - Stream responses with `streamText()`
-- Save chats to Redis with provider metadata
+- Chat state managed via `Chat` class from @ai-sdk/svelte
+- MCP (Model Context Protocol) support via @ai-sdk/mcp
+- Chat persistence to Redis
+
+### Authentication
+
+- Better Auth for authentication
+- GitHub OAuth provider
+- Server hook validates sessions and allowed emails
+- Remote function: `requireAuth()` for protected operations
 
 ### Database
 
-- Redis for chat storage and caching
-- Connection via environment variables
+- Redis (via Bun's built-in redis) for chat storage and caching
+- Keys pattern: `chats:{userId}:{chatId}`, `chat:title:{chatId}`
+
+### Remote Procedures
+
+- Use `$app/server` for server functions: `query()` and `command()`
+- Batch queries with `.batch()` for efficiency
+- Call `.refresh()` after mutations to update cached data
+- Location: `src/lib/remote/*.remote.ts`
+
+### Environment Variables
+
+Required in `.envrc` or environment:
+- `OPENROUTER_API_KEY` - OpenRouter API access
+- `AUTH_SECRET` - Better Auth secret
+- `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` - GitHub OAuth
+- `AUTH_ALLOWED_EMAILS` - Comma-separated allowed emails
+- `REDIS_URL` - Redis connection string
 
 ## Editor Configuration
 
 - Biome: biome.jsonc (formatting, ignores Svelte linter rules)
 - Prettier: .prettierrc (plugins for Svelte and Tailwind)
+- oxlint for linting
 - Path aliases configured in components.json
 
 ## Path Aliases
 
 ```
-$lib          -> src/lib
+$lib               -> src/lib
 $lib/components/ui -> src/lib/components/ui
-$lib/hooks    -> src/lib/hooks
-$lib/utils    -> src/lib/utils
+$lib/hooks         -> src/lib/hooks
+$app/server        -> SvelteKit server modules
+$env/dynamic/private -> Private environment variables
 ```
+
+## Key Dependencies
+
+- **Framework**: Svelte 5.49.1, SvelteKit 2.51.0
+- **Styling**: TailwindCSS 4.1.17, tailwind-variants, tailwind-merge
+- **AI**: ai SDK 6.0.86, @ai-sdk/svelte, @openrouter/ai-sdk-provider
+- **Auth**: better-auth 1.5.0-beta.13
+- **UI**: bits-ui 2.15.5 (shadcn-svelte base), @lucide/svelte
+- **Utils**: valibot, uuidv7, runed, mode-watcher

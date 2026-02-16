@@ -14,7 +14,11 @@ let { content, isStreaming } = $props();
 	animation={{ enabled: isStreaming, type: "fade", duration: 200 }}
 	shikiTheme="dracula"
 	shikiThemes={{ dracula }}
-	shikiLanguages={[{ id: "typst", import: () => import("@shikijs/langs/typst") }]}
+	shikiLanguages={[
+		{ id: "lua", import: () => import("@shikijs/langs/lua") },
+		{ id: "powershell", import: () => import("@shikijs/langs/powershell") },
+		{ id: "typst", import: () => import("@shikijs/langs/typst") },
+	]}
 	theme={{
 		li: {
 			base: "dark:marker:text-muted-foreground",

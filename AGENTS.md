@@ -24,7 +24,7 @@ bun run prepare
 bun run check
 bun run check:watch
 
-# Format code (Prettier + Biome + Rustywind)
+# Format code (oxfmt + prettier)
 bun run format
 
 # Lint with oxlint

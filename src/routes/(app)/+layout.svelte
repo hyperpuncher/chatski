@@ -85,7 +85,7 @@ function handleKeydown(e: KeyboardEvent) {
 <Sidebar.Provider bind:open={isSidebarOpen}>
 	<main class="w-full">
 		<header
-			class="flex fixed top-0 right-0 left-0 z-10 justify-between items-center p-4 w-full"
+			class="fixed top-0 right-0 left-0 z-10 flex w-full items-center justify-between p-4"
 		>
 			<Settings />
 			<Sidebar.Trigger
@@ -100,7 +100,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 		{#if dev}
 			<span
-				class="fixed top-5 py-1.5 px-3 font-mono text-xs text-black bg-amber-300 rounded-full left-15"
+				class="fixed top-5 left-15 rounded-full bg-amber-300 px-3 py-1.5 font-mono text-xs text-black"
 			>
 				DEV
 			</span>

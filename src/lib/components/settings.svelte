@@ -85,7 +85,7 @@ function handleKeydown(e: KeyboardEvent) {
 		<Settings aria-hidden="true" />
 	</Dialog.Trigger>
 
-	<Dialog.Content class="overflow-y-auto sm:max-w-md no-scrollbar max-h-[95dvh]">
+	<Dialog.Content class="no-scrollbar max-h-[95dvh] overflow-y-auto sm:max-w-md">
 		<Dialog.Header>
 			<Dialog.Title>Settings</Dialog.Title>
 		</Dialog.Header>
@@ -109,8 +109,7 @@ function handleKeydown(e: KeyboardEvent) {
 								<a
 									href="https://openrouter.ai/settings/keys"
 									target="_blank"
-									rel="noopener noreferrer"
-									>here ↗</a
+									rel="noopener noreferrer">here ↗</a
 								>.
 							</Field.Description>
 						</Field.Field>
@@ -123,7 +122,7 @@ function handleKeydown(e: KeyboardEvent) {
 										{config.settings.labs.join(", ")}
 									</Label>
 								</Select.Trigger>
-								<Select.Content class="overflow-y-scroll max-h-64">
+								<Select.Content class="max-h-64 overflow-y-scroll">
 									{#each await getLabs() as lab}
 										<Select.Item value={lab}>{lab}</Select.Item>
 									{/each}
@@ -144,15 +143,13 @@ function handleKeydown(e: KeyboardEvent) {
 									{:else}
 										<span>Select model</span>
 									{/if}
-									<ChevronDownIcon class="opacity-50 size-4" />
+									<ChevronDownIcon class="size-4 opacity-50" />
 								</Popover.Trigger>
-								<Popover.Content class="p-0 w-full" side="bottom">
+								<Popover.Content class="w-full p-0" side="bottom">
 									<Command.Root>
 										<Command.Input placeholder="Search models..." />
 										<Command.List>
-											<Command.Empty>
-												No results found.
-											</Command.Empty>
+											<Command.Empty>No results found.</Command.Empty>
 											<Command.Group>
 												{#each await getModels(config.settings.labs) as model (model.id)}
 													<Command.Item
@@ -162,9 +159,7 @@ function handleKeydown(e: KeyboardEvent) {
 															isDefaultModelPopoverOpen = false;
 														}}
 													>
-														<span class="truncate"
-															>{model.id.split("/")[1]}</span
-														>
+														<span class="truncate">{model.id.split("/")[1]}</span>
 													</Command.Item>
 												{/each}
 											</Command.Group>
@@ -228,21 +223,14 @@ function handleKeydown(e: KeyboardEvent) {
 							<Field.Separator />
 							<Field.Field>
 								<Field.Label>New MCP Server</Field.Label>
-								<Tabs.Root
-									bind:value={mcpInput.type}
-									onValueChange={resetMCPInput}
-								>
+								<Tabs.Root bind:value={mcpInput.type} onValueChange={resetMCPInput}>
 									<Tabs.List>
 										<Tabs.Trigger value="http">http</Tabs.Trigger>
 										<Tabs.Trigger value="stdio">stdio</Tabs.Trigger>
 									</Tabs.List>
 									<Tabs.Content value="http">
 										<div class="flex flex-col gap-2">
-											<Input
-												placeholder="name"
-												required
-												bind:value={mcpInput.name}
-											/>
+											<Input placeholder="name" required bind:value={mcpInput.name} />
 											<Input
 												placeholder="http://localhost:3000/mcp"
 												bind:value={mcpInput.url}
@@ -252,11 +240,7 @@ function handleKeydown(e: KeyboardEvent) {
 									</Tabs.Content>
 									<Tabs.Content value="stdio">
 										<div class="flex flex-col gap-2">
-											<Input
-												placeholder="name"
-												required
-												bind:value={mcpInput.name}
-											/>
+											<Input placeholder="name" required bind:value={mcpInput.name} />
 											<div class="flex gap-2">
 												<Input
 													placeholder="bunx"
@@ -272,7 +256,7 @@ function handleKeydown(e: KeyboardEvent) {
 										</div>
 									</Tabs.Content>
 								</Tabs.Root>
-								<div class="flex gap-2 justify-end">
+								<div class="flex justify-end gap-2">
 									<Button
 										variant="outline"
 										onclick={() => {
@@ -302,17 +286,13 @@ function handleKeydown(e: KeyboardEvent) {
 						<AlertDialog.Root bind:open={isDeleteMCPAlertOpen}>
 							<AlertDialog.Content>
 								<AlertDialog.Header>
-									<AlertDialog.Title>
-										Delete MCP Server?
-									</AlertDialog.Title>
+									<AlertDialog.Title>Delete MCP Server?</AlertDialog.Title>
 									<AlertDialog.Description>
 										This will permanently delete "{mcpToDelete}".
 									</AlertDialog.Description>
 								</AlertDialog.Header>
 								<AlertDialog.Footer>
-									<AlertDialog.Cancel
-										onclick={() => (isDeleteMCPAlertOpen = false)}
-									>
+									<AlertDialog.Cancel onclick={() => (isDeleteMCPAlertOpen = false)}>
 										Cancel
 									</AlertDialog.Cancel>
 									<AlertDialog.Action
@@ -334,7 +314,7 @@ function handleKeydown(e: KeyboardEvent) {
 				<Field.Separator />
 			</Field.Set>
 
-			<div class="flex gap-2 mt-6 sm:justify-end">
+			<div class="mt-6 flex gap-2 sm:justify-end">
 				<Button
 					class="me-auto"
 					variant="destructive"
@@ -348,8 +328,7 @@ function handleKeydown(e: KeyboardEvent) {
 						<AlertDialog.Header>
 							<AlertDialog.Title>Reset All Settings?</AlertDialog.Title>
 							<AlertDialog.Description>
-								This will reset all settings to default. This action
-								cannot be undone.
+								This will reset all settings to default. This action cannot be undone.
 							</AlertDialog.Description>
 						</AlertDialog.Header>
 						<AlertDialog.Footer>
@@ -367,9 +346,7 @@ function handleKeydown(e: KeyboardEvent) {
 					</AlertDialog.Content>
 				</AlertDialog.Root>
 
-				<Dialog.Close class={buttonVariants({ variant: "outline" })}>
-					Cancel
-				</Dialog.Close>
+				<Dialog.Close class={buttonVariants({ variant: "outline" })}>Cancel</Dialog.Close>
 				<Button type="submit">Save settings</Button>
 			</div>
 		</form>

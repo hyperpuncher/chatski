@@ -50,13 +50,13 @@ const sidebar = useSidebar();
 				<Sheet.Title>Sidebar</Sheet.Title>
 				<Sheet.Description>Displays the mobile sidebar.</Sheet.Description>
 			</Sheet.Header>
-			<div class="flex flex-col w-full h-full">{@render children?.()}</div>
+			<div class="flex h-full w-full flex-col">{@render children?.()}</div>
 		</Sheet.Content>
 	</Sheet.Root>
 {:else}
 	<div
 		bind:this={ref}
-		class="hidden md:block group peer text-sidebar-foreground"
+		class="group peer hidden text-sidebar-foreground md:block"
 		data-state={sidebar.state}
 		data-collapsible={sidebar.state === "collapsed" ? collapsible : ""}
 		data-variant={variant}

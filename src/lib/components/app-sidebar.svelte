@@ -48,7 +48,7 @@ function handleKeydown(e: KeyboardEvent) {
 							<a href="/" {...props}>
 								<MessageSquarePlus />
 								<span class="font-semibold">New Chat</span>
-								<Kbd.Root class="hidden sm:inline-flex ms-auto">
+								<Kbd.Root class="ms-auto hidden sm:inline-flex">
 									{isMac ? "⌘" : "Ctrl"} + O
 								</Kbd.Root>
 							</a>
@@ -93,7 +93,7 @@ function handleKeydown(e: KeyboardEvent) {
 						</Sidebar.MenuButton>
 
 						<Sidebar.MenuAction
-							class="top-1/2 -translate-y-1/2 end-1 hover:bg-primary/10"
+							class="end-1 top-1/2 -translate-y-1/2 hover:bg-primary/10"
 							onclick={() => deleteChat(chatId)}
 							aria-label="Delete chat"
 							showOnHover
@@ -109,7 +109,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 						{#if hasBadge}
 							<Sidebar.MenuBadge
-								class="hidden top-1/2 -translate-y-1/2 sm:flex end-1 bg-sidebar group-hover/menu-item:opacity-0"
+								class="end-1 top-1/2 hidden -translate-y-1/2 bg-sidebar group-hover/menu-item:opacity-0 sm:flex"
 							>
 								<Kbd.Root>{isMac ? "⌘" : "Ctrl"} + {i + 1}</Kbd.Root>
 							</Sidebar.MenuBadge>

@@ -30,7 +30,7 @@ let {
 >
 	{#snippet children({ checked, indeterminate })}
 		<span
-			class="flex absolute justify-center items-center pointer-events-none start-2 size-3.5"
+			class="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center"
 		>
 			{#if indeterminate}
 				<MinusIcon class="size-4" />

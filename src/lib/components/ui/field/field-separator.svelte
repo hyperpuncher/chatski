@@ -29,7 +29,7 @@ const hasContent = $derived(!!children);
 	<Separator class="absolute inset-0 top-1/2" />
 	{#if children}
 		<span
-			class="block relative px-2 mx-auto w-fit bg-background text-muted-foreground"
+			class="relative mx-auto block w-fit bg-background px-2 text-muted-foreground"
 			data-slot="field-separator-content"
 		>
 			{@render children()}

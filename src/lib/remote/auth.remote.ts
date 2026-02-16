@@ -1,5 +1,5 @@
-import { error } from "@sveltejs/kit";
 import { getRequestEvent, query } from "$app/server";
+import { error } from "@sveltejs/kit";
 
 export const requireAuth = query(async () => {
 	const { session } = getRequestEvent().locals;

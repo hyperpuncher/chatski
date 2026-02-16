@@ -257,13 +257,13 @@ $effect(() => {
 
 {#if isDragging}
 	<div
-		class="flex fixed inset-0 z-50 flex-col gap-4 justify-center items-center bg-black/25 backdrop-blur-sm"
+		class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/25 backdrop-blur-sm"
 	>
 		<div
 			class="flex size-[80%] flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed border-primary-foreground text-lg text-primary-foreground text-shadow-md/20 dark:border-muted-foreground dark:text-muted-foreground"
 		>
 			{#if inputModalities}
-				<FileUp class="animate-bounce size-12 drop-shadow-md/20" />
+				<FileUp class="size-12 animate-bounce drop-shadow-md/20" />
 				<span>Drop files here</span>
 			{:else}
 				<FileX class="size-12 drop-shadow-md/20" />
@@ -273,18 +273,15 @@ $effect(() => {
 	</div>
 {/if}
 
-<div class="flex flex-col justify-center items-center px-2 mx-auto max-w-3xl h-full">
+<div class="mx-auto flex h-full max-w-3xl flex-col items-center justify-center px-2">
 	{#if ctx.chat.messages.length}
-		<ul
-			class="overflow-hidden px-2 mt-20 mb-6 space-y-10 w-full h-full sm:px-5"
-			in:slide
-		>
+		<ul class="mt-20 mb-6 h-full w-full space-y-10 overflow-hidden px-2 sm:px-5" in:slide>
 			{#each ctx.chat.messages as message, messageIndex (messageIndex)}
 				{@const isLastMessage = messageIndex === ctx.chat.messages.length - 1}
 				{@const isAssistant = message.role === "assistant"}
 				{@const isUser = message.role === "user"}
 				<li
-					class="flex flex-col space-y-2 w-full scroll-mt-12"
+					class="flex w-full scroll-mt-12 flex-col space-y-2"
 					class:hidden={isLastMessage && isAssistant && (isResponding || isThinking)}
 					bind:this={messageRefs[messageIndex]}
 				>
@@ -297,15 +294,13 @@ $effect(() => {
 								</Button>
 							{:else if part.type === "text"}
 								<p
-									class="py-1.5 px-3.5 max-w-full whitespace-pre-wrap rounded-2xl sm:leading-7 ms-auto w-fit rounded-tr-[3px] bg-primary leading-6.5 text-primary-foreground sm:max-w-5/6"
+									class="ms-auto w-fit max-w-full rounded-2xl rounded-tr-[3px] bg-primary px-3.5 py-1.5 leading-6.5 whitespace-pre-wrap text-primary-foreground sm:max-w-5/6 sm:leading-7"
 								>
 									{part.text}
 								</p>
 							{/if}
 						{:else if part.type === "dynamic-tool"}
-							<p
-								class="font-mono text-sm wrap-anywhere text-muted-foreground"
-							>
+							<p class="font-mono text-sm wrap-anywhere text-muted-foreground">
 								• {part.toolName}
 								{part.input &&
 									Object.entries(part.input)
@@ -313,18 +308,11 @@ $effect(() => {
 										.join(" ")}
 							</p>
 						{:else if part.type === "text"}
-							<AiMessage
-								content={part.text}
-								isStreaming={isStreaming && isLastMessage}
-							/>
+							<AiMessage content={part.text} isStreaming={isStreaming && isLastMessage} />
 						{:else if part.type === "file"}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">
-									<img
-										class="rounded-2xl"
-										src={part.url}
-										alt={part.filename}
-									>
+									<img class="rounded-2xl" src={part.url} alt={part.filename} />
 								</a>
 							{/if}
 						{/if}
@@ -333,7 +321,7 @@ $effect(() => {
 					<div
 						class:ms-auto={isUser}
 						class:hidden={isLastMessage && isStreaming}
-						class="flex gap-1 items-center"
+						class="flex items-center gap-1"
 					>
 						<Button
 							variant="ghost"
@@ -373,7 +361,7 @@ $effect(() => {
 						{#if config.settings.stats && isAssistant && message.metadata}
 							{@const { tokens, cost, tps, time, provider } = message.metadata}
 							<div
-								class="grid grid-cols-2 justify-items-start sm:flex sm:gap-1 text-muted-foreground"
+								class="grid grid-cols-2 justify-items-start text-muted-foreground sm:flex sm:gap-1"
 							>
 								<Button
 									variant="ghost"
@@ -442,7 +430,7 @@ $effect(() => {
 		}}
 	>
 		<InputGroup.Root
-			class="py-1 px-2 rounded-3xl bg-muted/85 backdrop-blur-md dark:bg-muted/85"
+			class="rounded-3xl bg-muted/85 px-2 py-1 backdrop-blur-md dark:bg-muted/85"
 		>
 			{#if fileList?.length}
 				<InputGroup.Addon align="block-start">
@@ -452,14 +440,14 @@ $effect(() => {
 								<Button
 									variant="outline"
 									size="sm"
-									class="relative group"
+									class="group relative"
 									onclick={() => handleRemoveFile(file)}
 								>
 									<FileIcon type={file.type} />
 									<span>{collapseFilename(file.name)}</span>
 
 									<CircleX
-										class="absolute -top-1.5 -right-1.5 md:invisible group-hover:visible size-4.5 text-foreground"
+										class="absolute -top-1.5 -right-1.5 size-4.5 text-foreground group-hover:visible md:invisible"
 									/>
 								</Button>
 							</li>
@@ -492,7 +480,7 @@ $effect(() => {
 						disabled={!inputModalities}
 						aria-label="Attach files"
 					>
-						<label class="flex absolute inset-0 justify-center items-center">
+						<label class="absolute inset-0 flex items-center justify-center">
 							<Paperclip aria-hidden="true" />
 							<input
 								type="file"
@@ -500,7 +488,7 @@ $effect(() => {
 								class="hidden"
 								accept={inputModalities}
 								bind:files={fileList}
-							>
+							/>
 						</label>
 					</InputGroup.Button>
 
@@ -513,7 +501,7 @@ $effect(() => {
 					</div>
 				{/if}
 
-				<div class="flex gap-2 ms-auto">
+				<div class="ms-auto flex gap-2">
 					{#if supportedParameters?.includes("reasoning")}
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
@@ -540,10 +528,7 @@ $effect(() => {
 										onValueChange={() => config.save()}
 									>
 										{#each reasoningOptions as option}
-											<DropdownMenu.RadioItem
-												class="list-none"
-												value={option}
-											>
+											<DropdownMenu.RadioItem class="list-none" value={option}>
 												{option}
 											</DropdownMenu.RadioItem>
 										{/each}
@@ -569,8 +554,7 @@ $effect(() => {
 							<Bot />
 
 							{#if config.settings.selectedModel}
-								<span class="truncate"
-									>{config.settings.selectedModel.split("/")[1]}</span
+								<span class="truncate">{config.settings.selectedModel.split("/")[1]}</span
 								>
 							{:else}
 								<span class="truncate">Select model</span>
@@ -580,7 +564,7 @@ $effect(() => {
 								{isMac ? "⌘" : "Ctrl"} + M
 							</Kbd.Root>
 						</Popover.Trigger>
-						<Popover.Content class="p-0 w-66" side="top" align="end">
+						<Popover.Content class="w-66 p-0" side="top" align="end">
 							<Command.Root>
 								<Command.Input placeholder="Search models..." />
 								<Command.List>
@@ -591,7 +575,7 @@ $effect(() => {
 											{@const isDefault = config.settings.defaultModel === model}
 											{@const isHovered = hoveredModel === model}
 											<Command.Item
-												class="flex gap-2 justify-between group"
+												class="group flex justify-between gap-2"
 												value={model}
 												onSelect={() => {
 													config.settings.selectedModel = model;
@@ -621,13 +605,9 @@ $effect(() => {
 															}}
 														>
 															{#if isDefault}
-																<Lock
-																	aria-hidden="true"
-																/>
+																<Lock aria-hidden="true" />
 															{:else}
-																<LockOpen
-																	aria-hidden="true"
-																/>
+																<LockOpen aria-hidden="true" />
 															{/if}
 														</Button>
 														<Button

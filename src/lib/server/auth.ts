@@ -1,7 +1,7 @@
-import { betterAuth } from "better-auth/minimal";
-import { sveltekitCookies } from "better-auth/svelte-kit";
 import { getRequestEvent } from "$app/server";
 import { env } from "$env/dynamic/private";
+import { betterAuth } from "better-auth/minimal";
+import { sveltekitCookies } from "better-auth/svelte-kit";
 
 export const auth = betterAuth({
 	user: {

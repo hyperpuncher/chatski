@@ -11,16 +11,16 @@ let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon}>
+	<link rel="icon" href={favicon} />
 	<title>{dev ? "chatski-dev" : "chatski"}</title>
-	<meta name="description" content="chatski with your slop generators">
-	<meta property="og:title" content="chatski">
-	<meta property="og:description" content="chatski with your slop generators">
-	<meta property="og:type" content="website">
+	<meta name="description" content="chatski with your slop generators" />
+	<meta property="og:title" content="chatski" />
+	<meta property="og:description" content="chatski with your slop generators" />
+	<meta property="og:type" content="website" />
 	{#if pwaInfo}
 		{@html pwaInfo.webManifest.linkTag}
 	{/if}
-	<meta name="theme-color" content={mode.current === "dark" ? "#0a0a0a" : "#ffffff"}>
+	<meta name="theme-color" content={mode.current === "dark" ? "#0a0a0a" : "#ffffff"} />
 </svelte:head>
 
 <ModeWatcher />

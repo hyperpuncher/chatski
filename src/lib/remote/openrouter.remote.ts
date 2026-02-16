@@ -1,7 +1,7 @@
-import { redis } from "bun";
-import * as v from "valibot";
 import { query } from "$app/server";
 import { env } from "$env/dynamic/private";
+import { redis } from "bun";
+import * as v from "valibot";
 
 export const getModels = query(v.array(v.string()), async (labs) => {
 	const cached = await redis.get("openrouter:data");

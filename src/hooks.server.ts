@@ -1,9 +1,9 @@
-import { error, type Handle, redirect } from "@sveltejs/kit";
-import { sequence } from "@sveltejs/kit/hooks";
-import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
 import { env } from "$env/dynamic/private";
 import { auth } from "$lib/server/auth";
+import { error, type Handle, redirect } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
+import { svelteKitHandler } from "better-auth/svelte-kit";
 
 const authHandler: Handle = async ({ event, resolve }) => {
 	return svelteKitHandler({ event, resolve, auth, building });

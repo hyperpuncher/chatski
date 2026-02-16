@@ -34,7 +34,7 @@ let {
 		bind:files
 		bind:value
 		{...restProps}
-	>
+	/>
 {:else}
 	<input
 		bind:this={ref}
@@ -48,5 +48,5 @@ let {
 		{type}
 		bind:value
 		{...restProps}
-	>
+	/>
 {/if}

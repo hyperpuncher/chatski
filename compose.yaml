@@ -1,25 +1,25 @@
 services:
-  chatski:
-    image: ghcr.io/hyperpuncher/chatski
-    ports:
-      - "3000:3000"
-    environment:
-      - AUTH_ALLOWED_EMAILS=${AUTH_ALLOWED_EMAILS}
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
-      - BETTER_AUTH_URL=${BETTER_AUTH_URL}
-      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
-      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - REDIS_URL=redis://redis:6379
-      - BODY_SIZE_LIMIT=50M
-    depends_on:
-      - redis
-    restart: unless-stopped
+    chatski:
+        image: ghcr.io/hyperpuncher/chatski
+        ports:
+            - "3000:3000"
+        environment:
+            - AUTH_ALLOWED_EMAILS=${AUTH_ALLOWED_EMAILS}
+            - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+            - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+            - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+            - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+            - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+            - REDIS_URL=redis://redis:6379
+            - BODY_SIZE_LIMIT=50M
+        depends_on:
+            - redis
+        restart: unless-stopped
 
-  redis:
-    image: valkey/valkey:alpine
-    volumes:
-      - redis_data:/data
+    redis:
+        image: valkey/valkey:alpine
+        volumes:
+            - redis_data:/data
 
 volumes:
-  redis_data:
+    redis_data:

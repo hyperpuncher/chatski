@@ -1,6 +1,7 @@
+import { command, query } from "$app/server";
 import { redis } from "bun";
 import * as v from "valibot";
-import { command, query } from "$app/server";
+
 import { requireAuth } from "./auth.remote";
 
 export const getChats = query(async () => {

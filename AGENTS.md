@@ -87,9 +87,9 @@ let { class: className, variant = "default", children, ...rest } = $props();
 ### Imports
 
 - Use path aliases:
-  - `$lib` → src/lib
-  - `$lib/components/ui` → src/lib/components/ui
-  - `$lib/hooks` → src/lib/hooks
+    - `$lib` → src/lib
+    - `$lib/components/ui` → src/lib/components/ui
+    - `$lib/hooks` → src/lib/hooks
 - Create barrel files (index.ts) for re-exports
 - Named exports for components: `export { ComponentName }`
 - Server-only modules in `$lib/server/`
@@ -162,6 +162,7 @@ let { class: className, variant = "default", children, ...rest } = $props();
 ### Environment Variables
 
 Required in `.envrc` or environment:
+
 - `OPENROUTER_API_KEY` - OpenRouter API access
 - `AUTH_SECRET` - Better Auth secret
 - `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` - GitHub OAuth
@@ -170,8 +171,8 @@ Required in `.envrc` or environment:
 
 ## Editor Configuration
 
-- Biome: biome.jsonc (formatting, ignores Svelte linter rules)
 - Prettier: .prettierrc (plugins for Svelte and Tailwind)
+- oxfmt for formatting
 - oxlint for linting
 - Path aliases configured in components.json
 

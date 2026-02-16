@@ -23,7 +23,7 @@ let {
 >
 	{#if heading}
 		<CommandPrimitive.GroupHeading
-			class="py-1.5 px-2 text-xs font-medium text-muted-foreground"
+			class="px-2 py-1.5 text-xs font-medium text-muted-foreground"
 		>
 			{heading}
 		</CommandPrimitive.GroupHeading>

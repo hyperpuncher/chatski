@@ -22,10 +22,10 @@ let {
 >
 	{#snippet children({ checked })}
 		<span
-			class="flex absolute justify-center items-center pointer-events-none start-2 size-3.5"
+			class="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center"
 		>
 			{#if checked}
-				<CircleIcon class="fill-current size-2" />
+				<CircleIcon class="size-2 fill-current" />
 			{/if}
 		</span>
 		{@render childrenProp?.({ checked })}

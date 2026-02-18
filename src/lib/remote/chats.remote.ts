@@ -33,16 +33,33 @@ export const getMessages = query(v.string(), async (chatId) => {
 
 export const saveChat = command("unchecked", async ({ chatId, messages }) => {
 	const user = await requireAuth();
+
+	const text = messages
+		.at(0)
+		?.parts.find((p: any) => p.type === "text")
+		?.text.slice(0, 60)
+		.trim();
+
+	const filePart = messages.at(0)?.parts.find((p: any) => p.type === "file");
+
+	let title: string;
+	if (text) {
+		title = text;
+	} else if (filePart?.mediaType) {
+		if (filePart.mediaType.startsWith("image/")) title = "image";
+		else if (filePart.mediaType.startsWith("audio/")) title = "audio";
+		else if (filePart.mediaType.startsWith("video/")) title = "video";
+		else if (filePart.mediaType === "application/pdf") title = "pdf";
+		else title = "file";
+	} else if (filePart) {
+		title = "file";
+	} else {
+		title = "new chat";
+	}
+
 	await Promise.all([
 		redis.set(`chats:${user.userId}:${chatId}`, JSON.stringify(messages)),
-		redis.setnx(
-			`chat:title:${chatId}`,
-			messages
-				.at(0)
-				.parts.find((p: any) => p.type === "text")
-				?.text.slice(0, 60)
-				.trim(),
-		),
+		redis.setnx(`chat:title:${chatId}`, title),
 	]);
 	getChats().refresh();
 });

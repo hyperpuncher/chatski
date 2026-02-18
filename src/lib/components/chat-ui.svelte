@@ -120,10 +120,11 @@ async function handleSubmit() {
 		if (page.url.pathname === "/") {
 			await goto(`/chat/${ctx.chat.id}`, { replaceState: true });
 		}
-		ctx.chat.sendMessage({
-			text: input,
-			files: fileList,
-		});
+		if (input.trim()) {
+			ctx.chat.sendMessage({ text: input, files: fileList });
+		} else if (fileList) {
+			ctx.chat.sendMessage({ files: fileList });
+		}
 		await tick();
 		scroll.scrollToBottom();
 		userHasScrolled = false;
@@ -464,7 +465,7 @@ $effect(() => {
 				placeholder="Generate slop…"
 				rows={1}
 				onkeydown={async (e) => {
-					if (e.key === "Enter" && !e.shiftKey && input.trim()) {
+					if (e.key === "Enter" && !e.shiftKey && (input.trim() || fileList?.length)) {
 						e.preventDefault();
 						await handleSubmit();
 					}
@@ -649,7 +650,7 @@ $effect(() => {
 							? "Stop generation"
 							: "Send message"}
 						disabled={ctx.chat.status !== "streaming" &&
-							(!input.trim() || !config.settings.selectedModel)}
+							((!input.trim() && !fileList?.length) || !config.settings.selectedModel)}
 					>
 						{#if ctx.chat.status === "streaming"}
 							<Square aria-hidden="true" />

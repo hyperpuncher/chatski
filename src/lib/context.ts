@@ -1,6 +1,5 @@
 import type { MyChat } from "$lib/types";
 import type { ScrollState } from "runed";
-
 import { createContext } from "svelte";
 
 export type ChatContext = {

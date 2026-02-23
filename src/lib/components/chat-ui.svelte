@@ -81,7 +81,7 @@ const inputModalities = $derived.by(() => {
 	}
 	if (modalities.input.includes("audio")) {
 		types.push(
-			"audio/x-aac,audio/flac,audio/mp3,audio/m4a,audio/mpeg,audio/mpga,audio/mp4,audio/ogg,audio/pcm,audio/wav,audio/webm",
+			"audio/x-aac,audio/flac,audio/mp3,audio/m4a,audio/mpeg,audio/mpga,audio/mp4,audio/ogg,audio/pcm,audio/wav,audio/webm,audio/vnd.wave,application/ogg",
 		);
 	}
 	if (modalities.input.includes("video")) {

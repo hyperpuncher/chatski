@@ -10,7 +10,7 @@ import { Toaster } from "$lib/components/ui/sonner/index.js";
 import { createChat } from "$lib/chat";
 import { config } from "$lib/config.svelte";
 import { type ChatContext, setChatContext, setScrollContext } from "$lib/context";
-import { getMessages } from "$lib/remote/chats.remote";
+import { getMessages } from "$lib/storage";
 import { isMac, isMobile } from "$lib/utils";
 
 let { children } = $props();

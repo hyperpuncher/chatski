@@ -39,7 +39,7 @@ import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { config } from "$lib/config.svelte";
 import { getChatContext, getScrollContext } from "$lib/context";
-import { getModels } from "$lib/remote/openrouter.remote";
+import { getModels } from "$lib/storage";
 import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
 
 const ctx = getChatContext();

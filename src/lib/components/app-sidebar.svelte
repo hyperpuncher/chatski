@@ -10,12 +10,13 @@ import * as Kbd from "$lib/components/ui/kbd";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Spinner } from "$lib/components/ui/spinner";
 import { getChatContext } from "$lib/context";
-import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/remote/chats.remote";
+import { chatsStore } from "$lib/storage.svelte";
+import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/storage";
 import { isMac } from "$lib/utils";
 
 const ctx = getChatContext();
 
-const chats = $derived(await getChats());
+let chats = $state(await getChats());
 
 let isClearAllAlertOpen = $state(false);
 
@@ -29,6 +30,12 @@ function handleKeydown(e: KeyboardEvent) {
 		goto(`/chat/${chats[Number(e.key) - 1]}`);
 	}
 }
+
+$effect(() => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+	chatsStore.version;
+	getChats().then((c) => (chats = c));
+});
 </script>
 
 <svelte:window onkeydown={handleKeydown} />

@@ -1,6 +1,6 @@
 import { config } from "$lib/config.svelte";
 import { createOpenRouterClient, type OpenRouterMetadata } from "$lib/openrouter";
-import { saveChat } from "$lib/remote/chats.remote";
+import { saveChat } from "$lib/storage";
 import type { MyUIMessage } from "$lib/types";
 import { roundToSignificant } from "$lib/utils";
 import { Chat } from "@ai-sdk/svelte";

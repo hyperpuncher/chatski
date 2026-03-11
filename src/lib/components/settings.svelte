@@ -16,7 +16,7 @@ import * as Select from "$lib/components/ui/select";
 import { Switch } from "$lib/components/ui/switch";
 import * as Tabs from "$lib/components/ui/tabs/index.js";
 import { config, type MCP } from "$lib/config.svelte";
-import { getLabs, getModels } from "$lib/remote/openrouter.remote";
+import { getLabs, getModels } from "$lib/storage";
 import { cn, isMac, isMobile } from "$lib/utils";
 
 let open = $state(!config.settings.apiKey);

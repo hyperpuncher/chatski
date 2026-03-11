@@ -15,6 +15,13 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+export function roundToSignificant(value: number, significantDigits = 2) {
+	if (value === 0) return 0;
+	const exponent = Math.floor(Math.log10(value));
+	const scale = 10 ** (significantDigits - exponent - 1);
+	return Math.round(value * scale) / scale;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -44,7 +44,8 @@ export async function getTitle(chatId: string): Promise<string | null> {
 }
 
 export async function getMessages(chatId: string): Promise<MyUIMessage[] | undefined> {
-	return idbStorage.get(`${CHAT_KEY}:${chatId}`) ?? undefined;
+	const messages = await idbStorage.get(`${CHAT_KEY}:${chatId}`);
+	return messages ?? undefined;
 }
 
 export async function saveChat({

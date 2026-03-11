@@ -16,9 +16,7 @@ import { getMessages } from "$lib/storage";
 import { isMac, isMobile } from "$lib/utils";
 import "./layout.css";
 import { pwaInfo } from "virtual:pwa-info";
-// @ts-expect-error fontsource has no types
 import "@fontsource-variable/cascadia-code";
-// @ts-expect-error fontsource has no types
 import "@fontsource-variable/inter";
 
 let { children } = $props();

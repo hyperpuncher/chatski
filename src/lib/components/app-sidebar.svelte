@@ -32,7 +32,6 @@ function handleKeydown(e: KeyboardEvent) {
 }
 
 $effect(() => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 	chatsStore.version;
 	getChats().then((c) => (chats = c));
 });

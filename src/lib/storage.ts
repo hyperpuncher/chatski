@@ -99,9 +99,15 @@ export async function deleteChat(chatId: string): Promise<void> {
 }
 
 export async function deleteAllChats(): Promise<void> {
-	const chatKeys = await idbStorage.keys(`${BASE}:${CHAT_KEY}:`);
-	const titleKeys = await idbStorage.keys(`${BASE}:${TITLE_KEY}:`);
-	await Promise.all([...chatKeys, ...titleKeys].map((key) => idbStorage.del(key)));
+	const [chatKeys, titleKeys] = await Promise.all([
+		idbStorage.keys(`${BASE}:${CHAT_KEY}:`),
+		idbStorage.keys(`${BASE}:${TITLE_KEY}:`),
+	]);
+	await Promise.all(
+		[...chatKeys, ...titleKeys].map((key) =>
+			idbStorage.del(key.slice(BASE.length + 1)),
+		),
+	);
 	refreshChats();
 }
 

@@ -16,7 +16,7 @@ import { isMac } from "$lib/utils";
 
 const ctx = getChatContext();
 
-let chats = $state(await getChats());
+let chats = $state<string[]>([]);
 
 let isClearAllAlertOpen = $state(false);
 

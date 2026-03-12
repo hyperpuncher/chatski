@@ -1,4 +1,4 @@
-import { localStorage } from "./storage";
+import { configStorage } from "./storage";
 
 type Settings = {
 	apiKey: string;
@@ -48,7 +48,7 @@ class ConfigStore {
 	isInitialized = $state(false);
 
 	init = async () => {
-		const saved = await localStorage.get<Partial<Settings>>("config");
+		const saved = await configStorage.get<Partial<Settings>>("config");
 		if (!saved) return;
 		this.settings = {
 			...defaultSettings,
@@ -58,13 +58,13 @@ class ConfigStore {
 	};
 
 	save = async () => {
-		await localStorage.set("config", this.settings);
+		await configStorage.set("config", this.settings);
 		this.isInitialized = true;
 	};
 
 	clear = async () => {
 		this.settings = defaultSettings;
-		await localStorage.remove("config");
+		await configStorage.del("config");
 		this.isInitialized = false;
 	};
 }

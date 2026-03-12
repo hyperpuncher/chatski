@@ -4,47 +4,47 @@ import { createStorage } from "unstorage";
 import indexedDbDriver from "unstorage/drivers/indexedb";
 import localStorageDriver from "unstorage/drivers/localstorage";
 
-const BASE = "chatski";
 const CHAT_KEY = "chat";
 const TITLE_KEY = "title";
 const CACHE_KEY = "cache";
 
-// Typed storage definition
-type StorageDefinition = {
-	[key: `chat:${string}`]: MyUIMessage[];
-	[key: `title:${string}`]: string;
-	"cache:openrouter:models": { data: unknown; timestamp: number };
-	"cache:openrouter:labs": { data: unknown; timestamp: number };
-};
-
-// Config storage (small, sync-capable)
-export const localStorage = createStorage({
-	driver: localStorageDriver({ base: BASE }),
+// Config storage (settings, api key, etc.) - localStorage for speed
+export const configStorage = createStorage({
+	driver: localStorageDriver({ base: "chatski" }),
 });
 
-// Chat storage (larger, async) - typed
-const idbStorage = createStorage<StorageDefinition>({
-	driver: indexedDbDriver({ base: BASE }),
+// Chat storage (messages, titles)
+const chatStorage = createStorage({
+	driver: indexedDbDriver({
+		dbName: "chatski-chats",
+		storeName: "data",
+	}),
+});
+
+// Cache storage (models, labs - ephemeral)
+const cacheStorage = createStorage({
+	driver: indexedDbDriver({
+		dbName: "chatski-cache",
+		storeName: "data",
+	}),
 });
 
 const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 hours
 
-// Chat storage
 export async function getChats(): Promise<string[]> {
-	const keys = await idbStorage.keys(`${BASE}:${CHAT_KEY}:`);
+	const keys = await chatStorage.keys(CHAT_KEY);
 	return keys
-		.map((key) => key.split(":").at(-1))
-		.filter((id): id is string => id !== undefined && id.length > 0)
+		.map((key) => key.split(":")[1])
 		.sort()
 		.reverse();
 }
 
 export async function getTitle(chatId: string): Promise<string | null> {
-	return idbStorage.get(`${TITLE_KEY}:${chatId}`);
+	return chatStorage.get<string>(`${TITLE_KEY}:${chatId}`);
 }
 
 export async function getMessages(chatId: string): Promise<MyUIMessage[] | undefined> {
-	const messages = await idbStorage.get(`${CHAT_KEY}:${chatId}`);
+	const messages = await chatStorage.get<MyUIMessage[]>(`${CHAT_KEY}:${chatId}`);
 	return messages ?? undefined;
 }
 
@@ -55,9 +55,11 @@ export async function saveChat({
 	chatId: string;
 	messages: MyUIMessage[];
 }): Promise<void> {
-	const existingTitle = await idbStorage.get(`${TITLE_KEY}:${chatId}`);
+	const existingTitle = await chatStorage.get<string>(`${TITLE_KEY}:${chatId}`);
 
-	const saves: Promise<unknown>[] = [idbStorage.set(`${CHAT_KEY}:${chatId}`, messages)];
+	const saves: Promise<unknown>[] = [
+		chatStorage.set(`${CHAT_KEY}:${chatId}`, messages),
+	];
 
 	if (!existingTitle) {
 		const text = messages
@@ -83,7 +85,7 @@ export async function saveChat({
 			title = "new chat";
 		}
 
-		saves.push(idbStorage.set(`${TITLE_KEY}:${chatId}`, title));
+		saves.push(chatStorage.set(`${TITLE_KEY}:${chatId}`, title));
 	}
 
 	await Promise.all(saves);
@@ -92,57 +94,58 @@ export async function saveChat({
 
 export async function deleteChat(chatId: string): Promise<void> {
 	await Promise.all([
-		idbStorage.del(`${CHAT_KEY}:${chatId}`),
-		idbStorage.del(`${TITLE_KEY}:${chatId}`),
+		chatStorage.del(`${CHAT_KEY}:${chatId}`),
+		chatStorage.del(`${TITLE_KEY}:${chatId}`),
 	]);
 	refreshChats();
 }
 
 export async function deleteAllChats(): Promise<void> {
-	const [chatKeys, titleKeys] = await Promise.all([
-		idbStorage.keys(`${BASE}:${CHAT_KEY}:`),
-		idbStorage.keys(`${BASE}:${TITLE_KEY}:`),
-	]);
-	await Promise.all(
-		[...chatKeys, ...titleKeys].map((key) =>
-			idbStorage.del(key.slice(BASE.length + 1)),
-		),
-	);
+	await chatStorage.clear();
 	refreshChats();
 }
 
 // OpenRouter cache
-export async function getCachedModels() {
-	const cached = await idbStorage.get(`${CACHE_KEY}:openrouter:models`);
+interface CacheEntry<T> {
+	data: T;
+	timestamp: number;
+}
+
+export async function getCachedModels(): Promise<unknown[] | null> {
+	const cached = await cacheStorage.get<CacheEntry<unknown[]>>(
+		`${CACHE_KEY}:openrouter:models`,
+	);
 	if (!cached) return null;
 
 	if (Date.now() - cached.timestamp > CACHE_TTL) {
-		await idbStorage.del(`${CACHE_KEY}:openrouter:models`);
+		await cacheStorage.del(`${CACHE_KEY}:openrouter:models`);
 		return null;
 	}
 	return cached.data;
 }
 
-export async function setCachedModels(data: unknown) {
-	await idbStorage.set(`${CACHE_KEY}:openrouter:models`, {
+export async function setCachedModels(data: unknown[]): Promise<void> {
+	await cacheStorage.set(`${CACHE_KEY}:openrouter:models`, {
 		data,
 		timestamp: Date.now(),
 	});
 }
 
-export async function getCachedLabs() {
-	const cached = await idbStorage.get(`${CACHE_KEY}:openrouter:labs`);
+export async function getCachedLabs(): Promise<string[] | null> {
+	const cached = await cacheStorage.get<CacheEntry<string[]>>(
+		`${CACHE_KEY}:openrouter:labs`,
+	);
 	if (!cached) return null;
 
 	if (Date.now() - cached.timestamp > CACHE_TTL) {
-		await idbStorage.del(`${CACHE_KEY}:openrouter:labs`);
+		await cacheStorage.del(`${CACHE_KEY}:openrouter:labs`);
 		return null;
 	}
 	return cached.data;
 }
 
-export async function setCachedLabs(data: unknown) {
-	await idbStorage.set(`${CACHE_KEY}:openrouter:labs`, {
+export async function setCachedLabs(data: string[]): Promise<void> {
+	await cacheStorage.set(`${CACHE_KEY}:openrouter:labs`, {
 		data,
 		timestamp: Date.now(),
 	});
@@ -162,7 +165,7 @@ interface ModelInfo {
 export async function getModels(labs: string[]): Promise<ModelInfo[]> {
 	const cached = await getCachedModels();
 	if (cached) {
-		return parseModels(cached as any[], labs);
+		return parseModels(cached, labs);
 	}
 
 	const res = await fetch("https://openrouter.ai/api/v1/models");
@@ -178,7 +181,7 @@ export async function getModels(labs: string[]): Promise<ModelInfo[]> {
 export async function getLabs(): Promise<string[]> {
 	const cached = await getCachedLabs();
 	if (cached) {
-		return cached as string[];
+		return cached;
 	}
 
 	const res = await fetch("https://openrouter.ai/api/v1/models");

@@ -33,6 +33,7 @@ const defaultSettings: Settings = {
 		"minimax",
 		"moonshotai",
 		"openai",
+		"openrouter",
 		"x-ai",
 		"xiaomi",
 		"z-ai",

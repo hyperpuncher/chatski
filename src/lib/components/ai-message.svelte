@@ -25,7 +25,7 @@ let { content, isStreaming } = $props();
 		},
 		code: {
 			container: "bg-[#171717]",
-			pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground no-scrollbar",
+			pre: "bg-[#171717] sm:text-base text-primary-foreground dark:text-foreground no-scrollbar selection:bg-neutral-50 selection:text-neutral-950",
 		},
 	}}
 />

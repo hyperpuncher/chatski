@@ -1,6 +1,4 @@
 <script lang="ts">
-let { isThinking } = $props();
-
 const length = 18;
 const interval = 60;
 const chars =
@@ -46,11 +44,8 @@ $effect(() => {
 
 <span class="font-mono text-sm select-none">
 	<span
-		class="animate-gradient bg-linear-to-r/longer from-violet-400 via-[#DDFF84] to-violet-400 mask-r-from-90% mask-l-from-90% bg-size-[200%] bg-clip-text text-transparent dark:from-violet-300 dark:via-[#EFFFB4] dark:to-violet-300"
+		class="animate-gradient bg-linear-to-r from-neutral-700 via-neutral-100 to-neutral-700 mask-r-from-90% mask-l-from-90% bg-size-[200%] bg-clip-text text-transparent dark:from-neutral-300 dark:via-neutral-800 dark:to-neutral-300"
 	>
 		{displayText.join("")}
 	</span>
-	{#if isThinking}
-		<span class="animate-in text-muted-foreground fade-in">Thinking…</span>
-	{/if}
 </span>

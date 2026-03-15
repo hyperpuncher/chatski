@@ -1,6 +1,7 @@
 import { config } from "$lib/config.svelte";
 import { createOpenRouterClient, type OpenRouterMetadata } from "$lib/openrouter";
 import { saveChat } from "$lib/storage";
+import { shellTool, fetchTool, searchTool, readSkillTool } from "$lib/tools";
 import type { MyUIMessage } from "$lib/types";
 import { roundToSignificant } from "$lib/utils";
 import { Chat } from "@ai-sdk/svelte";
@@ -21,9 +22,13 @@ export function createChat(id?: string, messages?: MyUIMessage[]) {
 
 	const agent = new ToolLoopAgent({
 		model: createModel(),
-		tools: {},
-		stopWhen: stepCountIs(10),
-		prepareCall: (args) => ({
+		tools: {
+			fetch: fetchTool,
+			search: searchTool,
+			shell: shellTool,
+		},
+		stopWhen: stepCountIs(100),
+		prepareCall: async (args) => ({
 			...args,
 			model: createModel(),
 		}),

@@ -11,7 +11,7 @@ let { content, isStreaming, reasoning = false } = $props();
 	{content}
 	components={{ code: Code }}
 	baseTheme="shadcn"
-	animation={{ enabled: isStreaming, type: "fade", duration: 200 }}
+	animation={{ enabled: isStreaming, type: "fade", duration: 350 }}
 	shikiTheme="dracula"
 	shikiThemes={{ dracula }}
 	shikiLanguages={[

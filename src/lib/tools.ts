@@ -1,4 +1,5 @@
 import { shell } from "$lib/remote/shell.remote";
+import { readSkill } from "$lib/remote/skills.remote";
 import { scrape, search } from "$lib/remote/web.remote";
 import { tool } from "ai";
 import * as z from "zod/v4";
@@ -33,5 +34,16 @@ export const shellTool = tool({
 	execute: async ({ command }) => {
 		const output = await shell({ command });
 		return output;
+	},
+});
+
+export const readSkillTool = tool({
+	description: "Read a skill",
+	inputSchema: z.object({
+		path: z.string(),
+	}),
+	execute: async ({ path }) => {
+		const text = await readSkill({ path });
+		return text;
 	},
 });

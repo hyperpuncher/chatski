@@ -1,5 +1,6 @@
 import { config } from "$lib/config.svelte";
 import { createOpenRouterClient, type OpenRouterMetadata } from "$lib/openrouter";
+import { getSkills } from "$lib/remote/skills.remote";
 import { saveChat } from "$lib/storage";
 import { shellTool, fetchTool, searchTool, readSkillTool } from "$lib/tools";
 import type { MyUIMessage } from "$lib/types";
@@ -26,11 +27,13 @@ export function createChat(id?: string, messages?: MyUIMessage[]) {
 			fetch: fetchTool,
 			search: searchTool,
 			shell: shellTool,
+			skill: readSkillTool,
 		},
 		stopWhen: stepCountIs(100),
 		prepareCall: async (args) => ({
 			...args,
 			model: createModel(),
+			instructions: messages?.length ? "" : await getSkills(),
 		}),
 	});
 

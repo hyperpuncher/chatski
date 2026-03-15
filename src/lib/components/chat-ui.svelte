@@ -286,7 +286,7 @@ $effect(() => {
 				{@const isUser = message.role === "user"}
 				<li
 					class="flex w-full scroll-mt-12 flex-col space-y-2"
-					class:hidden={isLastMessage && isAssistant && (isResponding || isThinking)}
+					class:hidden={isLastMessage && isAssistant && isResponding}
 					bind:this={messageRefs[messageIndex]}
 				>
 					{#each message.parts as part, partIndex (partIndex)}
@@ -343,6 +343,12 @@ $effect(() => {
 							</Collapsible.Root>
 						{:else if part.type === "text"}
 							<AiMessage content={part.text} isStreaming={isStreaming && isLastMessage} />
+						{:else if part.type === "reasoning"}
+							<AiMessage
+								content={part.text}
+								isStreaming={isStreaming && isLastMessage}
+								reasoning={true}
+							/>
 						{:else if part.type === "file"}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">
@@ -449,8 +455,8 @@ $effect(() => {
 			{/each}
 
 			<div class="mb-10">
-				{#if isResponding || isThinking}
-					<Loader {isThinking} />
+				{#if isResponding}
+					<Loader />
 				{/if}
 			</div>
 		</ul>

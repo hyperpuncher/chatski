@@ -3,11 +3,11 @@ import dracula from "@shikijs/themes/dracula";
 import { Streamdown } from "svelte-streamdown";
 import Code from "svelte-streamdown/code";
 
-let { content, isStreaming } = $props();
+let { content, isStreaming, reasoning = false } = $props();
 </script>
 
 <Streamdown
-	class="leading-7 sm:leading-7.5"
+	class="leading-7 sm:leading-7.5 {reasoning ? 'opacity-40 dark:opacity-65' : ''}"
 	{content}
 	components={{ code: Code }}
 	baseTheme="shadcn"

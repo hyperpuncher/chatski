@@ -43,6 +43,13 @@ import { config } from "$lib/config.svelte";
 import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/storage";
 import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
+import {
+	isToolUIPart,
+	getToolName,
+	isTextUIPart,
+	isFileUIPart,
+	isReasoningUIPart,
+} from "ai";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
 
 const ctx = getChatContext();
@@ -292,23 +299,21 @@ $effect(() => {
 				>
 					{#each message.parts as part, partIndex (partIndex)}
 						{#if isUser}
-							{#if part.type === "file"}
+							{#if isFileUIPart(part)}
 								<Button variant="outline" size="sm" class="ms-auto">
 									<FileIcon type={part.type} />
 									<span>{part.filename}</span>
 								</Button>
-							{:else if part.type === "text"}
+							{:else if isTextUIPart(part)}
 								<p
 									class="ms-auto w-fit max-w-full rounded-2xl rounded-tr-[3px] bg-primary px-3.5 py-1.5 leading-6.5 whitespace-pre-wrap text-primary-foreground sm:max-w-5/6 sm:leading-7"
 								>
 									{part.text}
 								</p>
 							{/if}
-						{:else if part.type.includes("tool")}
-							{@const toolName = part.type.startsWith("tool-")
-								? part.type.slice(5)
-								: part.toolName}
-							{@const isPending = !part.state.includes("output")}
+						{:else if isToolUIPart(part)}
+							{@const toolName = getToolName(part)}
+							{@const isPending = !part.state.startsWith("output")}
 							<Collapsible.Root
 								class="animate-in rounded-xl bg-muted px-2 font-mono text-sm text-neutral-400 fade-in dark:text-muted-foreground"
 							>
@@ -342,15 +347,15 @@ $effect(() => {
 									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>
-						{:else if part.type === "text"}
+						{:else if isTextUIPart(part)}
 							<AiMessage content={part.text} isStreaming={isStreaming && isLastMessage} />
-						{:else if part.type === "reasoning"}
+						{:else if isReasoningUIPart(part)}
 							<AiMessage
 								content={part.text}
 								isStreaming={isStreaming && isLastMessage}
 								reasoning={true}
 							/>
-						{:else if part.type === "file"}
+						{:else if isFileUIPart(part)}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">
 									<img class="rounded-2xl" src={part.url} alt={part.filename} />
@@ -370,7 +375,7 @@ $effect(() => {
 							aria-label="Copy message"
 							onclick={() => {
 								const text = message.parts
-									.filter((p) => p.type === "text")
+									.filter(isTextUIPart)
 									.map((p) => p.text)
 									.join("\n");
 								if (text) handleCopy(text);

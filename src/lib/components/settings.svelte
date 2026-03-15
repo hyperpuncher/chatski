@@ -116,7 +116,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 						<Field.Field>
 							<Field.Label>Labs</Field.Label>
-							<Select.Root bind:value={config.settings.labs}>
+							<Select.Root bind:value={config.settings.labs} type="multiple">
 								<Select.Trigger class="w-full">
 									<Label class="truncate">
 										{config.settings.labs.join(", ")}

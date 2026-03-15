@@ -1,5 +1,7 @@
 <script lang="ts">
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
+import ChevronDown from "@lucide/svelte/icons/chevron-down";
+import * as Collapsible from "$lib/components/ui/collapsible/index.js";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
 import CircleX from "@lucide/svelte/icons/circle-x";
@@ -41,6 +43,7 @@ import { config } from "$lib/config.svelte";
 import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/storage";
 import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
+import { Spinner } from "$lib/components/ui/spinner/index.js";
 
 const ctx = getChatContext();
 const scroll = getScrollContext();
@@ -300,14 +303,44 @@ $effect(() => {
 									{part.text}
 								</p>
 							{/if}
-						{:else if part.type === "dynamic-tool"}
-							<p class="font-mono text-sm wrap-anywhere text-muted-foreground">
-								• {part.toolName}
-								{part.input &&
-									Object.entries(part.input)
-										.map(([key, value]) => `${key}=${value}`)
-										.join(" ")}
-							</p>
+						{:else if part.type.includes("tool")}
+							{@const toolName = part.type.startsWith("tool-")
+								? part.type.slice(5)
+								: part.toolName}
+							{@const isPending = !part.state.includes("output")}
+							<Collapsible.Root
+								class="animate-in rounded-xl bg-muted px-2 font-mono text-sm text-neutral-400 fade-in dark:text-muted-foreground"
+							>
+								<Collapsible.Trigger
+									class="group flex w-full items-center justify-between gap-2 py-2"
+								>
+									<div class="flex items-center gap-2 text-left">
+										{#if isPending}
+											<Spinner class="shrink-0" />
+										{:else}
+											<span class="px-1">•</span>
+										{/if}
+
+										{toolName}
+
+										{#if part.input}
+											{Object.values(part.input).join(" ")}
+										{/if}
+									</div>
+
+									{#if !isPending}
+										<ChevronDown
+											class="size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180"
+										/>
+									{/if}
+								</Collapsible.Trigger>
+								<Collapsible.Content>
+									{#if part.state === "output-available"}
+										<pre
+											class="mb-2 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
+									{/if}
+								</Collapsible.Content>
+							</Collapsible.Root>
 						{:else if part.type === "text"}
 							<AiMessage content={part.text} isStreaming={isStreaming && isLastMessage} />
 						{:else if part.type === "file"}

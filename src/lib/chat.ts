@@ -14,7 +14,7 @@ function createModel() {
 	const openrouter = createOpenRouterClient();
 	return openrouter.chat(config.settings.selectedModel, {
 		reasoning: { effort: config.settings.reasoning },
-		provider: { order: ["google-ai-studio"] },
+		provider: { order: ["google-ai-studio", "groq"] },
 	});
 }
 

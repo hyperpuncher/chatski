@@ -7,7 +7,7 @@ import * as z from "zod/v4";
 
 const turndownService = new TurndownService();
 
-export const scrape = query(z.object({ url: z.string() }), async ({ url }) => {
+export const scrape = query(z.string(), async (url) => {
 	const impit = getClient();
 	const res = await impit.fetch(url);
 
@@ -18,7 +18,7 @@ export const scrape = query(z.object({ url: z.string() }), async ({ url }) => {
 	return text;
 });
 
-export const search = query(z.object({ query: z.string() }), async ({ query }) => {
+export const search = query(z.string(), async (query) => {
 	const impit = getClient();
 	const res = await impit.fetch(
 		`https://search.brave.com/search?q=${encodeURIComponent(query)}`,

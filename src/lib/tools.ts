@@ -10,7 +10,7 @@ export const fetchTool = tool({
 		url: z.string(),
 	}),
 	execute: async ({ url }) => {
-		const text = await scrape({ url });
+		const text = await scrape(url);
 		return text;
 	},
 });
@@ -21,7 +21,7 @@ export const searchTool = tool({
 		query: z.string(),
 	}),
 	execute: async ({ query }) => {
-		const text = await search({ query });
+		const text = await search(query);
 		return text;
 	},
 });

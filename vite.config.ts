@@ -38,9 +38,4 @@ export default defineConfig({
 			template: "treemap",
 		}),
 	],
-	server: {
-		watch: {
-			usePolling: true,
-		},
-	},
 });

@@ -18,6 +18,7 @@ import "./layout.css";
 import { pwaInfo } from "virtual:pwa-info";
 import "@fontsource-variable/cascadia-code";
 import "@fontsource-variable/inter";
+import FpsCounter from "$lib/components/fps-counter.svelte";
 
 let { children } = $props();
 let isSidebarOpen = $state(false);
@@ -73,6 +74,9 @@ function handleKeydown(e: KeyboardEvent) {
 
 <svelte:window onkeydown={handleKeydown} />
 
+{#if dev}
+	<FpsCounter />
+{/if}
 <ModeWatcher />
 <Toaster richColors position="top-center" />
 
@@ -90,14 +94,6 @@ function handleKeydown(e: KeyboardEvent) {
 
 		{#if config.isInitialized}
 			{@render children?.()}
-		{/if}
-
-		{#if dev}
-			<span
-				class="fixed top-5 left-15 rounded-full bg-amber-300 px-3 py-1.5 font-mono text-xs text-black"
-			>
-				DEV
-			</span>
 		{/if}
 	</main>
 	<AppSidebar />

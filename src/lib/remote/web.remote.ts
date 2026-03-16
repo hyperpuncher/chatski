@@ -1,4 +1,5 @@
 import { query } from "$app/server";
+import { PROXY_URL } from "$env/static/private";
 import { Impit } from "impit";
 import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
@@ -73,7 +74,7 @@ function cleanHtml(html: string): string {
 function getClient() {
 	return new Impit({
 		browser: "chrome",
-		proxyUrl: process.env.PROXY_URL,
+		proxyUrl: PROXY_URL,
 		ignoreTlsErrors: true,
 	});
 }

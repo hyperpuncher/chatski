@@ -115,6 +115,19 @@ function handleKeydown(e: KeyboardEvent) {
 						</Field.Field>
 
 						<Field.Field>
+							<Field.Label>Proxy URL</Field.Label>
+							<Input
+								type="url"
+								bind:value={config.settings.proxyUrl}
+								name="proxyUrl"
+								placeholder="http://localhost:8080"
+							/>
+							<Field.Description>
+								Optional proxy for web scraping requests.
+							</Field.Description>
+						</Field.Field>
+
+						<Field.Field>
 							<Field.Label>Labs</Field.Label>
 							<Select.Root bind:value={config.settings.labs} type="multiple">
 								<Select.Trigger class="w-full">

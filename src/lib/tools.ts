@@ -1,3 +1,4 @@
+import { config } from "$lib/config.svelte";
 import { shell } from "$lib/remote/shell.remote";
 import { readSkill } from "$lib/remote/skills.remote";
 import { scrape, search } from "$lib/remote/web.remote";
@@ -10,7 +11,7 @@ export const fetchTool = tool({
 		url: z.string(),
 	}),
 	execute: async ({ url }) => {
-		const text = await scrape(url);
+		const text = await scrape({ url, proxyUrl: config.settings.proxyUrl });
 		return text;
 	},
 });
@@ -21,7 +22,7 @@ export const searchTool = tool({
 		query: z.string(),
 	}),
 	execute: async ({ query }) => {
-		const text = await search(query);
+		const text = await search({ query, proxyUrl: config.settings.proxyUrl });
 		return text;
 	},
 });

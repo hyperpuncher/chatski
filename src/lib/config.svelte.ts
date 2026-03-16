@@ -2,6 +2,7 @@ import { configStorage } from "./storage";
 
 type Settings = {
 	apiKey: string;
+	proxyUrl: string;
 	defaultModel: string;
 	selectedModel: string;
 	favorites: string[];
@@ -23,6 +24,7 @@ export type MCP = {
 
 const defaultSettings: Settings = {
 	apiKey: "",
+	proxyUrl: "",
 	defaultModel: "moonshotai/kimi-k2.5",
 	selectedModel: "moonshotai/kimi-k2.5",
 	favorites: ["moonshotai/kimi-k2.5"],

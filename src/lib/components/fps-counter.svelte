@@ -24,7 +24,7 @@ $effect(() => {
 </script>
 
 <div
-	class="pointer-events-none fixed top-5 left-15 z-9999 w-18 rounded-lg bg-muted py-1.5 text-center font-mono text-xs text-nowrap text-green-400"
+	class="pointer-events-none fixed top-5 left-15 z-9999 w-18 rounded-lg bg-muted py-1.5 text-center font-mono text-xs font-semibold text-nowrap text-violet-400"
 >
 	{display} FPS
 </div>

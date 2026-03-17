@@ -13,6 +13,7 @@ import { getChatContext } from "$lib/context";
 import { chatsStore } from "$lib/storage.svelte";
 import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/storage";
 import { isMac } from "$lib/utils";
+import { resolve } from "$app/paths";
 
 const ctx = getChatContext();
 
@@ -27,7 +28,7 @@ function isDigitKey(key: string) {
 function handleKeydown(e: KeyboardEvent) {
 	if (isDigitKey(e.key) && e.key !== "0" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
-		goto(`/chat/${chats[Number(e.key) - 1]}`);
+		goto(resolve("/chat/[id]", { id: chats[Number(e.key) - 1] }));
 	}
 }
 
@@ -87,7 +88,7 @@ $effect(() => {
 						<Sidebar.MenuButton
 							class="h-9"
 							{isActive}
-							onclick={() => goto(`/chat/${chatId}`)}
+							onclick={() => goto(resolve("/chat/[id]", { id: chatId }))}
 						>
 							<span
 								class="w-full {hasBadge

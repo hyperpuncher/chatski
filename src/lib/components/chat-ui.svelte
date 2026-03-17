@@ -51,6 +51,7 @@ import {
 	isReasoningUIPart,
 } from "ai";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
+import { resolve } from "$app/paths";
 
 const ctx = getChatContext();
 const scroll = getScrollContext();
@@ -128,7 +129,7 @@ async function handleSubmit() {
 		ctx.chat.stop();
 	} else {
 		if (page.url.pathname === "/") {
-			await goto(`/chat/${ctx.chat.id}`, { replaceState: true });
+			await goto(resolve("/chat/[id]", { id: ctx.chat.id }), { replaceState: true });
 		}
 		if (input.trim()) {
 			ctx.chat.sendMessage({ text: input, files: fileList });

@@ -1,7 +1,4 @@
 import { config } from "$lib/config.svelte";
-import { shell } from "$lib/remote/shell.remote";
-import { readSkill } from "$lib/remote/skills.remote";
-import { scrape, search } from "$lib/remote/web.remote";
 import { tool } from "ai";
 import * as z from "zod/v4";
 
@@ -11,8 +8,10 @@ export const fetchTool = tool({
 		url: z.string(),
 	}),
 	execute: async ({ url }) => {
-		const text = await scrape({ url, proxyUrl: config.settings.proxyUrl });
-		return text;
+		return await window.api.scrape({
+			url,
+			proxyUrl: config.settings.proxyUrl || undefined,
+		});
 	},
 });
 
@@ -22,8 +21,10 @@ export const searchTool = tool({
 		query: z.string(),
 	}),
 	execute: async ({ query }) => {
-		const text = await search({ query, proxyUrl: config.settings.proxyUrl });
-		return text;
+		return await window.api.search({
+			query,
+			proxyUrl: config.settings.proxyUrl || undefined,
+		});
 	},
 });
 
@@ -33,8 +34,7 @@ export const shellTool = tool({
 		command: z.string(),
 	}),
 	execute: async ({ command }) => {
-		const output = await shell({ command });
-		return output;
+		return await window.api.shell(command);
 	},
 });
 
@@ -44,7 +44,6 @@ export const readSkillTool = tool({
 		path: z.string(),
 	}),
 	execute: async ({ path }) => {
-		const text = await readSkill({ path });
-		return text;
+		return await window.api.readSkill({ path });
 	},
 });

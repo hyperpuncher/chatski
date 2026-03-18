@@ -1,51 +1,55 @@
 import { refreshChats } from "$lib/storage.svelte";
 import type { MyUIMessage } from "$lib/types";
-import { createStorage } from "unstorage";
-import indexedDbDriver from "unstorage/drivers/indexedb";
-import localStorageDriver from "unstorage/drivers/localstorage";
 
-const CHAT_KEY = "chat";
-const TITLE_KEY = "title";
-const CACHE_KEY = "cache";
+// ── Config storage ──────────────────────────────────────────────
+// Thin wrapper: we pass raw JSON strings over IPC to avoid
+// double-serialization. The caller (config.svelte.ts) handles
+// the JS object ↔ JSON dance.
 
-// Config storage (settings, api key, etc.) - localStorage for speed
-export const configStorage = createStorage({
-	driver: localStorageDriver({ base: "chatski" }),
-});
+export const configStorage = {
+	async get<T>(key: string): Promise<T | null> {
+		const raw = await window.api.config.get();
+		if (!raw) return null;
+		const obj = JSON.parse(raw);
+		return obj[key] ?? null;
+	},
 
-// Chat storage (messages, titles)
-const chatStorage = createStorage({
-	driver: indexedDbDriver({
-		dbName: "chatski-chats",
-		storeName: "data",
-	}),
-});
+	async set<T>(key: string, value: T): Promise<void> {
+		const raw = await window.api.config.get();
+		const obj = raw ? JSON.parse(raw) : {};
+		obj[key] = value;
+		await window.api.config.set(JSON.stringify(obj));
+	},
 
-// Cache storage (models, labs - ephemeral)
-const cacheStorage = createStorage({
-	driver: indexedDbDriver({
-		dbName: "chatski-cache",
-		storeName: "data",
-	}),
-});
+	async del(key: string): Promise<void> {
+		const raw = await window.api.config.get();
+		if (!raw) return;
+		const obj = JSON.parse(raw);
+		delete obj[key];
+		await window.api.config.set(JSON.stringify(obj));
+	},
+};
 
-const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 hours
+// ── Session storage (JSONL) ─────────────────────────────────────
+// Each chat is a .jsonl file where every line is a serialized
+// UIMessage. We re-write the whole file on save because the AI
+// SDK gives us the full message array (handles edits, regens).
 
-export async function getChats(): Promise<string[]> {
-	const keys = await chatStorage.keys(CHAT_KEY);
-	return keys
-		.map((key) => key.split(":")[1])
-		.sort()
-		.reverse();
+function messagesToJSONL(messages: MyUIMessage[]): string {
+	return messages.map((m) => JSON.stringify(m)).join("\n") + "\n";
 }
 
-export async function getTitle(chatId: string): Promise<string | null> {
-	return chatStorage.get<string>(`${TITLE_KEY}:${chatId}`);
+function jsonlToMessages(jsonl: string): MyUIMessage[] {
+	return jsonl
+		.split("\n")
+		.filter((line) => line.trim())
+		.map((line) => JSON.parse(line));
 }
 
 export async function getMessages(chatId: string): Promise<MyUIMessage[] | undefined> {
-	const messages = await chatStorage.get<MyUIMessage[]>(`${CHAT_KEY}:${chatId}`);
-	return messages ?? undefined;
+	const raw = await window.api.sessions.load(chatId);
+	if (!raw) return undefined;
+	return jsonlToMessages(raw);
 }
 
 export async function saveChat({
@@ -55,103 +59,66 @@ export async function saveChat({
 	chatId: string;
 	messages: MyUIMessage[];
 }): Promise<void> {
-	const existingTitle = await chatStorage.get<string>(`${TITLE_KEY}:${chatId}`);
-
-	const saves: Promise<unknown>[] = [
-		chatStorage.set(`${CHAT_KEY}:${chatId}`, messages),
-	];
-
-	if (!existingTitle) {
-		const text = messages
-			.at(0)
-			?.parts.find((p) => p.type === "text")
-			?.text.slice(0, 60)
-			.trim();
-
-		const filePart = messages.at(0)?.parts.find((p) => p.type === "file");
-
-		let title: string;
-		if (text) {
-			title = text;
-		} else if (filePart?.mediaType) {
-			if (filePart.mediaType.startsWith("image/")) title = "image";
-			else if (filePart.mediaType.startsWith("audio/")) title = "audio";
-			else if (filePart.mediaType.startsWith("video/")) title = "video";
-			else if (filePart.mediaType === "application/pdf") title = "pdf";
-			else title = "file";
-		} else if (filePart) {
-			title = "file";
-		} else {
-			title = "new chat";
-		}
-
-		saves.push(chatStorage.set(`${TITLE_KEY}:${chatId}`, title));
-	}
-
-	await Promise.all(saves);
+	const jsonl = messagesToJSONL(messages);
+	await window.api.sessions.save(chatId, jsonl);
 	refreshChats();
 }
 
 export async function deleteChat(chatId: string): Promise<void> {
-	await Promise.all([
-		chatStorage.del(`${CHAT_KEY}:${chatId}`),
-		chatStorage.del(`${TITLE_KEY}:${chatId}`),
-	]);
+	await window.api.sessions.delete(chatId);
 	refreshChats();
 }
 
 export async function deleteAllChats(): Promise<void> {
-	await chatStorage.clear();
+	await window.api.sessions.clear();
 	refreshChats();
 }
 
-// OpenRouter cache
+// ── OpenRouter cache ────────────────────────────────────────────
+// Stored as separate JSON files in the OS cache directory.
+// e.g. ~/.cache/chatski/openrouter-models.json
+
+const CACHE_TTL = 4 * 60 * 60 * 1000; // 4 hours
+
 interface CacheEntry<T> {
 	data: T;
 	timestamp: number;
 }
 
-export async function getCachedModels(): Promise<unknown[] | null> {
-	const cached = await cacheStorage.get<CacheEntry<unknown[]>>(
-		`${CACHE_KEY}:openrouter:models`,
-	);
-	if (!cached) return null;
+async function getCached<T>(key: string): Promise<T | null> {
+	const raw = await window.api.cache.get(key);
+	if (!raw) return null;
 
-	if (Date.now() - cached.timestamp > CACHE_TTL) {
-		await cacheStorage.del(`${CACHE_KEY}:openrouter:models`);
+	const entry = JSON.parse(raw) as CacheEntry<T>;
+	if (Date.now() - entry.timestamp > CACHE_TTL) {
+		await window.api.cache.del(key);
 		return null;
 	}
-	return cached.data;
+	return entry.data;
+}
+
+async function setCached<T>(key: string, data: T): Promise<void> {
+	await window.api.cache.set(key, JSON.stringify({ data, timestamp: Date.now() }));
+}
+
+export async function getCachedModels(): Promise<unknown[] | null> {
+	return getCached<unknown[]>("openrouter-models");
 }
 
 export async function setCachedModels(data: unknown[]): Promise<void> {
-	await cacheStorage.set(`${CACHE_KEY}:openrouter:models`, {
-		data,
-		timestamp: Date.now(),
-	});
+	await setCached("openrouter-models", data);
 }
 
 export async function getCachedLabs(): Promise<string[] | null> {
-	const cached = await cacheStorage.get<CacheEntry<string[]>>(
-		`${CACHE_KEY}:openrouter:labs`,
-	);
-	if (!cached) return null;
-
-	if (Date.now() - cached.timestamp > CACHE_TTL) {
-		await cacheStorage.del(`${CACHE_KEY}:openrouter:labs`);
-		return null;
-	}
-	return cached.data;
+	return getCached<string[]>("openrouter-labs");
 }
 
 export async function setCachedLabs(data: string[]): Promise<void> {
-	await cacheStorage.set(`${CACHE_KEY}:openrouter:labs`, {
-		data,
-		timestamp: Date.now(),
-	});
+	await setCached("openrouter-labs", data);
 }
 
-// OpenRouter API client
+// ── OpenRouter API client ───────────────────────────────────────
+
 interface ModelInfo {
 	id: string;
 	name: string;

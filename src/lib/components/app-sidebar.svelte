@@ -2,22 +2,15 @@
 import MessageSquarePlus from "@lucide/svelte/icons/message-square-plus";
 import MessagesSquare from "@lucide/svelte/icons/messages-square";
 import Trash2 from "@lucide/svelte/icons/trash-2";
-import { goto } from "$app/navigation";
-import { page } from "$app/state";
 import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 import { Button, buttonVariants } from "$lib/components/ui/button";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Spinner } from "$lib/components/ui/spinner";
-import { getChatContext } from "$lib/context";
 import { chatsStore } from "$lib/storage.svelte";
-import { deleteAllChats, deleteChat, getChats, getTitle } from "$lib/storage";
+import { deleteAllChats, deleteChat } from "$lib/storage";
 import { isMac } from "$lib/utils";
-import { resolve } from "$app/paths";
-
-const ctx = getChatContext();
-
-let chats = $state<string[]>([]);
+import { chat } from "$lib/chat.svelte";
 
 let isClearAllAlertOpen = $state(false);
 
@@ -28,14 +21,9 @@ function isDigitKey(key: string) {
 function handleKeydown(e: KeyboardEvent) {
 	if (isDigitKey(e.key) && e.key !== "0" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
-		goto(resolve("/chat/[id]", { id: chats[Number(e.key) - 1] }));
+		chat.loadChat(chatsStore.chats[Number(e.key) - 1]?.id);
 	}
 }
-
-$effect(() => {
-	chatsStore.version;
-	getChats().then((c) => (chats = c));
-});
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -50,16 +38,12 @@ $effect(() => {
 		<Sidebar.GroupContent>
 			<Sidebar.Menu>
 				<Sidebar.MenuItem>
-					<Sidebar.MenuButton onclick={() => ctx.newChat()}>
-						{#snippet child({ props })}
-							<a href="/" {...props}>
-								<MessageSquarePlus />
-								<span class="font-semibold">New Chat</span>
-								<Kbd.Root class="ms-auto hidden sm:inline-flex">
-									{isMac ? "⌘" : "Ctrl"} + O
-								</Kbd.Root>
-							</a>
-						{/snippet}
+					<Sidebar.MenuButton onclick={() => chat.newChat()}>
+						<MessageSquarePlus />
+						<span class="font-semibold">New Chat</span>
+						<Kbd.Root class="ms-auto hidden sm:inline-flex">
+							{isMac ? "⌘" : "Ctrl"} + O
+						</Kbd.Root>
 					</Sidebar.MenuButton>
 				</Sidebar.MenuItem>
 			</Sidebar.Menu>
@@ -81,32 +65,28 @@ $effect(() => {
 		</Sidebar.GroupLabel>
 		<Sidebar.GroupContent>
 			<Sidebar.Menu>
-				{#each chats as chatId, i (chatId)}
-					{@const isActive = chatId === page.params.id}
+				{#each chatsStore.chats as { id, title }, i (id)}
+					{@const isActive = id === chat.current.id}
 					{@const hasBadge = i < 9 && !isActive}
 					<Sidebar.MenuItem>
-						<Sidebar.MenuButton
-							class="h-9"
-							{isActive}
-							onclick={() => goto(resolve("/chat/[id]", { id: chatId }))}
-						>
+						<Sidebar.MenuButton class="h-9" {isActive} onclick={() => chat.loadChat(id)}>
 							<span
 								class="w-full {hasBadge
 									? 'mask-r-from-60% mask-r-to-75%'
 									: 'mask-r-from-70% mask-r-to-85%'}"
 							>
-								{await getTitle(chatId)}
+								{title}
 							</span>
 						</Sidebar.MenuButton>
 
 						<Sidebar.MenuAction
 							class="end-1 top-1/2 -translate-y-1/2 hover:bg-primary/10"
-							onclick={() => deleteChat(chatId)}
+							onclick={() => deleteChat(id)}
 							aria-label="Delete chat"
 							showOnHover
 						>
 							<div class="rounded-md p-1.75 [&>svg]:size-3.5">
-								{#if ctx.isLoading && isActive}
+								{#if chat.isLoading && isActive}
 									<Spinner />
 								{:else}
 									<Trash2 aria-hidden="true" />
@@ -142,8 +122,7 @@ $effect(() => {
 					class={buttonVariants({ variant: "destructive" })}
 					onclick={() => {
 						deleteAllChats();
-						ctx.newChat();
-						goto("/");
+						chat.newChat();
 						isClearAllAlertOpen = false;
 					}}
 				>

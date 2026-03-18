@@ -1,6 +1,5 @@
 import { config } from "$lib/config.svelte";
 import { createOpenRouterClient, type OpenRouterMetadata } from "$lib/openrouter";
-import { getSkills } from "$lib/remote/skills.remote";
 import { saveChat } from "$lib/storage";
 import { shellTool, fetchTool, searchTool, readSkillTool } from "$lib/tools";
 import type { MyUIMessage } from "$lib/types";
@@ -18,11 +17,20 @@ function createModel() {
 	});
 }
 
-export function createChat(id?: string, messages?: MyUIMessage[]) {
+function createChatBase({
+	id,
+	messages,
+	instructions,
+}: {
+	id?: string;
+	messages?: MyUIMessage[];
+	instructions?: string;
+}) {
 	if (!id) id = uuidv7();
 
 	const agent = new ToolLoopAgent({
 		model: createModel(),
+		instructions,
 		tools: {
 			fetch: fetchTool,
 			search: searchTool,
@@ -33,7 +41,6 @@ export function createChat(id?: string, messages?: MyUIMessage[]) {
 		prepareCall: async (args) => ({
 			...args,
 			model: createModel(),
-			instructions: messages?.length ? "" : await getSkills(),
 		}),
 	});
 
@@ -72,4 +79,13 @@ export function createChat(id?: string, messages?: MyUIMessage[]) {
 		messages,
 		onFinish: ({ messages }) => saveChat({ chatId: id, messages }),
 	});
+}
+
+export async function createChat() {
+	const instructions = await window.api.getSkills();
+	return createChatBase({ instructions });
+}
+
+export function restoreChat(id: string, messages: MyUIMessage[]) {
+	return createChatBase({ id, messages });
 }

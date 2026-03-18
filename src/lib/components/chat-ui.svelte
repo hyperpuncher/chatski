@@ -27,8 +27,6 @@ import WholeWord from "@lucide/svelte/icons/whole-word";
 import { tick } from "svelte";
 import { slide } from "svelte/transition";
 import { toast } from "svelte-sonner";
-import { afterNavigate, goto } from "$app/navigation";
-import { page } from "$app/state";
 import AiMessage from "$lib/components/ai-message.svelte";
 import FileIcon from "$lib/components/file-icon.svelte";
 import Loader from "$lib/components/loader.svelte";
@@ -40,7 +38,6 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { config } from "$lib/config.svelte";
-import { getChatContext, getScrollContext } from "$lib/context";
 import { getModels } from "$lib/storage";
 import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
 import {
@@ -51,10 +48,13 @@ import {
 	isReasoningUIPart,
 } from "ai";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
-import { resolve } from "$app/paths";
+import { chat } from "$lib/chat.svelte";
+import { ScrollState } from "runed";
 
-const ctx = getChatContext();
-const scroll = getScrollContext();
+const scroll = new ScrollState({
+	element: () => document.documentElement,
+	behavior: "smooth",
+});
 
 let input = $state("");
 let inputElement = $state<HTMLTextAreaElement | null>(null);
@@ -62,14 +62,14 @@ let fileList = $state<FileList>();
 let hoveredModel = $state("");
 let isModelsPopoverOpen = $state(false);
 let isResponding = $derived(
-	ctx.chat.status !== "error" &&
-		ctx.chat.status !== "ready" &&
-		ctx.chat.lastMessage?.role !== "assistant",
+	chat.current.status !== "error" &&
+		chat.current.status !== "ready" &&
+		chat.current.lastMessage?.role !== "assistant",
 );
-let isStreaming = $derived(ctx.chat.status === "streaming");
+let isStreaming = $derived(chat.current.status === "streaming");
 let isThinking = $derived(
-	ctx.chat.status === "streaming" &&
-		ctx.chat.lastMessage?.parts.at(-1)?.type === "reasoning",
+	chat.current.status === "streaming" &&
+		chat.current.lastMessage?.parts.at(-1)?.type === "reasoning",
 );
 
 let dragCounter = $state(0);
@@ -121,20 +121,17 @@ const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 
 let userHasScrolled = $state(false);
 let messageRefs = $state<Record<number, HTMLElement>>({});
-const lastMessageIndex = $derived(ctx.chat.messages.length - 1);
+const lastMessageIndex = $derived(chat.current.messages.length - 1);
 const lastMessageElement = $derived(messageRefs[lastMessageIndex]);
 
 async function handleSubmit() {
-	if (ctx.chat.status === "streaming") {
-		ctx.chat.stop();
+	if (chat.current.status === "streaming") {
+		chat.current.stop();
 	} else {
-		if (page.url.pathname === "/") {
-			await goto(resolve("/chat/[id]", { id: ctx.chat.id }), { replaceState: true });
-		}
 		if (input.trim()) {
-			ctx.chat.sendMessage({ text: input, files: fileList });
+			chat.current.sendMessage({ text: input, files: fileList });
 		} else if (fileList) {
-			ctx.chat.sendMessage({ files: fileList });
+			chat.current.sendMessage({ files: fileList });
 		}
 		await tick();
 		scroll.scrollToBottom();
@@ -148,6 +145,9 @@ function handleKeydown(e: KeyboardEvent) {
 	if (e.code === "KeyM" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		isModelsPopoverOpen = !isModelsPopoverOpen;
+	} else if (e.code === "KeyO" && (isMac ? e.metaKey : e.ctrlKey)) {
+		e.preventDefault();
+		chat.newChat();
 	}
 }
 
@@ -225,19 +225,22 @@ function handleRemoveFile(file: File) {
 }
 
 function handleEdit(messageIndex: number) {
-	const message = ctx.chat.messages[messageIndex];
+	const message = chat.current.messages[messageIndex];
 	input = message.parts.find((p) => p.type === "text")?.text ?? "";
-	ctx.chat.messages = ctx.chat.messages.slice(0, messageIndex);
+	chat.current.messages = chat.current.messages.slice(0, messageIndex);
 	inputElement?.focus();
 }
 
-afterNavigate(() => {
-	inputElement?.focus();
+$effect(() => {
+	if (!chat.isLoading) {
+		inputElement?.focus();
+		scroll.scrollToBottom();
+	}
 });
 
 $effect(() => {
-	if (ctx.chat.error) {
-		toast.error(ctx.chat.error.message || "Something went wrong");
+	if (chat.current.error) {
+		toast.error(chat.current.error.message || "Something went wrong");
 	}
 });
 
@@ -245,7 +248,7 @@ $effect(() => {
 	if (
 		(isStreaming || isThinking) &&
 		!userHasScrolled &&
-		ctx.chat.lastMessage?.parts &&
+		chat.current.lastMessage?.parts &&
 		lastMessageElement
 	) {
 		const rect = lastMessageElement.getBoundingClientRect();
@@ -286,10 +289,10 @@ $effect(() => {
 {/if}
 
 <div class="mx-auto flex h-full max-w-3xl flex-col items-center justify-center px-2">
-	{#if ctx.chat.messages.length}
+	{#if chat.current.messages.length}
 		<ul class="mt-20 mb-6 h-full w-full space-y-10 overflow-hidden px-2 sm:px-5" in:slide>
-			{#each ctx.chat.messages as message, messageIndex (message.id)}
-				{@const isLastMessage = messageIndex === ctx.chat.messages.length - 1}
+			{#each chat.current.messages as message, messageIndex (message.id)}
+				{@const isLastMessage = messageIndex === chat.current.messages.length - 1}
 				{@const isAssistant = message.role === "assistant"}
 				{@const isUser = message.role === "user"}
 				<li
@@ -342,8 +345,12 @@ $effect(() => {
 								</Collapsible.Trigger>
 								<Collapsible.Content>
 									{#if part.state === "output-available"}
+										{@const output =
+											toolName === "shell"
+												? part.output.stdout + part.output.stderr
+												: part.output}
 										<pre
-											class="mb-2 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
+											class="mb-2 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{output}</pre>
 									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>
@@ -388,7 +395,7 @@ $effect(() => {
 							variant="ghost"
 							size="icon-sm"
 							aria-label="Regenerate response"
-							onclick={() => ctx.chat.regenerate({ messageId: message.id })}
+							onclick={() => chat.current.regenerate({ messageId: message.id })}
 						>
 							<RefreshCcw aria-hidden="true" />
 						</Button>
@@ -687,17 +694,17 @@ $effect(() => {
 					</Popover.Root>
 
 					<InputGroup.Button
-						variant={ctx.chat.status === "streaming" ? "destructive" : "default"}
+						variant={chat.current.status === "streaming" ? "destructive" : "default"}
 						class="ml-1 rounded-full"
 						size="icon-sm"
 						type="submit"
-						aria-label={ctx.chat.status === "streaming"
+						aria-label={chat.current.status === "streaming"
 							? "Stop generation"
 							: "Send message"}
-						disabled={ctx.chat.status !== "streaming" &&
+						disabled={chat.current.status !== "streaming" &&
 							((!input.trim() && !fileList?.length) || !config.settings.selectedModel)}
 					>
-						{#if ctx.chat.status === "streaming"}
+						{#if chat.current.status === "streaming"}
 							<Square aria-hidden="true" />
 						{:else}
 							<ArrowUp aria-hidden="true" />

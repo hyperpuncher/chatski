@@ -80,7 +80,7 @@ app.on("ready", async () => {
 	CONFIG_DIR = app.getPath("userData");
 	CONFIG_FILE = join(CONFIG_DIR, "config.json");
 	SESSIONS_DIR = join(CONFIG_DIR, "sessions");
-	CACHE_DIR = app.getPath("cache");
+	CACHE_DIR = join(app.getPath("cache"), "chatski");
 	await mkdir(SESSIONS_DIR, { recursive: true });
 	await mkdir(CACHE_DIR, { recursive: true });
 

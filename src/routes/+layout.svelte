@@ -6,6 +6,7 @@ import AppSidebar from "$lib/components/app-sidebar.svelte";
 import Settings from "$lib/components/settings.svelte";
 import * as Sidebar from "$lib/components/ui/sidebar";
 import { Toaster } from "$lib/components/ui/sonner/index.js";
+import { chat } from "$lib/chat.svelte";
 import { config } from "$lib/config.svelte";
 import { isMobile } from "$lib/utils";
 import "./layout.css";
@@ -45,7 +46,7 @@ let isSidebarOpen = $state(false);
 			/>
 		</header>
 
-		{#if config.isInitialized}
+		{#if config.isInitialized && chat.current}
 			{@render children?.()}
 		{/if}
 	</main>

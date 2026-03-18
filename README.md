@@ -1,6 +1,6 @@
 # 🤖 chatski
 
-> minimal self-hosted ai chat interface for openrouter
+> simple ai chat that can actually do shit
 
 <div>
 	<picture>
@@ -18,16 +18,9 @@
 
 ## tldr
 
-- **sveltekit** + **bun**
-- **self-hosted**
+- **sveltekit** + **electron**
 - **keyboard driven**
 - **no bloat**
-- **mcp support**
-- **image generation**
-
-## self-host
-
-just throw `compose.yaml` at your preferred deployment platform and fill in the env
 
 ## shortcuts
 
@@ -39,28 +32,13 @@ just throw `compose.yaml` at your preferred deployment platform and fill in the 
 | `ctrl` + `,`   | toggle settings |
 | `ctrl` + `1-9` | switch chats    |
 
-## local dev
-
-### prerequisites
-
-- bun
-- redis
+## dev
 
 ```bash
-# clone & install
 git clone https://github.com/hyperpuncher/chatski.git
 cd chatski
 bun install
-
-# copy env and fill it out
-cp .env.example .env
-
-# dev
 bun run dev
-
-# production
-bun run build
-bun run start
 ```
 
 ## license

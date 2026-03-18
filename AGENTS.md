@@ -3,32 +3,15 @@
 ## Commands
 
 ```sh
-bun run build
-
-# Generate types and sync SvelteKit
-bun run prepare
-
-# Type checking
-bun run check
-
-bun run format
-
-bun run lint
-bun run lint:fix
-
-bun run clean
+bun run check          # type checking
+bun run format         # format
+bun run lint           # lint
 ```
 
 ## Architecture
 
-### AI Integration
-
-- AI SDK (@ai-sdk/svelte) + OpenRouter for LLM calls
-- Stream responses with `streamText()`
-- Chat state managed via `Chat` class from @ai-sdk/svelte
-- Chat persistence to IndexedDB
-
-### Database
-
-- Local storage for settings
-- IndexedDB for chats and messages
+- **Electron** — SvelteKit renderer + Node.js main process
+- **IPC** via `window.api.*` (defined in `electron/preload.ts`)
+- **AI SDK** + OpenRouter for LLM calls
+- **Storage**: JSONL files + JSON config in `app.getPath('userData')`
+- **Cache**: JSON files in `app.getPath('cache')`

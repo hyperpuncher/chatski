@@ -66,7 +66,7 @@ function handleKeydown(e: KeyboardEvent) {
 		<Sidebar.GroupContent>
 			<Sidebar.Menu>
 				{#each chatsStore.chats as { id, title }, i (id)}
-					{@const isActive = id === chat.current.id}
+					{@const isActive = chat.current?.id === id}
 					{@const hasBadge = i < 9 && !isActive}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton class="h-9" {isActive} onclick={() => chat.loadChat(id)}>

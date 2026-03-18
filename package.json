@@ -17,7 +17,7 @@
 		"clean": "rm -rf node_modules/ .svelte-kit/ build/ bun.lock out/ .vite/ dist/",
 		"start": "electron-vite preview",
 		"dev": "electron-vite dev",
-		"prebuild": "electron-vite build",
+		"prebuild": "vite build && electron-vite build",
 		"build:unpack": "bun run prebuild && electron-builder --dir",
 		"build:linux": "bun run prebuild && electron-builder --linux",
 		"build:mac": "bun run prebuild && electron-builder --mac",

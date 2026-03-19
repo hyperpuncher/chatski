@@ -15,10 +15,6 @@ export type SearchInput = {
 };
 
 export type ShellInput = string;
-export type ShellResult = {
-	stdout: string;
-	stderr: string;
-};
 
 const api = {
 	getSkills: (): Promise<string> => ipcRenderer.invoke("getSkills"),
@@ -26,7 +22,7 @@ const api = {
 		ipcRenderer.invoke("readSkill", input),
 	scrape: (input: ScrapeInput): Promise<string> => ipcRenderer.invoke("scrape", input),
 	search: (input: SearchInput): Promise<string> => ipcRenderer.invoke("search", input),
-	shell: (cmd: ShellInput): Promise<ShellResult> => ipcRenderer.invoke("shell", cmd),
+	shell: (cmd: ShellInput): Promise<string> => ipcRenderer.invoke("shell", cmd),
 
 	// Config storage — raw JSON string over IPC to avoid double serialization
 	config: {

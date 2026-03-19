@@ -11,13 +11,7 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { Impit } from "impit";
 import TurndownService from "turndown";
 
-import type {
-	ReadSkillInput,
-	ScrapeInput,
-	SearchInput,
-	ShellInput,
-	ShellResult,
-} from "./preload";
+import type { ReadSkillInput, ScrapeInput, SearchInput, ShellInput } from "./preload";
 
 const execAsync = promisify(exec);
 
@@ -152,12 +146,24 @@ ipcMain.handle("search", async (_event, input: SearchInput): Promise<string> => 
 	return text;
 });
 
-ipcMain.handle("shell", async (_event, command: ShellInput): Promise<ShellResult> => {
+ipcMain.handle("shell", async (_event, command: ShellInput) => {
 	try {
-		return await execAsync(command, { cwd: HOME });
+		const res = await execAsync(command, { cwd: HOME });
+		const out = res.stdout.split("\n");
+
+		if (out.length > 100) {
+			const file = join(CACHE_DIR, `${crypto.randomUUID()}.txt`);
+			await writeFile(file, res.stdout, "utf-8");
+
+			let lines = out.slice(-100).join("\n");
+			lines += `\n\nShowing last 100 lines of output, total output: ${file}`;
+
+			return lines;
+		}
+		return res.stdout;
 	} catch (err) {
 		const error = err as ExecException;
-		return { stdout: error.stdout || "", stderr: error.stderr || "" };
+		return error.stderr;
 	}
 });
 

@@ -345,12 +345,8 @@ $effect(() => {
 								</Collapsible.Trigger>
 								<Collapsible.Content>
 									{#if part.state === "output-available"}
-										{@const output =
-											toolName === "shell"
-												? part.output.stdout + part.output.stderr
-												: part.output}
 										<pre
-											class="mb-2 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{output}</pre>
+											class="mb-2 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
 									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>

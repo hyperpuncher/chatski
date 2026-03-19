@@ -42,7 +42,7 @@ const defaultSettings: Settings = {
 	],
 	reasoning: "none",
 	sidebarSide: "right",
-	stats: false,
+	stats: true,
 	mcps: [],
 };
 

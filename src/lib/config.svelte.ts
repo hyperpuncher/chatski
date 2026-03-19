@@ -52,23 +52,19 @@ class ConfigStore {
 
 	init = async () => {
 		const saved = await configStorage.get<Partial<Settings>>("config");
-		if (!saved) return;
-		this.settings = {
-			...defaultSettings,
-			...saved,
-		};
+		if (saved) {
+			this.settings = { ...defaultSettings, ...saved };
+		}
 		this.isInitialized = true;
 	};
 
 	save = async () => {
 		await configStorage.set("config", this.settings);
-		this.isInitialized = true;
 	};
 
 	clear = async () => {
 		this.settings = defaultSettings;
 		await configStorage.del("config");
-		this.isInitialized = false;
 	};
 }
 

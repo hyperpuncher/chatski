@@ -39,7 +39,9 @@ let isSidebarOpen = $state(false);
 		<header
 			class="fixed top-0 right-0 left-0 z-10 flex w-full items-center justify-between p-4"
 		>
-			<Settings />
+			{#if config.isInitialized}
+				<Settings />
+			{/if}
 			<Sidebar.Trigger
 				variant={isMobile.current ? "secondary" : "ghost"}
 				class={isSidebarOpen ? "-translate-x-64" : ""}

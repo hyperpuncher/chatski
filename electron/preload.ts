@@ -17,9 +17,14 @@ export type SearchInput = {
 export type ShellInput = string;
 
 const api = {
-	getSkills: (): Promise<string> => ipcRenderer.invoke("getSkills"),
-	readSkill: (input: ReadSkillInput): Promise<string> =>
-		ipcRenderer.invoke("readSkill", input),
+	system: () => ipcRenderer.invoke("system"),
+
+	skills: {
+		get: (): Promise<string> => ipcRenderer.invoke("skills:get"),
+		read: (input: ReadSkillInput): Promise<string> =>
+			ipcRenderer.invoke("skills:read", input),
+	},
+
 	scrape: (input: ScrapeInput): Promise<string> => ipcRenderer.invoke("scrape", input),
 	search: (input: SearchInput): Promise<string> => ipcRenderer.invoke("search", input),
 	shell: (cmd: ShellInput): Promise<string> => ipcRenderer.invoke("shell", cmd),

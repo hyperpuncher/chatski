@@ -82,7 +82,9 @@ function createChatBase({
 }
 
 export async function createChat() {
-	const instructions = await window.api.getSkills();
+	let instructions = await window.api.system();
+	instructions += "\n\n";
+	instructions += await window.api.skills.get();
 	return createChatBase({ instructions });
 }
 

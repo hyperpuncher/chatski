@@ -93,7 +93,11 @@ app.on("activate", () => {
 	}
 });
 
-ipcMain.handle("getSkills", async (): Promise<string> => {
+ipcMain.handle("system", async (): Promise<string> => {
+	return `OS: ${process.platform} ${process.arch}\nTime: ${new Date().toLocaleString("sv-SE")}`;
+});
+
+ipcMain.handle("skills:get", async (): Promise<string> => {
 	const skills: Skill[] = [];
 
 	for await (const relativePath of glob("**/SKILL.md", { cwd: SKILLS })) {
@@ -110,7 +114,7 @@ ipcMain.handle("getSkills", async (): Promise<string> => {
 	return formatSkills(skills);
 });
 
-ipcMain.handle("readSkill", async (_event, input: ReadSkillInput): Promise<string> => {
+ipcMain.handle("skills:read", async (_event, input: ReadSkillInput): Promise<string> => {
 	const raw = await readFile(input.path, "utf8");
 	const { content } = parseFrontMatter(raw);
 	return content;

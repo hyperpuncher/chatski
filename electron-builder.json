@@ -1,18 +1,21 @@
 {
 	"$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/refs/heads/master/packages/app-builder-lib/scheme.json",
-	"appId": "com.electron.app",
+	"appId": "com.chatski.app",
 	"productName": "chatski",
 	"directories": {
 		"buildResources": "build"
 	},
+	"electronLanguages": ["en-US"],
+	"compression": "maximum",
 	"files": [
 		"!**/.vscode/*",
 		"!src/*",
 		"!electron.vite.config.{js,ts,mjs,cjs}",
 		"!svelte.config.{js,ts,mjs}",
-		"!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}",
-		"!{.env,.env.*,.npmrc,pnpm-lock.yaml}",
-		"!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+		"!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,.prettierrc,dev-app-update.yml,CHANGELOG.md,README.md}",
+		"!{.env,.env.*,.envrc,.npmrc,pnpm-lock.yaml}",
+		"!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}",
+		"!{.svelte-kit,.oxfmtrc.jsonc,.devtools,scripts}"
 	],
 	"npmRebuild": true,
 	"win": {

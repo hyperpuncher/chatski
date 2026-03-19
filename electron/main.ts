@@ -52,9 +52,15 @@ app.commandLine.appendSwitch("enable-features", "OverlayScrollbar");
 Menu.setApplicationMenu(null);
 
 const createWindow = () => {
+	const iconPath =
+		process.env.NODE_ENV === "development"
+			? path.join(import.meta.dirname, "../static/icon.png")
+			: path.join(import.meta.dirname, "../renderer/icon.png");
+
 	const mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: 1000,
+		height: 1400,
+		icon: iconPath,
 		webPreferences: {
 			preload: path.join(import.meta.dirname, "../preload/preload.mjs"),
 			sandbox: false,

@@ -6,7 +6,6 @@
 		"buildResources": "build"
 	},
 	"electronLanguages": ["en-US"],
-	"compression": "maximum",
 	"files": [
 		"!**/.vscode/*",
 		"!src/*",

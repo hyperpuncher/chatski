@@ -7,7 +7,7 @@ import path from "node:path";
 import { env } from "node:process";
 import { promisify } from "node:util";
 
-import { app, BrowserWindow, ipcMain } from "electron";
+import { Menu, app, BrowserWindow, ipcMain } from "electron";
 import { Impit } from "impit";
 import TurndownService from "turndown";
 
@@ -49,12 +49,12 @@ type FrontMatter = {
 };
 
 app.commandLine.appendSwitch("enable-features", "OverlayScrollbar");
+Menu.setApplicationMenu(null);
 
 const createWindow = () => {
 	const mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
-		autoHideMenuBar: true,
 		webPreferences: {
 			preload: path.join(import.meta.dirname, "../preload/preload.mjs"),
 			sandbox: false,

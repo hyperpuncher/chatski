@@ -44,30 +44,44 @@ function createChatBase({
 		}),
 	});
 
-	let start = 0;
-	let tokens = 0;
-	let cost = 0;
-	let provider = "";
+	let messageStats = {
+		start: 0,
+		tokens: 0,
+		cost: 0,
+		provider: "",
+	};
 
 	const transport = new DirectChatTransport({
 		agent,
 		messageMetadata: ({ part }) => {
 			if (part.type === "start") {
-				start = performance.now();
+				messageStats = {
+					start: performance.now(),
+					tokens: 0,
+					cost: 0,
+					provider: "",
+				};
 			} else if (part.type === "finish-step") {
 				const metadata = part.providerMetadata?.openrouter as
 					| OpenRouterMetadata
 					| undefined;
 				if (metadata) {
-					tokens += metadata.usage.completionTokens;
-					cost += metadata.usage.cost;
-					provider = metadata.provider;
+					messageStats.tokens += metadata.usage.completionTokens;
+					messageStats.cost += metadata.usage.cost;
+					messageStats.provider = metadata.provider;
 				}
 			} else if (part.type === "finish") {
-				const time = roundToSignificant((performance.now() - start) / 1000);
-				const tps = Math.round(tokens / time);
-				cost = roundToSignificant(cost);
-				return { tokens, time, tps, cost, provider };
+				const time = roundToSignificant(
+					(performance.now() - messageStats.start) / 1000,
+				);
+				const tps = Math.round(messageStats.tokens / time);
+				return {
+					tokens: messageStats.tokens,
+					time,
+					tps,
+					cost: roundToSignificant(messageStats.cost),
+					provider: messageStats.provider,
+				};
 			}
 			return undefined;
 		},

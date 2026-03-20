@@ -1,7 +1,6 @@
 <script lang="ts">
-import { ModeWatcher, mode } from "mode-watcher";
+import { ModeWatcher } from "mode-watcher";
 import { dev } from "$app/environment";
-import favicon from "$lib/assets/favicon.svg";
 import AppSidebar from "$lib/components/app-sidebar.svelte";
 import Settings from "$lib/components/settings.svelte";
 import * as Sidebar from "$lib/components/ui/sidebar";
@@ -17,15 +16,6 @@ import FpsCounter from "$lib/components/fps-counter.svelte";
 let { children } = $props();
 let isSidebarOpen = $state(false);
 </script>
-
-<svelte:head>
-	<link rel="icon" href={favicon} />
-	<meta name="description" content="chatski with your slop generators" />
-	<meta property="og:title" content="chatski" />
-	<meta property="og:description" content="chatski with your slop generators" />
-	<meta property="og:type" content="website" />
-	<meta name="theme-color" content={mode.current === "dark" ? "#0a0a0a" : "#ffffff"} />
-</svelte:head>
 
 {#if dev}
 	<FpsCounter />

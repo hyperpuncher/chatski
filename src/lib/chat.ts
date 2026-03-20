@@ -11,7 +11,7 @@ import { uuidv7 } from "uuidv7";
 
 function createModel() {
 	const openrouter = createOpenRouterClient();
-	return openrouter.chat(config.settings.selectedModel, {
+	return openrouter.chat(config.settings.model, {
 		reasoning: { effort: config.settings.reasoning },
 		provider: { order: ["google-ai-studio", "groq"] },
 	});

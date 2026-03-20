@@ -13,8 +13,7 @@ import FileUp from "@lucide/svelte/icons/file-up";
 import FileX from "@lucide/svelte/icons/file-x";
 import Gauge from "@lucide/svelte/icons/gauge";
 import Image from "@lucide/svelte/icons/image";
-import Lock from "@lucide/svelte/icons/lock";
-import LockOpen from "@lucide/svelte/icons/lock-open";
+
 import Music from "@lucide/svelte/icons/music";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import RefreshCcw from "@lucide/svelte/icons/refresh-ccw";
@@ -83,7 +82,7 @@ const modelsList = $derived([
 ]);
 
 const modalities = $derived(
-	models.filter((m) => m.id === config.settings.selectedModel)[0]?.modalities,
+	models.filter((m) => m.id === config.settings.model)[0]?.modalities,
 );
 const inputModalities = $derived.by(() => {
 	let types = [];
@@ -113,8 +112,8 @@ const modalityIcons = [
 ] as const;
 
 const supportedParameters = $derived(
-	config.settings.selectedModel &&
-		models.find((m) => m.id === config.settings.selectedModel)?.supportedParameters,
+	config.settings.model &&
+		models.find((m) => m.id === config.settings.model)?.supportedParameters,
 );
 
 const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
@@ -181,16 +180,6 @@ function handleFavorite(model: string) {
 		favorites.add(model);
 	}
 	config.settings.favorites = [...favorites].sort();
-	config.save();
-}
-
-function handleDefaultModel(model: string) {
-	if (config.settings.defaultModel === model) {
-		config.settings.defaultModel = "";
-	} else {
-		config.settings.selectedModel = model;
-		config.settings.defaultModel = model;
-	}
 	config.save();
 }
 
@@ -521,7 +510,7 @@ $effect(() => {
 			/>
 
 			<InputGroup.Addon align="block-end">
-				{#if config.settings.selectedModel}
+				{#if config.settings.model}
 					<InputGroup.Button
 						variant="outline"
 						class="relative rounded-full"
@@ -602,9 +591,8 @@ $effect(() => {
 						>
 							<Bot />
 
-							{#if config.settings.selectedModel}
-								<span class="truncate">{config.settings.selectedModel.split("/")[1]}</span
-								>
+							{#if config.settings.model}
+								<span class="truncate">{config.settings.model.split("/")[1]}</span>
 							{:else}
 								<span class="truncate">Select model</span>
 							{/if}
@@ -621,13 +609,13 @@ $effect(() => {
 									<Command.Group>
 										{#each modelsList as model (model)}
 											{@const isFavorite = favorites.has(model)}
-											{@const isDefault = config.settings.defaultModel === model}
+
 											{@const isHovered = hoveredModel === model}
 											<Command.Item
 												class="group flex justify-between gap-2"
 												value={model}
 												onSelect={() => {
-													config.settings.selectedModel = model;
+													config.settings.model = model;
 													isModelsPopoverOpen = false;
 													config.save();
 												}}
@@ -638,30 +626,11 @@ $effect(() => {
 													{model.split("/")[1]}
 												</span>
 
-												{#if isHovered || isFavorite || isDefault}
+												{#if isHovered || isFavorite}
 													<div class="flex gap-2">
 														<Button
 															class="invisible transition-none group-hover:visible
-														{isDefault ? 'visible' : ''}"
-															variant="ghost"
-															size="icon-xs"
-															aria-label={isFavorite
-																? "Remove from favorites"
-																: "Add to favorites"}
-															onclick={(e) => {
-																e.stopPropagation();
-																handleDefaultModel(model);
-															}}
-														>
-															{#if isDefault}
-																<Lock aria-hidden="true" />
-															{:else}
-																<LockOpen aria-hidden="true" />
-															{/if}
-														</Button>
-														<Button
-															class="invisible transition-none group-hover:visible
-														{isFavorite ? 'visible' : ''}"
+																{isFavorite ? 'visible' : ''}"
 															variant="ghost"
 															size="icon-xs"
 															aria-label={isFavorite
@@ -698,7 +667,7 @@ $effect(() => {
 							? "Stop generation"
 							: "Send message"}
 						disabled={chat.current.status !== "streaming" &&
-							((!input.trim() && !fileList?.length) || !config.settings.selectedModel)}
+							((!input.trim() && !fileList?.length) || !config.settings.model)}
 					>
 						{#if chat.current.status === "streaming"}
 							<Square aria-hidden="true" />

@@ -44,6 +44,6 @@ export const readSkillTool = tool({
 		path: z.string(),
 	}),
 	execute: async ({ path }) => {
-		return await window.api.readSkill({ path });
+		return await window.api.skills.read({ path });
 	},
 });

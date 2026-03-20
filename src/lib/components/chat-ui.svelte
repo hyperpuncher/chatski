@@ -147,6 +147,14 @@ function handleKeydown(e: KeyboardEvent) {
 	} else if (e.code === "KeyO" && (isMac ? e.metaKey : e.ctrlKey)) {
 		e.preventDefault();
 		chat.newChat();
+	} else if (e.code === "KeyT" && (isMac ? e.metaKey : e.ctrlKey)) {
+		e.preventDefault();
+		config.settings.showToolOutput = !config.settings.showToolOutput;
+		config.save();
+	} else if (e.code === "KeyR" && (isMac ? e.metaKey : e.ctrlKey)) {
+		e.preventDefault();
+		config.settings.showReasoning = !config.settings.showReasoning;
+		config.save();
 	}
 }
 
@@ -307,6 +315,7 @@ $effect(() => {
 							{@const toolName = getToolName(part)}
 							{@const isPending = !part.state.startsWith("output")}
 							<Collapsible.Root
+								open={config.settings.showToolOutput}
 								class="animate-in rounded-xl bg-muted px-4 font-mono text-sm  fade-in "
 							>
 								<Collapsible.Trigger
@@ -339,11 +348,13 @@ $effect(() => {
 						{:else if isTextUIPart(part)}
 							<AiMessage content={part.text} isStreaming={isStreaming && isLastMessage} />
 						{:else if isReasoningUIPart(part)}
-							<AiMessage
-								content={part.text}
-								isStreaming={isStreaming && isLastMessage}
-								reasoning={true}
-							/>
+							{#if config.settings.showReasoning}
+								<AiMessage
+									content={part.text}
+									isStreaming={isStreaming && isLastMessage}
+									reasoning={true}
+								/>
+							{/if}
 						{:else if isFileUIPart(part)}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">

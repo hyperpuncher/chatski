@@ -3,20 +3,19 @@ import Pencil from "@lucide/svelte/icons/pencil";
 import PlusIcon from "@lucide/svelte/icons/plus";
 import Settings from "@lucide/svelte/icons/settings";
 import Trash2 from "@lucide/svelte/icons/trash-2";
+import * as Kbd from "$lib/components/ui/kbd";
 import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 import { Button, buttonVariants } from "$lib/components/ui/button";
-import * as Command from "$lib/components/ui/command/index.js";
 import * as Dialog from "$lib/components/ui/dialog";
 import * as Field from "$lib/components/ui/field";
 import { Input } from "$lib/components/ui/input";
 import { Label } from "$lib/components/ui/label";
-import * as Popover from "$lib/components/ui/popover/index.js";
 import * as Select from "$lib/components/ui/select";
 import { Switch } from "$lib/components/ui/switch";
 import * as Tabs from "$lib/components/ui/tabs/index.js";
 import { config, type MCP } from "$lib/config.svelte";
-import { getLabs, getModels } from "$lib/storage";
-import { cn, isMac, isMobile } from "$lib/utils";
+import { getLabs } from "$lib/storage";
+import { isMac, isMobile } from "$lib/utils";
 
 let open = $state(!config.settings.apiKey);
 let isMCPInputOpen = $state(false);
@@ -156,6 +155,28 @@ function handleKeydown(e: KeyboardEvent) {
 								</Field.Description>
 							</Field.Content>
 							<Switch id="stats" bind:checked={config.settings.stats} />
+						</Field.Field>
+						<Field.Field orientation="horizontal">
+							<Field.Content>
+								<Field.Label
+									>Show Tool Output <Kbd.Root class="hidden sm:inline-flex">
+										{isMac ? "⌘" : "Ctrl"} + T
+									</Kbd.Root>
+								</Field.Label>
+								<Field.Description>Show tool call details in messages.</Field.Description>
+							</Field.Content>
+							<Switch id="showToolOutput" bind:checked={config.settings.showToolOutput} />
+						</Field.Field>
+						<Field.Field orientation="horizontal">
+							<Field.Content>
+								<Field.Label
+									>Show Reasoning <Kbd.Root class="hidden sm:inline-flex">
+										{isMac ? "⌘" : "Ctrl"} + R
+									</Kbd.Root>
+								</Field.Label>
+								<Field.Description>Show reasoning parts in messages.</Field.Description>
+							</Field.Content>
+							<Switch id="showReasoning" bind:checked={config.settings.showReasoning} />
 						</Field.Field>
 					</Field.Group>
 				</Field.Set>

@@ -10,6 +10,8 @@ type Settings = {
 	sidebarSide: "left" | "right";
 	stats: boolean;
 	mcps: MCP[];
+	showToolOutput: boolean;
+	showReasoning: boolean;
 };
 
 export type MCP = {
@@ -42,6 +44,8 @@ const defaultSettings: Settings = {
 	sidebarSide: "right",
 	stats: true,
 	mcps: [],
+	showToolOutput: true,
+	showReasoning: true,
 };
 
 class ConfigStore {

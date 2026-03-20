@@ -61,6 +61,7 @@ const createWindow = () => {
 		width: 1000,
 		height: 1400,
 		icon: iconPath,
+		title: "",
 		webPreferences: {
 			preload: path.join(import.meta.dirname, "../preload/preload.mjs"),
 			sandbox: false,

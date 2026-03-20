@@ -20,7 +20,6 @@ let isSidebarOpen = $state(false);
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>{dev ? "chatski-dev" : "chatski"}</title>
 	<meta name="description" content="chatski with your slop generators" />
 	<meta property="og:title" content="chatski" />
 	<meta property="og:description" content="chatski with your slop generators" />

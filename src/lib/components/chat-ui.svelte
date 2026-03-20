@@ -382,8 +382,10 @@ $effect(() => {
 									{/if}
 
 									{#if part.state === "output-available"}
-										<pre
-											class="mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
+										{#if part.output.trim()}
+											<pre
+												class="mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
+										{/if}
 									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>

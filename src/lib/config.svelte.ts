@@ -25,7 +25,7 @@ const defaultSettings: Settings = {
 	apiKey: "",
 	proxyUrl: "",
 	model: "moonshotai/kimi-k2.5",
-	favorites: ["moonshotai/kimi-k2.5"],
+	favorites: ["minimax/minimax-m2.7", "moonshotai/kimi-k2.5", "xiaomi/mimo-v2-omni"],
 	labs: [
 		"anthropic",
 		"deepseek",
@@ -38,7 +38,7 @@ const defaultSettings: Settings = {
 		"xiaomi",
 		"z-ai",
 	],
-	reasoning: "none",
+	reasoning: "minimal",
 	sidebarSide: "right",
 	stats: true,
 	mcps: [],

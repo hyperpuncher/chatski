@@ -7,14 +7,11 @@
 	},
 	"electronLanguages": ["en-US"],
 	"files": [
-		"!**/.vscode/*",
-		"!src/*",
-		"!electron.vite.config.{js,ts,mjs,cjs}",
-		"!svelte.config.{js,ts,mjs}",
-		"!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,.prettierrc,dev-app-update.yml,CHANGELOG.md,README.md}",
-		"!{.env,.env.*,.envrc,.npmrc,pnpm-lock.yaml}",
-		"!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}",
-		"!{.svelte-kit,.oxfmtrc.jsonc,.devtools,scripts}"
+		"out/**/*",
+		"node_modules/impit/**/*",
+		"node_modules/impit-linux-x64-gnu/**/*",
+		"node_modules/impit-linux-x64-musl/**/*",
+		"package.json"
 	],
 	"npmRebuild": true,
 	"win": {

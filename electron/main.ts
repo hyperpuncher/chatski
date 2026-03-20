@@ -7,7 +7,7 @@ import path from "node:path";
 import { env } from "node:process";
 import { promisify } from "node:util";
 
-import { Menu, app, BrowserWindow, ipcMain } from "electron";
+import { Menu, app, BrowserWindow, ipcMain, shell } from "electron";
 import { Impit } from "impit";
 import TurndownService from "turndown";
 
@@ -60,6 +60,11 @@ const createWindow = () => {
 			preload: path.join(import.meta.dirname, "../preload/preload.mjs"),
 			sandbox: false,
 		},
+	});
+
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		shell.openExternal(url);
+		return { action: "deny" };
 	});
 
 	if (process.env.NODE_ENV === "development" && process.env["ELECTRON_RENDERER_URL"]) {

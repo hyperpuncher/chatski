@@ -306,7 +306,7 @@ $effect(() => {
 								</Button>
 							{:else if isTextUIPart(part)}
 								<p
-									class="ms-auto w-fit max-w-full rounded-2xl rounded-tr-[3px] bg-primary px-3.5 py-1.5 leading-6.5 whitespace-pre-wrap text-primary-foreground sm:max-w-5/6 sm:leading-7"
+									class="ms-auto w-fit max-w-full rounded-2xl rounded-tr-[3px] bg-primary px-3.5 py-2 leading-6.5 whitespace-pre-wrap text-primary-foreground sm:max-w-5/6 sm:leading-normal"
 								>
 									{part.text}
 								</p>

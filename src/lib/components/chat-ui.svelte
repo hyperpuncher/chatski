@@ -1,5 +1,6 @@
 <script lang="ts">
 import ArrowUp from "@lucide/svelte/icons/arrow-up";
+import Trash2 from "@lucide/svelte/icons/trash-2";
 import ChevronDown from "@lucide/svelte/icons/chevron-down";
 import * as Collapsible from "$lib/components/ui/collapsible/index.js";
 import Bot from "@lucide/svelte/icons/bot";
@@ -121,23 +122,64 @@ const reasoningOptions = ["none", "minimal", "low", "medium", "high", "xhigh"];
 let userHasScrolled = $state(false);
 let messageRefs = $state<Record<number, HTMLElement>>({});
 const lastMessageIndex = $derived(chat.current.messages.length - 1);
+
+// Message queue for pending messages while streaming
+type QueuedMessage = { text?: string; files?: FileList };
+let messageQueue = $state<QueuedMessage[]>([]);
+
+// Process queue when ready
+$effect(() => {
+	if (chat.current.status === "ready" && messageQueue.length > 0) {
+		// Merge all queued messages into one
+		const texts = messageQueue.map((m) => m.text).filter(Boolean);
+		const allFiles = messageQueue.flatMap((m) => (m.files ? [...m.files] : []));
+		messageQueue = []; // Clear queue
+
+		if (texts.length > 0 || allFiles.length > 0) {
+			const dataTransfer = new DataTransfer();
+			allFiles.forEach((f) => dataTransfer.items.add(f));
+
+			if (texts.length > 0 && allFiles.length > 0) {
+				chat.current.sendMessage({
+					text: texts.join("\n\n"),
+					files: dataTransfer.files,
+				});
+			} else if (texts.length > 0) {
+				chat.current.sendMessage({ text: texts.join("\n\n") });
+			} else {
+				chat.current.sendMessage({ files: dataTransfer.files });
+			}
+		}
+	}
+});
 const lastMessageElement = $derived(messageRefs[lastMessageIndex]);
 
 async function handleSubmit() {
-	if (chat.current.status === "streaming") {
-		chat.current.stop();
+	const text = input.trim();
+	const files = fileList;
+	input = "";
+	fileList = undefined;
+
+	if (!text && !files) return;
+
+	// Check if a response is in progress (submitted or streaming)
+	if (chat.current.status === "submitted" || chat.current.status === "streaming") {
+		// Queue message to be sent after current response finishes
+		messageQueue.push({ text, files });
 	} else {
-		if (input.trim()) {
-			chat.current.sendMessage({ text: input, files: fileList });
-		} else if (fileList) {
-			chat.current.sendMessage({ files: fileList });
+		if (text) {
+			chat.current.sendMessage({ text, files });
+		} else if (files) {
+			chat.current.sendMessage({ files });
 		}
 		await tick();
 		scroll.scrollToBottom();
 		userHasScrolled = false;
 	}
-	input = "";
-	fileList = undefined;
+}
+
+function handleStop() {
+	chat.current.stop();
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -472,9 +514,41 @@ $effect(() => {
 		class="sticky bottom-2 w-full sm:bottom-4"
 		onsubmit={async (e) => {
 			e.preventDefault();
-			await handleSubmit();
+			if (chat.current.status === "streaming") {
+				handleStop();
+			} else {
+				await handleSubmit();
+			}
 		}}
 	>
+		{#if messageQueue.length > 0}
+			<div
+				class="mx-5 flex flex-col gap-2 rounded-t-xl border border-b-0 bg-muted/85 px-3 py-2 backdrop-blur-md"
+			>
+				{#each messageQueue as msg, i}
+					<div class="group flex items-center gap-3 text-sm text-muted-foreground">
+						<span class="text-xs font-medium tabular-nums">
+							{i + 1}
+						</span>
+						<span class="truncate">
+							{msg.text || "📎 file"}
+						</span>
+						<Button
+							class="ml-auto opacity-0 transition-opacity group-hover:opacity-100"
+							variant="ghost"
+							size="icon-xs"
+							aria-label="Remove message"
+							onclick={() => {
+								messageQueue = messageQueue.filter((_, j) => i !== j);
+							}}
+						>
+							<Trash2 aria-hidden="true" />
+						</Button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		<InputGroup.Root
 			class="rounded-3xl bg-muted/85 px-2 py-1 backdrop-blur-md dark:bg-muted/85"
 		>

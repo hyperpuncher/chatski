@@ -307,35 +307,32 @@ $effect(() => {
 							{@const toolName = getToolName(part)}
 							{@const isPending = !part.state.startsWith("output")}
 							<Collapsible.Root
-								class="animate-in rounded-xl bg-muted px-2 font-mono text-sm text-neutral-400 fade-in dark:text-muted-foreground"
+								class="animate-in rounded-xl bg-muted px-4 font-mono text-sm  fade-in "
 							>
 								<Collapsible.Trigger
-									class="group flex w-full items-center justify-between gap-2 py-2"
+									class="group flex w-full justify-between gap-2 py-2 text-left"
 								>
-									<div class="flex items-center gap-2 text-left">
-										{#if isPending}
-											<Spinner class="shrink-0" />
-										{:else}
-											<span class="px-1">•</span>
-										{/if}
+									{toolName}
 
-										{toolName}
-
-										{#if part.input}
-											{Object.values(part.input).join(" ")}
-										{/if}
-									</div>
-
-									{#if !isPending}
+									{#if isPending}
+										<Spinner class="mt-0.5 shrink-0" />
+									{:else}
 										<ChevronDown
-											class="size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180"
+											class="mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180"
 										/>
 									{/if}
 								</Collapsible.Trigger>
 								<Collapsible.Content>
+									{#if part.input}
+										<pre
+											class="me-auto mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{Object.values(
+												part.input,
+											)}</pre>
+									{/if}
+
 									{#if part.state === "output-available"}
 										<pre
-											class="mb-2 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
+											class="mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
 									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>

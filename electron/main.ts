@@ -99,7 +99,16 @@ app.on("activate", () => {
 });
 
 ipcMain.handle("system", async (): Promise<string> => {
-	return `OS: ${process.platform} ${process.arch}\nTime: ${new Date().toLocaleString("sv-SE")}`;
+	let systemInfo = `OS: ${process.platform} ${process.arch}\nTime: ${new Date().toLocaleString("sv-SE")}`;
+
+	// Read AGENTS.md from config directory if it exists
+	const agentsMdPath = join(CONFIG_DIR, "AGENTS.md");
+	if (existsSync(agentsMdPath)) {
+		const agentsMd = await readFile(agentsMdPath, "utf-8");
+		systemInfo += `\n\n${agentsMd}`;
+	}
+
+	return systemInfo;
 });
 
 ipcMain.handle("skills:get", async (): Promise<string> => {

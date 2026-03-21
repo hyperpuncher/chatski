@@ -48,7 +48,8 @@ type FrontMatter = {
 	description?: string;
 };
 
-app.commandLine.appendSwitch("enable-features", "OverlayScrollbar");
+app.commandLine.appendSwitch("enable-features", "MiddleClickAutoscroll,OverlayScrollbar");
+
 Menu.setApplicationMenu(null);
 
 const createWindow = () => {

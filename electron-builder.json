@@ -5,7 +5,6 @@
 	"directories": {
 		"buildResources": "build"
 	},
-	"publish": null,
 	"electronLanguages": ["en-US"],
 	"files": ["out/**/*"],
 	"npmRebuild": true,

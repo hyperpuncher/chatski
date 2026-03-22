@@ -22,7 +22,10 @@
 		"build:unpack": "bun run prebuild && electron-builder --dir",
 		"build:linux": "bun run prebuild && electron-builder --linux",
 		"build:mac": "bun run prebuild && electron-builder --mac",
-		"build:windows": "bun run prebuild && electron-builder --windows"
+		"build:windows": "bun run prebuild && electron-builder --windows",
+		"publish:linux": "bun run prebuild && electron-builder --linux --publish onTag",
+		"publish:mac": "bun run prebuild && electron-builder --mac --publish onTag",
+		"publish:windows": "bun run prebuild && electron-builder --windows --publish onTag"
 	},
 	"dependencies": {
 		"impit": "^0.11.0"
@@ -48,6 +51,7 @@
 		"clsx": "^2.1.1",
 		"electron": "^41.0.2",
 		"electron-builder": "^26.8.1",
+		"electron-updater": "^6.8.3",
 		"electron-vite": "^5.0.0",
 		"mode-watcher": "^1.1.0",
 		"oxfmt": "^0.41.0",

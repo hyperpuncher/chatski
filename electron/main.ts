@@ -7,7 +7,8 @@ import path from "node:path";
 import { env } from "node:process";
 import { promisify } from "node:util";
 
-import { Menu, app, BrowserWindow, ipcMain, shell } from "electron";
+import { Menu, app, BrowserWindow, ipcMain, shell, dialog } from "electron";
+import { autoUpdater } from "electron-updater";
 import { Impit } from "impit";
 import TurndownService from "turndown";
 
@@ -86,6 +87,41 @@ app.on("ready", async () => {
 	await mkdir(CACHE_DIR, { recursive: true });
 
 	createWindow();
+
+	// Auto-updater setup
+	if (!app.isPackaged) {
+		// Don't check for updates in development
+		return;
+	}
+
+	autoUpdater.logger = {
+		info: (...args: unknown[]) => console.log("[updater]", ...args),
+		error: (...args: unknown[]) => console.error("[updater]", ...args),
+		warn: (...args: unknown[]) => console.warn("[updater]", ...args),
+		debug: (...args: unknown[]) => console.debug("[updater]", ...args),
+	};
+
+	autoUpdater.on("update-available", () => {
+		console.log("Update available");
+	});
+
+	autoUpdater.on("update-downloaded", (info) => {
+		console.log("Update downloaded:", info.version);
+		dialog
+			.showMessageBox({
+				type: "info",
+				title: "Update Ready",
+				message: `Version ${info.version} has been downloaded. Restart to apply the update?`,
+				buttons: ["Restart", "Later"],
+			})
+			.then((result) => {
+				if (result.response === 0) {
+					autoUpdater.quitAndInstall();
+				}
+			});
+	});
+
+	autoUpdater.checkForUpdatesAndNotify();
 });
 
 app.on("window-all-closed", () => {

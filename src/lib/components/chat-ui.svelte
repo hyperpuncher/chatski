@@ -564,12 +564,13 @@ $effect(() => {
 							onclick={() => handleRemoveFile(file)}
 						>
 							{#if preview}
-								<div class="size-16 overflow-hidden rounded-lg">
+								<div class="size-16 overflow-clip rounded-md">
 									{#if file.type.startsWith("image/")}
 										<img
 											class="size-full object-cover"
 											src={URL.createObjectURL(file)}
 											alt={file.name}
+											style="overflow-clip-margin: unset;"
 										/>
 									{:else}
 										<!-- svelte-ignore a11y_media_has_caption -->

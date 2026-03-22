@@ -22,15 +22,21 @@
 - **keyboard driven**
 - **no bloat**
 
+## download
+
+latest [release](https://github.com/hyperpuncher/chatski/releases/latest)
+
 ## shortcuts
 
-| shortcut       | action          |
-| -------------- | --------------- |
-| `ctrl` + `o`   | new chat        |
-| `ctrl` + `m`   | toggle models   |
-| `ctrl` + `b`   | toggle sidebar  |
-| `ctrl` + `,`   | toggle settings |
-| `ctrl` + `1-9` | switch chats    |
+| shortcut       | action             |
+| -------------- | ------------------ |
+| `ctrl` + `o`   | new chat           |
+| `ctrl` + `m`   | toggle models      |
+| `ctrl` + `t`   | toggle tool output |
+| `ctrl` + `r`   | toggle reasoning   |
+| `ctrl` + `,`   | toggle settings    |
+| `ctrl` + `b`   | toggle sidebar     |
+| `ctrl` + `1-9` | switch chats       |
 
 ## dev
 
@@ -39,6 +45,14 @@ git clone https://github.com/hyperpuncher/chatski.git
 cd chatski
 bun install
 bun run dev
+```
+
+## build
+
+```bash
+bun run build:linux
+bun run build:mac
+bun run build:windows
 ```
 
 ## license

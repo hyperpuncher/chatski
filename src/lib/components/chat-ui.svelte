@@ -555,26 +555,65 @@ $effect(() => {
 			class="rounded-3xl bg-muted/85 px-2 py-1 backdrop-blur-md dark:bg-muted/85"
 		>
 			{#if fileList?.length}
-				<InputGroup.Addon align="block-start">
-					<ul class="flex gap-2">
-						{#each fileList as file}
-							<li>
-								<Button
-									variant="outline"
-									size="sm"
-									class="group relative"
-									onclick={() => handleRemoveFile(file)}
-								>
-									<FileIcon type={file.type} />
-									<span>{collapseFilename(file.name)}</span>
+				{#snippet fileItem(file: File, preview: boolean)}
+					<li>
+						<Button
+							variant="outline"
+							size={preview ? "icon" : "sm"}
+							class="group/file relative cursor-pointer {preview ? 'size-auto p-0' : ''}"
+							onclick={() => handleRemoveFile(file)}
+						>
+							{#if preview}
+								<div class="size-16 overflow-hidden rounded-lg">
+									{#if file.type.startsWith("image/")}
+										<img
+											class="size-full object-cover"
+											src={URL.createObjectURL(file)}
+											alt={file.name}
+										/>
+									{:else}
+										<!-- svelte-ignore a11y_media_has_caption -->
+										<video class="size-full object-cover" src={URL.createObjectURL(file)}
+										></video>
+									{/if}
+								</div>
+							{:else}
+								<FileIcon type={file.type} />
+								<span>{collapseFilename(file.name)}</span>
+							{/if}
 
-									<CircleX
-										class="absolute -top-1.5 -right-1.5 size-4.5 text-foreground group-hover:visible md:invisible"
-									/>
-								</Button>
-							</li>
-						{/each}
-					</ul>
+							<div
+								class="absolute -top-1.5 -right-1.5 inline-flex size-5 items-center justify-center rounded-full border bg-background text-foreground opacity-0 transition-opacity group-hover/file:opacity-100"
+							>
+								<CircleX aria-hidden="true" class="size-3" />
+							</div>
+						</Button>
+					</li>
+				{/snippet}
+
+				{@const mediaFiles = [...fileList].filter(
+					(f) => f.type.startsWith("image/") || f.type.startsWith("video/"),
+				)}
+				{@const otherFiles = [...fileList].filter(
+					(f) => !f.type.startsWith("image/") && !f.type.startsWith("video/"),
+				)}
+
+				<InputGroup.Addon align="block-start" class="flex-col items-start">
+					{#if mediaFiles.length}
+						<ul class="flex flex-wrap gap-2">
+							{#each mediaFiles as file}
+								{@render fileItem(file, true)}
+							{/each}
+						</ul>
+					{/if}
+
+					{#if otherFiles.length}
+						<ul class="flex flex-wrap gap-2">
+							{#each otherFiles as file}
+								{@render fileItem(file, false)}
+							{/each}
+						</ul>
+					{/if}
 				</InputGroup.Addon>
 			{/if}
 

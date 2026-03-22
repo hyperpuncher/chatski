@@ -38,6 +38,8 @@ jobs:
               run: bun install
 
             - name: Build
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: bun run publish:linux
 
     # ── Windows: native build ────────────────────────────────────
@@ -63,6 +65,8 @@ jobs:
               run: bun install
 
             - name: Build
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: bun run publish:windows
 
     # ── macOS: requires macOS runner ─────────────────────────────
@@ -88,4 +92,6 @@ jobs:
               run: bun install
 
             - name: Build
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: bun run publish:mac

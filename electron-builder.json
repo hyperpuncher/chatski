@@ -20,8 +20,8 @@
 	"mac": {
 		"target": [
 			{
-				"target": "dir",
-				"arch": ["x64", "arm64"]
+				"target": "dmg",
+				"arch": ["arm64"]
 			}
 		],
 		"notarize": false

@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: chatski-linux
-          path: release/*
+          path: dist/*
 
   # ── Windows: native build ────────────────────────────────────
   win:
@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: chatski-win
-          path: release/*
+          path: dist/*
 
   # ── macOS: requires macOS runner ─────────────────────────────
   mac:
@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: chatski-mac
-          path: release/*
+          path: dist/*
 
   # ── Combine all artifacts ────────────────────────────────────
   release:

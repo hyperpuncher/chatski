@@ -5,14 +5,9 @@
 	"directories": {
 		"buildResources": "build"
 	},
+	"publish": null,
 	"electronLanguages": ["en-US"],
-	"files": [
-		"out/**/*",
-		"node_modules/impit/**/*",
-		"node_modules/impit-linux-x64-gnu/**/*",
-		"node_modules/impit-linux-x64-musl/**/*",
-		"package.json"
-	],
+	"files": ["out/**/*"],
 	"npmRebuild": true,
 	"win": {
 		"executableName": "chatski"

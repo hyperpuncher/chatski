@@ -1,0 +1,124 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  BUN_VERSION: latest
+
+jobs:
+  # ── Linux: native build ──────────────────────────────────────
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/electron
+            ~/.cache/electron-builder
+          key: linux-${{ hashFiles('**/bun.lock') }}
+          restore-keys: linux-
+
+      - name: Install
+        run: bun install
+
+      - name: Build
+        run: bun run build:linux
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: chatski-linux
+          path: release/*
+
+  # ── Windows: native build ────────────────────────────────────
+  win:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~\AppData\Local\electron\Cache
+            ~\AppData\Local\electron-builder\Cache
+          key: win-${{ hashFiles('**/bun.lock') }}
+          restore-keys: win-
+
+      - name: Install
+        run: bun install
+
+      - name: Build
+        run: bun run build:win
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: chatski-win
+          path: release/*
+
+  # ── macOS: requires macOS runner ─────────────────────────────
+  mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/electron
+            ~/.cache/electron-builder
+          key: mac-${{ hashFiles('**/bun.lock') }}
+          restore-keys: mac-
+
+      - name: Install
+        run: bun install
+
+      - name: Build
+        run: bun run build:mac
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: chatski-mac
+          path: release/*
+
+  # ── Combine all artifacts ────────────────────────────────────
+  release:
+    needs: [linux, win, mac]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download all
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

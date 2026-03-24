@@ -51,7 +51,10 @@ type FrontMatter = {
 
 app.commandLine.appendSwitch("enable-features", "MiddleClickAutoscroll,OverlayScrollbar");
 
-Menu.setApplicationMenu(null);
+// Hide menu on Windows/Linux, keep default menu on macOS for keyboard shortcuts
+if (process.platform !== "darwin") {
+	Menu.setApplicationMenu(null);
+}
 
 const createWindow = () => {
 	const mainWindow = new BrowserWindow({

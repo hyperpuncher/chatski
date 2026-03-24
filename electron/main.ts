@@ -72,6 +72,41 @@ const createWindow = () => {
 		return { action: "deny" };
 	});
 
+	// Right-click context menu
+	mainWindow.webContents.on("context-menu", (_, params) => {
+		const template: Electron.MenuItemConstructorOptions[] = [];
+
+		if (params.selectionText) {
+			template.push({ role: "copy", label: "Copy" }, { type: "separator" });
+		}
+
+		if (params.isEditable) {
+			template.push(
+				{ role: "cut", label: "Cut" },
+				{ role: "copy", label: "Copy" },
+				{ role: "paste", label: "Paste" },
+				{ type: "separator" },
+				{ role: "selectAll", label: "Select All" },
+			);
+		}
+
+		// Allow inspect element in development
+		if (process.env.NODE_ENV === "development") {
+			if (template.length > 0) {
+				template.push({ type: "separator" });
+			}
+			template.push({
+				label: "Inspect Element",
+				click: () => mainWindow.webContents.inspectElement(params.x, params.y),
+			});
+		}
+
+		if (template.length > 0) {
+			const menu = Menu.buildFromTemplate(template);
+			menu.popup({ window: mainWindow, x: params.x, y: params.y });
+		}
+	});
+
 	if (process.env.NODE_ENV === "development" && process.env["ELECTRON_RENDERER_URL"]) {
 		mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
 		mainWindow.webContents.openDevTools();

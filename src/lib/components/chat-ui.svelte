@@ -358,7 +358,7 @@ $effect(() => {
 							{@const isPending = !part.state.startsWith("output")}
 							<Collapsible.Root
 								open={config.settings.showToolOutput}
-								class="animate-in rounded-xl bg-muted px-4 font-mono text-sm  fade-in "
+								class="animate-in rounded-xl bg-muted px-4 font-mono text-sm fade-in"
 							>
 								<Collapsible.Trigger
 									class="group flex w-full justify-between gap-2 py-2 text-left"
@@ -382,9 +382,10 @@ $effect(() => {
 									{/if}
 
 									{#if part.state === "output-available"}
-										{#if part.output.trim()}
+										{@const output = part.output.trim()}
+										{#if output}
 											<pre
-												class="mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{part.output}</pre>
+												class="mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{output}</pre>
 										{/if}
 									{/if}
 								</Collapsible.Content>

@@ -12,6 +12,7 @@ type Settings = {
 	mcps: MCP[];
 	showToolOutput: boolean;
 	showReasoning: boolean;
+	ignoredProviders: string[];
 };
 
 export type MCP = {
@@ -46,6 +47,32 @@ const defaultSettings: Settings = {
 	mcps: [],
 	showToolOutput: true,
 	showReasoning: true,
+	ignoredProviders: [
+		"alibaba",
+		"anthropic",
+		"atlas-cloud",
+		"baseten",
+		"cerebras",
+		"chutes",
+		"clarifai",
+		"deepinfra",
+		"deepseek",
+		"friendli",
+		"hyperbolic",
+		"inceptron",
+		"io-net",
+		"mancer",
+		"modelrun",
+		"nebius",
+		"nextbit",
+		"novita",
+		"parasail",
+		"phala",
+		"sambanova",
+		"siliconflow",
+		"together",
+		"venice",
+	],
 };
 
 class ConfigStore {

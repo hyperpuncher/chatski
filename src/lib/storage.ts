@@ -1,6 +1,8 @@
 import { refreshChats } from "$lib/storage.svelte";
 import type { MyUIMessage } from "$lib/types";
 
+import type { OpenRouterProvider } from "./openrouter";
+
 // ── Config storage ──────────────────────────────────────────────
 // Thin wrapper: we pass raw JSON strings over IPC to avoid
 // double-serialization. The caller (config.svelte.ts) handles
@@ -117,68 +119,10 @@ export async function setCachedLabs(data: string[]): Promise<void> {
 	await setCached("openrouter-labs", data);
 }
 
-// ── OpenRouter API client ───────────────────────────────────────
-
-interface ModelInfo {
-	id: string;
-	name: string;
-	modalities: {
-		input: string[];
-		output: string[];
-	};
-	supportedParameters: string[];
+export async function getCachedProviders(): Promise<OpenRouterProvider[] | null> {
+	return getCached<OpenRouterProvider[]>("openrouter-providers");
 }
 
-export async function getModels(labs: string[]): Promise<ModelInfo[]> {
-	const cached = await getCachedModels();
-	if (cached) {
-		return parseModels(cached, labs);
-	}
-
-	const res = await fetch("https://openrouter.ai/api/v1/models");
-	const json = await res.json();
-	const data = json.data;
-
-	await setCachedModels(data);
-	await setCachedLabs(parseLabs(data));
-
-	return parseModels(data, labs);
-}
-
-export async function getLabs(): Promise<string[]> {
-	const cached = await getCachedLabs();
-	if (cached) {
-		return cached;
-	}
-
-	const res = await fetch("https://openrouter.ai/api/v1/models");
-	const json = await res.json();
-	const data = json.data;
-
-	await setCachedModels(data);
-	const labs = parseLabs(data);
-	await setCachedLabs(labs);
-
-	return labs;
-}
-
-function parseModels(data: any[], labs: string[]): ModelInfo[] {
-	const labsSet = new Set(labs);
-
-	return data
-		.filter((model: any) => labsSet.has(model.id.split("/")[0]))
-		.map((model: any) => ({
-			id: model.id,
-			name: model.name,
-			modalities: {
-				input: model.architecture.input_modalities,
-				output: model.architecture.output_modalities,
-			},
-			supportedParameters: model.supported_parameters,
-		}))
-		.sort((a, b) => a.id.localeCompare(b.id));
-}
-
-function parseLabs(data: any[]): string[] {
-	return Array.from(new Set(data.map((model: any) => model.id.split("/")[0]).sort()));
+export async function setCachedProviders(data: OpenRouterProvider[]): Promise<void> {
+	await setCached("openrouter-providers", data);
 }

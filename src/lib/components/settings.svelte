@@ -14,7 +14,7 @@ import * as Select from "$lib/components/ui/select";
 import { Switch } from "$lib/components/ui/switch";
 import * as Tabs from "$lib/components/ui/tabs/index.js";
 import { config, type MCP } from "$lib/config.svelte";
-import { getLabs } from "$lib/storage";
+import { getLabs, getProviders } from "$lib/openrouter";
 import { isMac, isMobile } from "$lib/utils";
 
 let open = $state(!config.settings.apiKey);
@@ -138,6 +138,31 @@ function handleKeydown(e: KeyboardEvent) {
 									{/each}
 								</Select.Content>
 							</Select.Root>
+						</Field.Field>
+
+						<Field.Field>
+							<Field.Label>Ignored Providers</Field.Label>
+							<Select.Root bind:value={config.settings.ignoredProviders} type="multiple">
+								<Select.Trigger class="w-full">
+									<Label class="truncate">
+										{config.settings.ignoredProviders.length > 0
+											? `${config.settings.ignoredProviders.length} providers ignored`
+											: "No providers ignored"}
+									</Label>
+								</Select.Trigger>
+								<Select.Content class="max-h-64 overflow-y-scroll">
+									{#each await getProviders() as provider}
+										<Select.Item value={provider.slug}>{provider.name}</Select.Item>
+									{/each}
+								</Select.Content>
+							</Select.Root>
+							<Field.Description>
+								Providers to skip when routing requests. <a
+									href="https://openrouter.ai/docs/api-reference/providers"
+									target="_blank"
+									rel="noopener noreferrer">Learn more ↗</a
+								>
+							</Field.Description>
 						</Field.Field>
 					</Field.Group>
 				</Field.Set>

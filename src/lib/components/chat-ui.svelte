@@ -38,7 +38,7 @@ import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
 import { config } from "$lib/config.svelte";
-import { getModels } from "$lib/storage";
+import { getModels } from "$lib/openrouter";
 import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
 import {
 	isToolUIPart,

@@ -20,6 +20,16 @@ function createModel() {
 	});
 }
 
+function createTools() {
+	const tools = {
+		...(config.settings.enabledTools.includes("fetch") && { fetch: fetchTool }),
+		...(config.settings.enabledTools.includes("search") && { search: searchTool }),
+		...(config.settings.enabledTools.includes("shell") && { shell: shellTool }),
+		...(config.settings.enabledTools.includes("skill") && { skill: readSkillTool }),
+	};
+	return tools;
+}
+
 function createChatBase({
 	id,
 	messages,
@@ -34,12 +44,7 @@ function createChatBase({
 	const agent = new ToolLoopAgent({
 		model: createModel(),
 		instructions,
-		tools: {
-			fetch: fetchTool,
-			search: searchTool,
-			shell: shellTool,
-			skill: readSkillTool,
-		},
+		tools: createTools(),
 		stopWhen: stepCountIs(100),
 		prepareCall: async (args) => ({
 			...args,

@@ -1,5 +1,7 @@
 import { configStorage } from "./storage";
 
+export type ToolName = "fetch" | "search" | "shell" | "skill";
+
 type Settings = {
 	apiKey: string;
 	proxyUrl: string;
@@ -14,6 +16,7 @@ type Settings = {
 	showReasoning: boolean;
 	ignoredProviders: string[];
 	preferredProviders: string[];
+	enabledTools: ToolName[];
 };
 
 export type MCP = {
@@ -75,6 +78,7 @@ const defaultSettings: Settings = {
 		"venice",
 	],
 	preferredProviders: ["google-ai-studio", "groq"],
+	enabledTools: ["fetch", "search", "shell", "skill"],
 };
 
 class ConfigStore {

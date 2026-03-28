@@ -14,7 +14,7 @@ function createModel() {
 	return openrouter.chat(config.settings.model, {
 		reasoning: { effort: config.settings.reasoning },
 		provider: {
-			order: ["google-ai-studio", "groq"],
+			order: config.settings.preferredProviders,
 			ignore: config.settings.ignoredProviders,
 		},
 	});

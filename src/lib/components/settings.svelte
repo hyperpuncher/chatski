@@ -1,8 +1,11 @@
 <script lang="ts">
+import ArrowDown from "@lucide/svelte/icons/arrow-down";
+import ArrowUp from "@lucide/svelte/icons/arrow-up";
 import Pencil from "@lucide/svelte/icons/pencil";
 import PlusIcon from "@lucide/svelte/icons/plus";
 import Settings from "@lucide/svelte/icons/settings";
 import Trash2 from "@lucide/svelte/icons/trash-2";
+import X from "@lucide/svelte/icons/x";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 import { Button, buttonVariants } from "$lib/components/ui/button";
@@ -66,6 +69,32 @@ function handleKeydown(e: KeyboardEvent) {
 		e.preventDefault();
 		open = !open;
 	}
+}
+
+let preferredProviderToAdd = $state<string>("");
+
+function moveProvider(index: number, direction: "up" | "down") {
+	const providers = config.settings.preferredProviders;
+	const newIndex = direction === "up" ? index - 1 : index + 1;
+	if (newIndex < 0 || newIndex >= providers.length) return;
+	const newProviders = [...providers];
+	[newProviders[index], newProviders[newIndex]] = [
+		newProviders[newIndex],
+		newProviders[index],
+	];
+	config.settings.preferredProviders = newProviders;
+}
+
+function removeProvider(index: number) {
+	config.settings.preferredProviders = config.settings.preferredProviders.filter(
+		(_, i) => i !== index,
+	);
+}
+
+function addPreferredProvider() {
+	if (config.settings.preferredProviders.includes(preferredProviderToAdd)) return;
+	config.settings.preferredProviders.push(preferredProviderToAdd);
+	preferredProviderToAdd = "";
 }
 </script>
 
@@ -141,6 +170,80 @@ function handleKeydown(e: KeyboardEvent) {
 						</Field.Field>
 
 						<Field.Field>
+							<Field.Label>Preferred Providers</Field.Label>
+							<Field.Description>
+								Providers to prioritize when routing requests.
+							</Field.Description>
+							<div class="mt-2 flex flex-col gap-2">
+								{#if config.settings.preferredProviders.length === 0}
+									<p class="text-sm text-muted-foreground">No preferred providers</p>
+								{:else}
+									<ol class="flex flex-col gap-1">
+										{#each config.settings.preferredProviders as provider, index (provider)}
+											<li class="flex items-center gap-2 rounded-md border px-3 py-2">
+												<span class="w-6 text-sm text-muted-foreground">{index + 1}.</span
+												>
+												<span class="flex-1 text-sm">{provider}</span>
+												<div class="flex items-center gap-1">
+													<Button
+														size="icon-sm"
+														variant="ghost"
+														disabled={index === 0}
+														onclick={() => moveProvider(index, "up")}
+														aria-label="Move up"
+													>
+														<ArrowUp class="size-4" />
+													</Button>
+													<Button
+														size="icon-sm"
+														variant="ghost"
+														disabled={index ===
+															config.settings.preferredProviders.length - 1}
+														onclick={() => moveProvider(index, "down")}
+														aria-label="Move down"
+													>
+														<ArrowDown class="size-4" />
+													</Button>
+													<Button
+														size="icon-sm"
+														variant="ghost"
+														onclick={() => removeProvider(index)}
+														aria-label="Remove"
+													>
+														<X class="size-4" />
+													</Button>
+												</div>
+											</li>
+										{/each}
+									</ol>
+								{/if}
+								<div class="flex gap-2">
+									<Select.Root type="single" bind:value={preferredProviderToAdd}>
+										<Select.Trigger class="flex-1">
+											<span class="truncate">
+												{preferredProviderToAdd || "Add provider..."}
+											</span>
+										</Select.Trigger>
+										<Select.Content class="max-h-64 overflow-y-scroll">
+											{#each await getProviders() as provider}
+												<Select.Item value={provider.slug}>{provider.name}</Select.Item>
+											{/each}
+										</Select.Content>
+									</Select.Root>
+									<Button
+										size="icon"
+										variant="outline"
+										disabled={!preferredProviderToAdd}
+										onclick={addPreferredProvider}
+										aria-label="Add"
+									>
+										<PlusIcon class="size-4" />
+									</Button>
+								</div>
+							</div>
+						</Field.Field>
+
+						<Field.Field>
 							<Field.Label>Ignored Providers</Field.Label>
 							<Select.Root bind:value={config.settings.ignoredProviders} type="multiple">
 								<Select.Trigger class="w-full">
@@ -157,11 +260,7 @@ function handleKeydown(e: KeyboardEvent) {
 								</Select.Content>
 							</Select.Root>
 							<Field.Description>
-								Providers to skip when routing requests. <a
-									href="https://openrouter.ai/docs/api-reference/providers"
-									target="_blank"
-									rel="noopener noreferrer">Learn more ↗</a
-								>
+								Providers to skip when routing requests.
 							</Field.Description>
 						</Field.Field>
 					</Field.Group>

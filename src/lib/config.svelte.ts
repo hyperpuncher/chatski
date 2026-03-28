@@ -13,6 +13,7 @@ type Settings = {
 	showToolOutput: boolean;
 	showReasoning: boolean;
 	ignoredProviders: string[];
+	preferredProviders: string[];
 };
 
 export type MCP = {
@@ -73,6 +74,7 @@ const defaultSettings: Settings = {
 		"together",
 		"venice",
 	],
+	preferredProviders: ["google-ai-studio", "groq"],
 };
 
 class ConfigStore {

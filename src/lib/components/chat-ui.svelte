@@ -6,6 +6,7 @@ import * as Collapsible from "$lib/components/ui/collapsible/index.js";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
 import CircleX from "@lucide/svelte/icons/circle-x";
+import Dot from "@lucide/svelte/icons/dot";
 import Clock from "@lucide/svelte/icons/clock";
 import Copy from "@lucide/svelte/icons/copy";
 import DollarSign from "@lucide/svelte/icons/dollar-sign";
@@ -14,7 +15,6 @@ import FileUp from "@lucide/svelte/icons/file-up";
 import FileX from "@lucide/svelte/icons/file-x";
 import Gauge from "@lucide/svelte/icons/gauge";
 import Image from "@lucide/svelte/icons/image";
-
 import Music from "@lucide/svelte/icons/music";
 import Paperclip from "@lucide/svelte/icons/paperclip";
 import RefreshCcw from "@lucide/svelte/icons/refresh-ccw";
@@ -49,7 +49,9 @@ import {
 } from "ai";
 import { Spinner } from "$lib/components/ui/spinner/index.js";
 import { chat } from "$lib/chat.svelte";
+
 import { ScrollState } from "runed";
+import ToolIcon from "./tool-icon.svelte";
 
 const scroll = new ScrollState({
 	element: () => document.documentElement,
@@ -356,50 +358,80 @@ $effect(() => {
 						{:else if isToolUIPart(part)}
 							{@const toolName = getToolName(part)}
 							{@const isPending = !part.state.startsWith("output")}
+							{@const input = part.input ? Object.values(part.input)[0] : ""}
+							{@const output =
+								part.state === "output-available" ? part.output.trim() : ""}
 							<Collapsible.Root
 								open={config.settings.showToolOutput}
-								class="animate-in rounded-xl bg-muted px-4 font-mono text-sm fade-in"
+								class="animate-in rounded-lg px-2 font-mono text-sm fade-in hover:bg-muted/50"
 							>
 								<Collapsible.Trigger
-									class="group flex w-full justify-between gap-2 py-2 text-left"
+									class="group flex w-full items-center justify-between gap-2 py-2 text-left"
 								>
-									{toolName}
-
 									{#if isPending}
-										<Spinner class="mt-0.5 shrink-0" />
-									{:else}
+										<Spinner class="size-4" />
+									{:else if output}
 										<ChevronDown
-											class="mt-0.5 size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180"
+											class="size-4 transition-transform group-data-[state=open]:rotate-180"
 										/>
+									{:else}
+										<span class="px-1">•</span>
+									{/if}
+									<div class="flex items-center gap-2">
+										<ToolIcon {toolName} />
+										{toolName}
+									</div>
+
+									{#if input}
+										<span class="me-auto truncate text-muted-foreground">
+											{input.split("\n")[0]}
+										</span>
 									{/if}
 								</Collapsible.Trigger>
 								<Collapsible.Content>
-									{#if part.input}
+									{#if input && input.split("\n").length > 1}
 										<pre
-											class="me-auto mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{Object.values(
+											class="me-auto mb-4 rounded-lg bg-muted p-2 break-all whitespace-pre-wrap">{Object.values(
 												part.input,
 											)}</pre>
 									{/if}
 
-									{#if part.state === "output-available"}
-										{@const output = part.output.trim()}
-										{#if output}
-											<pre
-												class="mb-4 rounded-lg bg-background p-2 wrap-anywhere whitespace-pre-wrap">{output}</pre>
-										{/if}
+									{#if output}
+										<pre
+											class="mb-2 rounded-lg bg-muted p-2 break-all whitespace-pre-wrap">{output}</pre>
 									{/if}
 								</Collapsible.Content>
 							</Collapsible.Root>
 						{:else if isTextUIPart(part)}
 							<AiMessage content={part.text} isStreaming={isStreaming && isLastMessage} />
 						{:else if isReasoningUIPart(part)}
-							{#if config.settings.showReasoning}
-								<AiMessage
-									content={part.text}
-									isStreaming={isStreaming && isLastMessage}
-									reasoning={true}
-								/>
-							{/if}
+							<Collapsible.Root
+								open={config.settings.showReasoning}
+								class="animate-in rounded-lg px-2 text-sm fade-in hover:bg-muted/50"
+							>
+								<Collapsible.Trigger
+									class="group font-ligh flex w-full items-center gap-2 py-2 text-left font-mono"
+								>
+									{#if part.state === "streaming"}
+										<Spinner class="size-4" />
+										<Brain class="size-4" />
+										<span>thinking...</span>
+									{:else}
+										<ChevronDown
+											class="size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180"
+										/>
+										<Brain class="size-4" />
+										<span>reasoning</span>
+									{/if}
+								</Collapsible.Trigger>
+								<Collapsible.Content class="mb-2 rounded-lg bg-background px-2">
+									<AiMessage
+										content={part.text}
+										isStreaming={isStreaming && isLastMessage}
+										reasoning={true}
+									/>
+								</Collapsible.Content>
+							</Collapsible.Root>
 						{:else if isFileUIPart(part)}
 							{#if part.mediaType.startsWith("image/")}
 								<a href={part.url} download aria-label="Download image">

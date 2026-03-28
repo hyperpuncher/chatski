@@ -172,6 +172,10 @@ app.on("activate", () => {
 	}
 });
 
+ipcMain.handle("version", async (): Promise<string> => {
+	return app.getVersion();
+});
+
 ipcMain.handle("system", async (): Promise<string> => {
 	let systemInfo = `OS: ${process.platform} ${process.arch}\nTime: ${new Date().toLocaleString("sv-SE")}`;
 

@@ -17,6 +17,7 @@ export type SearchInput = {
 export type ShellInput = string;
 
 const api = {
+	version: () => ipcRenderer.invoke("version"),
 	system: () => ipcRenderer.invoke("system"),
 
 	skills: {

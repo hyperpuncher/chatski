@@ -157,6 +157,9 @@ const menuItems: { id: typeof activeSection; label: string }[] = [
 							{item.label}
 						</button>
 					{/each}
+					<div class="mx-auto mt-auto pt-4 text-xs text-muted-foreground/40">
+						v{await window.api.version()}
+					</div>
 				</div>
 
 				<!-- Content -->

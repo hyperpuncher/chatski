@@ -6,7 +6,6 @@ import * as Collapsible from "$lib/components/ui/collapsible/index.js";
 import Bot from "@lucide/svelte/icons/bot";
 import Brain from "@lucide/svelte/icons/brain";
 import CircleX from "@lucide/svelte/icons/circle-x";
-import Dot from "@lucide/svelte/icons/dot";
 import Clock from "@lucide/svelte/icons/clock";
 import Copy from "@lucide/svelte/icons/copy";
 import DollarSign from "@lucide/svelte/icons/dollar-sign";
@@ -369,10 +368,10 @@ $effect(() => {
 									class="group flex w-full items-center justify-between gap-2 py-2 text-left"
 								>
 									{#if isPending}
-										<Spinner class="size-4" />
+										<Spinner class="size-4 shrink-0" />
 									{:else if output}
 										<ChevronDown
-											class="size-4 transition-transform group-data-[state=open]:rotate-180"
+											class="size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180"
 										/>
 									{:else}
 										<span class="px-1">•</span>
@@ -413,7 +412,7 @@ $effect(() => {
 									class="group font-ligh flex w-full items-center gap-2 py-2 text-left font-mono"
 								>
 									{#if part.state === "streaming"}
-										<Spinner class="size-4" />
+										<Spinner class="size-4 shrink-0" />
 										<Brain class="size-4" />
 										<span>thinking...</span>
 									{:else}

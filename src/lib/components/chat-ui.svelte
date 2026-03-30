@@ -36,9 +36,17 @@ import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 import * as InputGroup from "$lib/components/ui/input-group";
 import * as Kbd from "$lib/components/ui/kbd";
 import * as Popover from "$lib/components/ui/popover/index.js";
+import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 import { config } from "$lib/config.svelte";
 import { getModels } from "$lib/openrouter";
-import { cn, collapseFilename, isMac, isMobile } from "$lib/utils";
+import {
+	cn,
+	collapseFilename,
+	fmtContext,
+	isMac,
+	isMobile,
+	roundToSignificant,
+} from "$lib/utils";
 import {
 	isToolUIPart,
 	getToolName,
@@ -82,6 +90,32 @@ const modelsList = $derived([
 	...favorites,
 	...models.filter((m) => !favorites.has(m.id)).map((m) => m.id),
 ]);
+const currentModel = $derived(models.find((m) => m.id === config.settings.model));
+
+// Total stats computation
+const totalStats = $derived.by(() => {
+	const assistantMessages = chat.current.messages.filter((m) => m.role === "assistant");
+	let totalCost = 0;
+	let totalTokens = 0;
+
+	for (const msg of assistantMessages) {
+		if (msg.metadata) {
+			totalCost += msg.metadata.cost;
+			totalTokens += msg.metadata.inputTokens + msg.metadata.completionTokens;
+		}
+	}
+
+	const contextLength = currentModel?.contextLength ?? 0;
+	const contextPercent =
+		contextLength > 0 ? Math.round((totalTokens / contextLength) * 100) : 0;
+
+	return {
+		cost: totalCost,
+		tokens: totalTokens,
+		contextPercent,
+		contextLength,
+	};
+});
 
 const modalities = $derived(
 	models.filter((m) => m.id === config.settings.model)[0]?.modalities,
@@ -457,7 +491,7 @@ $effect(() => {
 								if (text) handleCopy(text);
 							}}
 						>
-							<Copy aria-hidden="true" />
+							<Copy />
 						</Button>
 
 						<Button
@@ -466,7 +500,7 @@ $effect(() => {
 							aria-label="Regenerate response"
 							onclick={() => chat.current.regenerate({ messageId: message.id })}
 						>
-							<RefreshCcw aria-hidden="true" />
+							<RefreshCcw />
 						</Button>
 
 						{#if !isAssistant}
@@ -476,23 +510,23 @@ $effect(() => {
 								aria-label="Edit message"
 								onclick={() => handleEdit(messageIndex)}
 							>
-								<SquarePen aria-hidden="true" />
+								<SquarePen />
 							</Button>
 						{/if}
 
 						{#if config.settings.stats && isAssistant && message.metadata}
-							{@const { tokens, cost, tps, time, provider } = message.metadata}
+							{@const { completionTokens, cost, tps, time, provider } = message.metadata}
 							<div
-								class="grid grid-cols-2 justify-items-start text-muted-foreground sm:flex sm:gap-1"
+								class="grid grid-cols-2 justify-items-start gap-1 font-mono text-muted-foreground sm:flex sm:gap-1"
 							>
 								<Button
 									variant="ghost"
 									size="xs"
 									aria-label="Copy token count"
-									onclick={() => handleCopy(tokens)}
+									onclick={() => handleCopy(completionTokens)}
 								>
-									<WholeWord aria-hidden="true" />
-									{tokens} tokens
+									<WholeWord />
+									{completionTokens} tokens
 								</Button>
 								<Button
 									variant="ghost"
@@ -500,7 +534,7 @@ $effect(() => {
 									aria-label="Copy cost"
 									onclick={() => handleCopy(cost)}
 								>
-									<DollarSign aria-hidden="true" />
+									<DollarSign />
 									{cost}
 								</Button>
 								<Button
@@ -509,7 +543,7 @@ $effect(() => {
 									aria-label="Copy response time"
 									onclick={() => handleCopy(time)}
 								>
-									<Clock aria-hidden="true" />
+									<Clock />
 									{time}s
 								</Button>
 								<Button
@@ -518,7 +552,7 @@ $effect(() => {
 									aria-label="Copy tokens per second"
 									onclick={() => handleCopy(tps)}
 								>
-									<Gauge aria-hidden="true" />
+									<Gauge />
 									{tps} tokens/s
 								</Button>
 								<Button
@@ -527,7 +561,7 @@ $effect(() => {
 									aria-label="Copy provider"
 									onclick={() => handleCopy(provider)}
 								>
-									<Server aria-hidden="true" />
+									<Server />
 									{provider}
 								</Button>
 							</div>
@@ -576,7 +610,7 @@ $effect(() => {
 								messageQueue = messageQueue.filter((_, j) => i !== j);
 							}}
 						>
-							<Trash2 aria-hidden="true" />
+							<Trash2 />
 						</Button>
 					</div>
 				{/each}
@@ -618,7 +652,7 @@ $effect(() => {
 							<div
 								class="absolute -top-1.5 -right-1.5 inline-flex size-5 items-center justify-center rounded-full border bg-background text-foreground opacity-0 transition-opacity group-hover/file:opacity-100"
 							>
-								<CircleX aria-hidden="true" class="size-3" />
+								<CircleX class="size-3" />
 							</div>
 						</Button>
 					</li>
@@ -675,7 +709,7 @@ $effect(() => {
 						aria-label="Attach files"
 					>
 						<label class="absolute inset-0 flex items-center justify-center">
-							<Paperclip aria-hidden="true" />
+							<Paperclip />
 							<input
 								type="file"
 								multiple
@@ -695,42 +729,95 @@ $effect(() => {
 					</div>
 				{/if}
 
-				<div class="ms-auto flex gap-2">
-					{#if supportedParameters?.includes("reasoning")}
-						<DropdownMenu.Root>
-							<DropdownMenu.Trigger>
-								{#snippet child({ props })}
-									<Button
-										{...props}
-										variant="ghost"
-										size="icon-sm"
-										aria-label="Reasoning level"
-									>
-										<Brain
-											aria-hidden="true"
-											class={config.settings.reasoning === "none"
-												? ""
-												: "text-violet-400"}
+				<div class="ms-auto flex items-center gap-2">
+					<div>
+						{#if config.settings.stats && totalStats.tokens > 0}
+							{@const circumference = 2 * Math.PI * 10}
+							{@const strokeDashoffset =
+								circumference - (totalStats.contextPercent / 100) * circumference}
+							{@const colorClass =
+								totalStats.contextPercent > 90
+									? "text-red-500"
+									: totalStats.contextPercent > 70
+										? "text-yellow-500"
+										: "text-violet-400"}
+							<Tooltip.Root>
+								<Tooltip.Trigger
+									class={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+								>
+									<svg class="size-4 -rotate-90" viewBox="0 0 24 24">
+										<circle
+											cx="12"
+											cy="12"
+											r="10"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="3"
+											class="text-muted-foreground/30"
 										/>
-									</Button>
-								{/snippet}
-							</DropdownMenu.Trigger>
-							<DropdownMenu.Content>
-								<DropdownMenu.Group>
-									<DropdownMenu.RadioGroup
-										bind:value={config.settings.reasoning}
-										onValueChange={() => config.save()}
-									>
-										{#each reasoningOptions as option}
-											<DropdownMenu.RadioItem class="list-none" value={option}>
-												{option}
-											</DropdownMenu.RadioItem>
-										{/each}
-									</DropdownMenu.RadioGroup>
-								</DropdownMenu.Group>
-							</DropdownMenu.Content>
-						</DropdownMenu.Root>
-					{/if}
+										<circle
+											cx="12"
+											cy="12"
+											r="10"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="3"
+											stroke-linecap="round"
+											class={colorClass}
+											stroke-dasharray={circumference}
+											stroke-dashoffset={strokeDashoffset}
+											style="transition: stroke-dashoffset 0.3s ease"
+										/>
+									</svg>
+								</Tooltip.Trigger>
+								<Tooltip.Content side="top">
+									<div class="flex flex-col items-end gap-1 font-mono">
+										<span class="text-xs font-medium tabular-nums">
+											${roundToSignificant(totalStats.cost)}
+										</span>
+										<span class="text-xs font-medium tabular-nums">
+											{`${totalStats.contextPercent}%/${fmtContext.format(totalStats.contextLength)}`}
+										</span>
+									</div>
+								</Tooltip.Content>
+							</Tooltip.Root>
+						{/if}
+
+						{#if supportedParameters?.includes("reasoning")}
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger>
+									{#snippet child({ props })}
+										<Button
+											{...props}
+											variant="ghost"
+											size="icon-sm"
+											aria-label="Reasoning level"
+										>
+											<Brain
+												class={config.settings.reasoning === "none"
+													? ""
+													: "text-violet-400"}
+											/>
+										</Button>
+									{/snippet}
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content>
+									<DropdownMenu.Group>
+										<DropdownMenu.RadioGroup
+											bind:value={config.settings.reasoning}
+											onValueChange={() => config.save()}
+										>
+											{#each reasoningOptions as option}
+												<DropdownMenu.RadioItem class="list-none" value={option}>
+													{option}
+												</DropdownMenu.RadioItem>
+											{/each}
+										</DropdownMenu.RadioGroup>
+									</DropdownMenu.Group>
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
+						{/if}
+					</div>
 
 					<Popover.Root
 						bind:open={isModelsPopoverOpen}
@@ -798,7 +885,6 @@ $effect(() => {
 															}}
 														>
 															<Star
-																aria-hidden="true"
 																class={isFavorite
 																	? "fill-yellow-400 text-yellow-400"
 																	: ""}
@@ -826,9 +912,9 @@ $effect(() => {
 							((!input.trim() && !fileList?.length) || !config.settings.model)}
 					>
 						{#if chat.current.status === "streaming"}
-							<Square aria-hidden="true" />
+							<Square />
 						{:else}
-							<ArrowUp aria-hidden="true" />
+							<ArrowUp />
 						{/if}
 					</InputGroup.Button>
 				</div>

@@ -22,6 +22,11 @@ export function roundToSignificant(value: number, significantDigits = 2) {
 	return Math.round(value * scale) / scale;
 }
 
+export const fmtContext = new Intl.NumberFormat("en", {
+	notation: "compact",
+	compactDisplay: "short",
+});
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

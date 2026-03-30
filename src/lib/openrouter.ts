@@ -56,6 +56,7 @@ export interface ModelInfo {
 		output: string[];
 	};
 	supportedParameters: string[];
+	contextLength: number;
 }
 
 export async function getModels(labs: string[]): Promise<ModelInfo[]> {
@@ -104,6 +105,7 @@ function parseModels(data: any[], labs: string[]): ModelInfo[] {
 				output: model.architecture.output_modalities,
 			},
 			supportedParameters: model.supported_parameters,
+			contextLength: model.context_length ?? 0,
 		}))
 		.sort((a, b) => a.id.localeCompare(b.id));
 }

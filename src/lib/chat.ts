@@ -54,7 +54,8 @@ function createChatBase({
 
 	let messageStats = {
 		start: 0,
-		tokens: 0,
+		inputTokens: 0,
+		completionTokens: 0,
 		cost: 0,
 		provider: "",
 	};
@@ -65,7 +66,8 @@ function createChatBase({
 			if (part.type === "start") {
 				messageStats = {
 					start: performance.now(),
-					tokens: 0,
+					inputTokens: 0,
+					completionTokens: 0,
 					cost: 0,
 					provider: "",
 				};
@@ -74,7 +76,8 @@ function createChatBase({
 					| OpenRouterMetadata
 					| undefined;
 				if (metadata) {
-					messageStats.tokens += metadata.usage.completionTokens;
+					messageStats.inputTokens += metadata.usage.promptTokens;
+					messageStats.completionTokens += metadata.usage.completionTokens;
 					messageStats.cost += metadata.usage.cost;
 					messageStats.provider = metadata.provider;
 				}
@@ -82,9 +85,10 @@ function createChatBase({
 				const time = roundToSignificant(
 					(performance.now() - messageStats.start) / 1000,
 				);
-				const tps = Math.round(messageStats.tokens / time);
+				const tps = Math.round(messageStats.completionTokens / time);
 				return {
-					tokens: messageStats.tokens,
+					inputTokens: messageStats.inputTokens,
+					completionTokens: messageStats.completionTokens,
 					time,
 					tps,
 					cost: roundToSignificant(messageStats.cost),

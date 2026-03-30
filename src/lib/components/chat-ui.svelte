@@ -517,7 +517,7 @@ $effect(() => {
 						{#if config.settings.stats && isAssistant && message.metadata}
 							{@const { completionTokens, cost, tps, time, provider } = message.metadata}
 							<div
-								class="grid grid-cols-2 justify-items-start gap-1 font-mono text-muted-foreground sm:flex sm:gap-1"
+								class="grid grid-cols-2 justify-items-start gap-1 font-mono text-neutral-400 sm:flex dark:text-neutral-500"
 							>
 								<Button
 									variant="ghost"

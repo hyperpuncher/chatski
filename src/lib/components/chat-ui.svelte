@@ -96,14 +96,15 @@ const currentModel = $derived(models.find((m) => m.id === config.settings.model)
 const totalStats = $derived.by(() => {
 	const assistantMessages = chat.current.messages.filter((m) => m.role === "assistant");
 	let totalCost = 0;
-	let totalTokens = 0;
 
 	for (const msg of assistantMessages) {
-		if (msg.metadata) {
-			totalCost += msg.metadata.cost;
-			totalTokens += msg.metadata.inputTokens + msg.metadata.completionTokens;
-		}
+		if (msg.metadata) totalCost += msg.metadata.cost;
 	}
+
+	const lastAssistantMessage = assistantMessages.at(-1);
+	const totalInputTokens = lastAssistantMessage?.metadata?.inputTokens ?? 0;
+	const totalCompletionTokens = lastAssistantMessage?.metadata?.completionTokens ?? 0;
+	const totalTokens = totalInputTokens + totalCompletionTokens;
 
 	const contextLength = currentModel?.contextLength ?? 0;
 	const contextPercent =

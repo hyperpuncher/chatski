@@ -1,10 +1,11 @@
 import { config } from "$lib/config.svelte";
-import { createOpenRouterClient, type OpenRouterMetadata } from "$lib/openrouter";
+import { createOpenRouterClient } from "$lib/openrouter";
 import { saveChat } from "$lib/storage";
 import { shellTool, fetchTool, searchTool, readSkillTool } from "$lib/tools";
 import type { MyUIMessage } from "$lib/types";
 import { roundToSignificant } from "$lib/utils";
 import { Chat } from "@ai-sdk/svelte";
+import type { OpenRouterUsageAccounting } from "@openrouter/ai-sdk-provider";
 import { DirectChatTransport, ToolLoopAgent, stepCountIs } from "ai";
 import type { ChatTransport } from "ai";
 import { uuidv7 } from "uuidv7";
@@ -52,47 +53,35 @@ function createChatBase({
 		}),
 	});
 
-	let messageStats = {
-		start: 0,
-		inputTokens: 0,
-		completionTokens: 0,
-		cost: 0,
-		provider: "",
-	};
+	let startTime = 0;
+	let totalCost = 0;
+	let lastMetadata: { provider: string; usage: OpenRouterUsageAccounting } | undefined;
 
 	const transport = new DirectChatTransport({
 		agent,
 		messageMetadata: ({ part }) => {
 			if (part.type === "start") {
-				messageStats = {
-					start: performance.now(),
-					inputTokens: 0,
-					completionTokens: 0,
-					cost: 0,
-					provider: "",
-				};
+				startTime = performance.now();
+				totalCost = 0;
+				lastMetadata = undefined;
 			} else if (part.type === "finish-step") {
-				const metadata = part.providerMetadata?.openrouter as
-					| OpenRouterMetadata
-					| undefined;
+				const metadata = part.providerMetadata?.openrouter as typeof lastMetadata;
 				if (metadata) {
-					messageStats.inputTokens += metadata.usage.promptTokens;
-					messageStats.completionTokens += metadata.usage.completionTokens;
-					messageStats.cost += metadata.usage.cost;
-					messageStats.provider = metadata.provider;
+					totalCost += metadata.usage.cost ?? 0;
+					lastMetadata = metadata;
 				}
-			} else if (part.type === "finish") {
-				const time = roundToSignificant(
-					(performance.now() - messageStats.start) / 1000,
-				);
-				const tps = Math.round(messageStats.completionTokens / time);
+			} else if (part.type === "finish" && lastMetadata) {
+				const time = roundToSignificant((performance.now() - startTime) / 1000);
+				const completionTokens = lastMetadata.usage.completionTokens;
+				const tps = Math.round(completionTokens / time);
 				return {
-					inputTokens: messageStats.inputTokens,
-					completionTokens: messageStats.completionTokens,
+					promptTokens: lastMetadata.usage.promptTokens,
+					completionTokens,
+					totalTokens: lastMetadata.usage.totalTokens,
 					time,
 					tps,
-					cost: roundToSignificant(messageStats.cost),
-					provider: messageStats.provider,
+					cost: roundToSignificant(totalCost),
+					provider: lastMetadata.provider,
 				};
 			}
 			return undefined;

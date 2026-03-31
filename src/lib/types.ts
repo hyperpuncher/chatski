@@ -1,8 +1,9 @@
 import type { Chat, UIMessage } from "@ai-sdk/svelte";
 
 type MessageMetadata = {
-	inputTokens: number;
+	promptTokens: number;
 	completionTokens: number;
+	totalTokens: number;
 	time: number;
 	tps: number;
 	cost: number;

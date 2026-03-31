@@ -113,19 +113,3 @@ function parseModels(data: any[], labs: string[]): ModelInfo[] {
 function parseLabs(data: any[]): string[] {
 	return Array.from(new Set(data.map((model: any) => model.id.split("/")[0]).sort()));
 }
-
-export type OpenRouterMetadata = {
-	usage: {
-		promptTokens: number;
-		promptTokensDetails: {
-			cachedTokens: number;
-		};
-		completionTokens: number;
-		completionTokensDetails: {
-			reasoningTokens: number;
-		};
-		cost: number;
-		totalTokens: number;
-	};
-	provider: string;
-};

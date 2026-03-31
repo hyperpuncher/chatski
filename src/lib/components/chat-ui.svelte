@@ -100,8 +100,8 @@ const totalStats = $derived.by(() => {
 		if (msg.metadata) cost += msg.metadata.cost;
 	}
 
-	const metadata = assistantMessages.at(-1)?.metadata;
-	const tokens = metadata?.totalTokens ?? 0;
+	const lastMessageWithMetadata = assistantMessages.findLast((m) => m.metadata);
+	const tokens = lastMessageWithMetadata?.metadata?.totalTokens ?? 0;
 
 	const contextLength = currentModel?.contextLength ?? 0;
 	const contextPercent =
@@ -729,7 +729,7 @@ $effect(() => {
 
 				<div class="ms-auto flex items-center gap-2">
 					<div>
-						{#if config.settings.stats && totalStats.tokens > 0}
+						{#if config.settings.stats}
 							{@const circumference = 2 * Math.PI * 10}
 							{@const strokeDashoffset =
 								circumference - (totalStats.contextPercent / 100) * circumference}

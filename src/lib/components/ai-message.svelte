@@ -16,6 +16,7 @@ let { content, isStreaming, reasoning = false } = $props();
 	shikiThemes={{ dracula }}
 	shikiLanguages={[
 		{ id: "astro", import: () => import("@shikijs/langs/astro") },
+		{ id: "diff", import: () => import("@shikijs/langs/diff") },
 		{ id: "lua", import: () => import("@shikijs/langs/lua") },
 		{ id: "powershell", import: () => import("@shikijs/langs/powershell") },
 		{ id: "typst", import: () => import("@shikijs/langs/typst") },

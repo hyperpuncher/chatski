@@ -1,6 +1,6 @@
 {
 	"name": "chatski",
-	"version": "2.3.2",
+	"version": "2.3.3",
 	"private": true,
 	"description": "chatski with your slop generators",
 	"type": "module",

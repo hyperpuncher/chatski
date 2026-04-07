@@ -17,6 +17,7 @@ let { content, isStreaming, reasoning = false } = $props();
 	shikiLanguages={[
 		{ id: "astro", import: () => import("@shikijs/langs/astro") },
 		{ id: "diff", import: () => import("@shikijs/langs/diff") },
+		{ id: "jsonc", import: () => import("@shikijs/langs/jsonc") },
 		{ id: "lua", import: () => import("@shikijs/langs/lua") },
 		{ id: "powershell", import: () => import("@shikijs/langs/powershell") },
 		{ id: "typst", import: () => import("@shikijs/langs/typst") },

@@ -397,7 +397,7 @@ $effect(() => {
 								class="animate-in rounded-lg px-2 font-mono text-sm fade-in hover:bg-muted/50"
 							>
 								<Collapsible.Trigger
-									class="group flex w-full items-center justify-between gap-2 py-2 text-left"
+									class="group flex w-full items-center gap-2 py-2 text-left"
 								>
 									{#if isPending}
 										<Spinner class="size-4 shrink-0" />
@@ -414,7 +414,7 @@ $effect(() => {
 									</div>
 
 									{#if input}
-										<span class="me-auto truncate text-muted-foreground">
+										<span class="truncate text-muted-foreground">
 											{input.split("\n")[0]}
 										</span>
 									{/if}

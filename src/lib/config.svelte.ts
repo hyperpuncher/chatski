@@ -31,8 +31,8 @@ export type MCP = {
 const defaultSettings: Settings = {
 	apiKey: "",
 	proxyUrl: "",
-	model: "moonshotai/kimi-k2.5",
-	favorites: ["minimax/minimax-m2.7", "moonshotai/kimi-k2.5", "xiaomi/mimo-v2-omni"],
+	model: "moonshotai/kimi-k2.6",
+	favorites: ["minimax/minimax-m2.7", "moonshotai/kimi-k2.6", "xiaomi/mimo-v2-omni"],
 	labs: [
 		"anthropic",
 		"deepseek",

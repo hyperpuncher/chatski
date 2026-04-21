@@ -78,7 +78,7 @@ const defaultSettings: Settings = {
 		"venice",
 	],
 	preferredProviders: ["google-ai-studio", "groq"],
-	enabledTools: ["fetch", "search", "shell", "skill"],
+	enabledTools: ["fetch", "search", "skill"],
 };
 
 class ConfigStore {

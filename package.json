@@ -9,9 +9,9 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --incremental --tsgo",
 		"check:watch": "svelte-kit sync && svelte-check --incremental --tsgo --watch",
-		"format": "bun run format:oxfmt ; bun run format:prettier",
-		"format:oxfmt": "bunx oxfmt",
-		"format:prettier": "prettier --log-level error --write '**/*.svelte'",
+		"fmt": "bun fmt:oxfmt ; bun fmt:prettier",
+		"fmt:oxfmt": "bunx oxfmt",
+		"fmt:prettier": "prettier --log-level error --write '**/*.svelte'",
 		"lint": "bunx oxlint",
 		"lint:fix": "bunx oxlint --fix",
 		"icons": "./scripts/generate-icons.sh",
@@ -19,13 +19,13 @@
 		"start": "electron-vite preview",
 		"dev": "electron-vite dev",
 		"prebuild": "vite build && electron-vite build",
-		"build:unpack": "bun run prebuild && electron-builder --dir",
-		"build:linux": "bun run prebuild && electron-builder --linux",
-		"build:mac": "bun run prebuild && electron-builder --mac",
-		"build:windows": "bun run prebuild && electron-builder --windows",
-		"publish:linux": "bun run prebuild && electron-builder --linux --publish onTag",
-		"publish:mac": "bun run prebuild && electron-builder --mac --publish onTag",
-		"publish:windows": "bun run prebuild && electron-builder --windows --publish onTag"
+		"build:unpack": "bun prebuild && electron-builder --dir",
+		"build:linux": "bun prebuild && electron-builder --linux",
+		"build:mac": "bun prebuild && electron-builder --mac",
+		"build:windows": "bun prebuild && electron-builder --windows",
+		"publish:linux": "bun prebuild && electron-builder --linux --publish onTag",
+		"publish:mac": "bun prebuild && electron-builder --mac --publish onTag",
+		"publish:windows": "bun prebuild && electron-builder --windows --publish onTag"
 	},
 	"dependencies": {
 		"impit": "^0.13.0"

@@ -3,9 +3,9 @@
 ## Commands
 
 ```sh
-bun run check          # type checking
-bun run format         # format
-bun run lint           # lint
+bun run check
+bun run fmt
+bun run lint
 ```
 
 ## Architecture

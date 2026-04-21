@@ -49,8 +49,8 @@ const defaultSettings: Settings = {
 	sidebarSide: "right",
 	stats: true,
 	mcps: [],
-	showToolOutput: true,
-	showReasoning: true,
+	showToolOutput: false,
+	showReasoning: false,
 	ignoredProviders: [
 		"alibaba",
 		"anthropic",

@@ -360,7 +360,7 @@ $effect(() => {
 	</div>
 {/if}
 
-<div class="mx-auto flex h-full max-w-3xl flex-col items-center justify-center px-2">
+<div class="mx-auto flex h-full max-w-200 flex-col items-center justify-center px-2">
 	{#if chat.current.messages.length}
 		<ul class="mt-20 mb-6 h-full w-full space-y-10 overflow-hidden px-2 sm:px-5" in:slide>
 			{#each chat.current.messages as message, messageIndex (message.id)}

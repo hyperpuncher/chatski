@@ -3,6 +3,7 @@
 	"printWidth": 90,
 	"tabWidth": 4,
 	"useTabs": true,
-	"experimentalSortImports": {},
-	"experimentalTailwindcss": {},
+	"sortImports": true,
+	"sortTailwindcss": true,
+	"ignorePatterns": ["public/**"],
 }

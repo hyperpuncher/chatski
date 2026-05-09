@@ -21,6 +21,7 @@ let { content, isStreaming, reasoning = false } = $props();
 		{ id: "json5", import: () => import("@shikijs/langs/json5") },
 		{ id: "jsonc", import: () => import("@shikijs/langs/jsonc") },
 		{ id: "lua", import: () => import("@shikijs/langs/lua") },
+		{ id: "odin", import: () => import("@shikijs/langs/odin") },
 		{ id: "powershell", import: () => import("@shikijs/langs/powershell") },
 		{ id: "typst", import: () => import("@shikijs/langs/typst") },
 	]}

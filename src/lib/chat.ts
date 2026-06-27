@@ -6,7 +6,7 @@ import type { MyUIMessage } from "$lib/types";
 import { roundToSignificant } from "$lib/utils";
 import { Chat } from "@ai-sdk/svelte";
 import type { OpenRouterUsageAccounting } from "@openrouter/ai-sdk-provider";
-import { DirectChatTransport, ToolLoopAgent, stepCountIs } from "ai";
+import { DirectChatTransport, ToolLoopAgent, isStepCount } from "ai";
 import type { ChatTransport } from "ai";
 import { uuidv7 } from "uuidv7";
 
@@ -46,7 +46,7 @@ function createChatBase({
 		model: createModel(),
 		instructions,
 		tools: createTools(),
-		stopWhen: stepCountIs(100),
+		stopWhen: isStepCount(100),
 		prepareCall: async (args) => ({
 			...args,
 			model: createModel(),
@@ -97,7 +97,7 @@ function createChatBase({
 }
 
 export async function createChat() {
-	let instructions = await window.api.system();
+	let instructions = await window.api.instructions();
 	instructions += "\n\n";
 	instructions += await window.api.skills.get();
 	return createChatBase({ instructions });

@@ -18,7 +18,7 @@ export type ShellInput = string;
 
 const api = {
 	version: () => ipcRenderer.invoke("version"),
-	system: () => ipcRenderer.invoke("system"),
+	instructions: () => ipcRenderer.invoke("system"),
 
 	skills: {
 		get: (): Promise<string> => ipcRenderer.invoke("skills:get"),

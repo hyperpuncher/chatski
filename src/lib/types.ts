@@ -1,4 +1,8 @@
+import type { MyTools } from "$lib/tools";
 import type { Chat, UIMessage } from "@ai-sdk/svelte";
+import type { InferUITools, UIDataTypes } from "ai";
+
+type MyUITools = InferUITools<MyTools>;
 
 type MessageMetadata = {
 	promptTokens: number;
@@ -10,6 +14,6 @@ type MessageMetadata = {
 	provider: string;
 };
 
-export type MyUIMessage = UIMessage<MessageMetadata>;
+export type MyUIMessage = UIMessage<MessageMetadata, UIDataTypes, MyUITools>;
 
 export type MyChat = Chat<MyUIMessage>;

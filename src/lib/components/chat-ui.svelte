@@ -48,7 +48,7 @@ import {
 	roundToSignificant,
 } from "$lib/utils";
 import {
-	isToolUIPart,
+	isStaticToolUIPart,
 	getToolName,
 	isTextUIPart,
 	isFileUIPart,
@@ -386,10 +386,10 @@ $effect(() => {
 									{part.text}
 								</p>
 							{/if}
-						{:else if isToolUIPart(part)}
+						{:else if isStaticToolUIPart(part)}
 							{@const toolName = getToolName(part)}
 							{@const isPending = !part.state.startsWith("output")}
-							{@const input = part.input ? Object.values(part.input)[0] : ""}
+							{@const input = part.input ? (Object.values(part.input)[0] ?? "") : ""}
 							{@const output =
 								part.state === "output-available" ? part.output.trim() : ""}
 							<Collapsible.Root
@@ -422,9 +422,7 @@ $effect(() => {
 								<Collapsible.Content>
 									{#if input && input.split("\n").length > 1}
 										<pre
-											class="me-auto mb-4 rounded-lg bg-muted p-2 break-all whitespace-pre-wrap">{Object.values(
-												part.input,
-											)}</pre>
+											class="me-auto mb-4 rounded-lg bg-muted p-2 break-all whitespace-pre-wrap">{input}</pre>
 									{/if}
 
 									{#if output}

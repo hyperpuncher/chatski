@@ -38,6 +38,13 @@ export const shellTool = tool({
 	},
 });
 
+export type MyTools = {
+	fetch: typeof fetchTool;
+	search: typeof searchTool;
+	shell: typeof shellTool;
+	skill: typeof readSkillTool;
+};
+
 export const readSkillTool = tool({
 	description: "Read a skill",
 	inputSchema: z.object({

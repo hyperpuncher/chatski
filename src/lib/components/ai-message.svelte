@@ -18,6 +18,7 @@ let { content, isStreaming, reasoning = false } = $props();
 		{ id: "astro", import: () => import("@shikijs/langs/astro") },
 		{ id: "diff", import: () => import("@shikijs/langs/diff") },
 		{ id: "elixir", import: () => import("@shikijs/langs/elixir") },
+		{ id: "ini", import: () => import("@shikijs/langs/ini") },
 		{ id: "json5", import: () => import("@shikijs/langs/json5") },
 		{ id: "jsonc", import: () => import("@shikijs/langs/jsonc") },
 		{ id: "lua", import: () => import("@shikijs/langs/lua") },
